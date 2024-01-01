@@ -37,6 +37,7 @@ public class UserModel implements UserDetails {
     private String password;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 50)
     private Role role;
 
     @Basic

@@ -1,0 +1,9 @@
+<div id="maindiv" class="d-flex flex-column flex-grow-1 justify-content-center align-items-center">
+    <form (ngSubmit)="inputCode()" [formGroup]="firstForm" style="margin-top: 78px;">
+        <div class="form-group">
+          <label for="code">Code*</label>
+          <input formControlName="code" type="text" required="required" class="form-control" id="code" placeholder="Enter code">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+</div>

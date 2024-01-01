@@ -1,0 +1,33 @@
+<div id="maindiv" class="d-flex flex-column flex-grow-1 justify-content-center align-items-center" style="height: 40vh;">
+    <form [formGroup]="firstForm" (ngSubmit)="registerUser()" style="margin-top: 120px;">
+
+        <div class="row">
+            <div class="col-12">
+                <div class="form-group text-center">
+                    <label for="username" class="text-center">Username*</label>
+                    <input formControlName="username" type="text" required="required" class="form-control text-center" id="username"
+                        placeholder="Enter username">
+                </div>
+            </div>
+            <div class="col-12 form-group text-center">
+                <label for="password" class="text-center">Password*</label>
+                <input formControlName="password" type="password" required="required" class="form-control text-center"
+                    id="password" placeholder="Enter password">
+            </div>  
+            <div class="col-12 form-group text-center">
+                <label for="email" class="text-center">Email*</label>
+                <input formControlName="email" type="email" required="required" class="form-control text-center" id="email"
+                    placeholder="Enter email">
+            </div>
+            
+              
+        </div>
+
+        <!-- Submit Button -->
+        <div class="row">
+            <div class="col-12 text-center">
+                <button [disabled]="firstForm.invalid" type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </form>
+</div>
