@@ -52,26 +52,6 @@ public class UserModel implements UserDetails {
     @Column(name = "is_terminated", nullable = false)
     private Boolean isTerminated;
 
-    @Basic
-    @Column(name = "read_enabled", nullable = false)
-    private Boolean readEnabled;
-
-    @Basic
-    @Column(name = "create_enabled", nullable = false)
-    private Boolean createEnabled;
-
-    @Basic
-    @Column(name = "update_enabled", nullable = false)
-    private Boolean updateEnabled;
-
-    @Basic
-    @Column(name = "delete_enabled", nullable = false)
-    private Boolean deleteEnabled;
-
-    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
-    private List<CommentModel> comments = new ArrayList<>();
-
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));

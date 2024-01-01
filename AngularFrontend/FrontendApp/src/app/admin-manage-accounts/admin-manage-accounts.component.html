@@ -1,0 +1,12 @@
+<div class="container">
+    <h1 style="margin-top: 10px;" class="text-center mb-4">User account requests</h1>
+    <div *ngFor="let user of users"  class="jumbotron jumbotron-fluid">
+      <div class="container">
+        <h1 class="display-4">Username: {{user.username}}</h1>
+        <p class="lead">Email: {{user.email}}</p>
+        <div style="margin-bottom: 10px;"><button (click)="acceptRequest(user)" class="btn btn-primary">Accept Request (you will be able to change permissions later)</button></div>
+        <!--div style="margin-bottom: 10px;"><a target="_blank" href="/manage-account/{{user.id}}" class="btn btn-primary">Show allow user options</a></div-->
+        <button (click)="terminateRequest(user)" class="btn btn-primary">Terminate request (won't be shown again)</button>
+      </div>
+    </div>
+  </div>

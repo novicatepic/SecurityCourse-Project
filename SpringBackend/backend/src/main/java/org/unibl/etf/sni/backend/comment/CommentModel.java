@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.unibl.etf.sni.backend.user.UserModel;
 
 import java.sql.Date;
 
@@ -36,6 +37,10 @@ public class CommentModel {
     @Basic
     @Column(name = "user_id", nullable = false)
     private Integer userId;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    private UserModel writer;
 
     @Basic
     @Column(name = "enabled", nullable = false)

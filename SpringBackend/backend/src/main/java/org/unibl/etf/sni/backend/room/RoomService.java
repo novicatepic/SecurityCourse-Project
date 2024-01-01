@@ -17,7 +17,11 @@ public class RoomService {
     private CommentRepository commentRepository;
 
     public List<CommentModel> getCommentsForRoom(Integer roomId) {
-        return commentRepository.findByRoomId(roomId);
+        return commentRepository.findAll().stream().filter((x) -> x.getRoomId()==roomId && x.getEnabled() && !x.getForbidden())
+                .toList();
     }
 
+    public List<RoomModel> getAllRooms() {
+        return roomRepository.findAll();
+    }
 }

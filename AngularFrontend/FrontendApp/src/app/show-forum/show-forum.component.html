@@ -1,0 +1,14 @@
+<div class="container">
+    <div *ngFor="let comment of comments" class="card">
+        <div class="card-header">
+          Comment
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">Title: {{comment.title}}</h5>
+          <p class="card-text">Content: {{comment.content}}</p>
+          <p class="card-text">Date: {{comment.dateCreated}}</p>
+          <p class="card-text">Writer: {{comment.writer?.username}}</p>
+          <a href="#" class="btn btn-primary">Go somewhere</a>
+        </div>
+      </div>
+</div>

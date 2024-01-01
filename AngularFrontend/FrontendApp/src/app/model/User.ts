@@ -1,18 +1,13 @@
 
 
 export class User {
-    /*username : string;
-    password: string;
-    email: string;*/
+    id?: number;
     active: boolean = false;
-    createEnabled: boolean = false;
-    deleteEnabled: boolean = false;
-    readEnabled: boolean = false;
-    updateEnabled: boolean = false;
     isTerminated: boolean = false;
     role: any = "ROLE_UNDEFINED";
+    
 
-    constructor(private username: string, private password:string, private email:string) {
+    constructor(public username?: string, public password?:string, public email?:string) {
 
     }
 

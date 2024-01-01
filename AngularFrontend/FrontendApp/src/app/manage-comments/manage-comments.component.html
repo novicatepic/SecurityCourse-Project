@@ -1,0 +1,14 @@
+<div class="container">
+    <h1 style="margin-top: 10px;" class="text-center mb-4">Comment requests</h1>
+    <div *ngFor="let comment of comments"  class="jumbotron jumbotron-fluid">
+      <div class="container">
+        <h1 class="display-4">Title: {{comment.title}}</h1>
+        <p class="lead">Content: {{comment.content}}</p>
+        <p class="lead">Date created: {{comment.dateCreated}}</p>
+        <p class="lead">Writer: {{comment.writer?.username}}</p>
+        <div style="margin-bottom: 10px;"><button (click)="acceptComment(comment)" class="btn btn-primary">Accept Comment</button></div>
+        <!--div style="margin-bottom: 10px;"><a target="_blank" href="/manage-account/{{user.id}}" class="btn btn-primary">Show allow user options</a></div-->
+        <button (click)="terminateComment(comment)" class="btn btn-primary">Terminate comment</button>
+      </div>
+    </div>
+  </div>

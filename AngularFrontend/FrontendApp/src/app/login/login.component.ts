@@ -12,9 +12,6 @@ import { SnackBarService } from '../snack-bar/snack-bar.service';
 })
 export class LoginComponent {
   public firstForm : FormGroup
-  question: any;
-
-
 
   constructor( 
     private formBuilder: FormBuilder,

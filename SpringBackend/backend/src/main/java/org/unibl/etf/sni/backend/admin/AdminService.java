@@ -9,6 +9,9 @@ import org.unibl.etf.sni.backend.mail.MailService;
 import org.unibl.etf.sni.backend.user.UserModel;
 import org.unibl.etf.sni.backend.user.UserRepository;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class AdminService {
 
@@ -27,6 +30,27 @@ public class AdminService {
 
     public CommentModel configureComment(CommentModel comment) {
         return commentRepository.save(comment);
+    }
+
+    public CommentModel disableComment(CommentModel comment) {
+        comment.setForbidden(true);
+        comment.setEnabled(false);
+        return commentRepository.save(comment);
+    }
+
+    public CommentModel enableComment(CommentModel comment) {
+        comment.setForbidden(false);
+        comment.setEnabled(true);
+        return commentRepository.save(comment);
+    }
+
+    public List<CommentModel> unprocessedComments() {
+        return commentRepository.findAll().stream().filter((x) -> !x.getForbidden() && !x.getEnabled()).toList();
+    }
+
+    public List<UserModel> getWaitingUsers() {
+        List<UserModel> users = userRepository.findAll();
+        return users.stream().filter((x) -> !x.getActive() && !x.getIsTerminated()).toList();
     }
 
     public UserModel configureUserEnabled(Integer userId) throws NotFoundException  {
@@ -50,4 +74,14 @@ public class AdminService {
         return userRepository.save(user);
     }
 
+    public UserModel getUserById(Integer userId) throws NotFoundException{
+        return userRepository.findById(userId).orElseThrow(NotFoundException::new);
+    }
+
+    public UserModel update(UserModel user) throws NotFoundException {
+        UserModel u =  this.userRepository.findById(user.getId()).orElseThrow(NotFoundException::new);
+        System.out.println("Found");
+        u.setRole(user.getRole());
+        return userRepository.save(u);
+    }
 }
