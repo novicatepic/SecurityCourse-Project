@@ -41,7 +41,7 @@ public class AuthenticationService {
                 .orElseThrow(InvalidUsernameException::new);
 
         if(!user.getActive() || user.getIsTerminated()) {
-            return new BoolAuthResponse(false, 0);
+            return new BoolAuthResponse(false, user.getId());
         }
         System.out.println("HERE 1");
         return loginCredentials(request);
@@ -66,7 +66,7 @@ public class AuthenticationService {
     public JwtAuthResponse codeEntrance(Code code) throws NotFoundException {
 
         Code c = codeService.getById(code.getUserId());
-
+        //System.out.println("Code " + c.getCode());
         if(c == null) {
             return null;
         }
@@ -76,15 +76,17 @@ public class AuthenticationService {
         if(!c.getCode().equals(code.getCode())) {
             return null;
         }
-
+        System.out.println("Equals" );
         var user = userRepository.findById(code.getUserId());
         UserModel extractedUser;
         if(!user.isPresent()) {
             throw new NotFoundException();
         }
+        System.out.println("Found user" );
         extractedUser = user.get();
         var jwt = jwtService.generateToken(extractedUser);
         JwtAuthResponse response = new JwtAuthResponse(jwt);
+        System.out.println("Token " + response );
         return response;
 
 

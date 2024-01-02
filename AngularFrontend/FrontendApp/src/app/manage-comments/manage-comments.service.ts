@@ -8,11 +8,7 @@ import { Comment } from '../model/Comment';
 })
 export class ManageCommentsService {
 
-  //HARD-KODOVAN admin id
   private commentDisableUrl = 'http://localhost:8080/admins/disable-comments';
-
-  //HARD-KODOVAN admin id
-  
 
   private commentsUrl = 'http://localhost:8080/admins/comments';
 

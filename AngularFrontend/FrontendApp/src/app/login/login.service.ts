@@ -11,8 +11,6 @@ export class LoginService {
 
   private loginCode = 'http://localhost:8080/auth/code';
 
-  private usernameUrl = 'http://localhost:4040/fitness-users/user/';
-
   constructor(private http:HttpClient) { }
 
   loginUserUPW(user: object): Observable<any> {
@@ -23,10 +21,5 @@ export class LoginService {
   loginUserCode(code: object): Observable<any> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     return this.http.post(`${this.loginCode}`, JSON.stringify(code), {headers});
-  }
-
-  getByUsername(username: any): Observable<any> {
-    const url = this.usernameUrl + username;
-    return this.http.get(`${url}`);
   }
 }

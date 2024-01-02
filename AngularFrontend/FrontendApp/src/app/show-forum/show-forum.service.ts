@@ -7,12 +7,27 @@ import { Observable } from 'rxjs';
 })
 export class ShowForumService {
 
-  private baseUrl = 'http://localhost:8080/rooms/comments/';
+  private commentsUrl = 'http://localhost:8080/rooms/comments/';
+
+  private roomUrl = 'http://localhost:8080/rooms/';
+
+  private permissionsUrl = 'http://localhost:8080/permissions/';
   
   constructor(private http:HttpClient) { }
 
-  loadData(roomId: any): Observable<any> {
-    const url = this.baseUrl + roomId;
+  loadComments(roomId: any): Observable<any> {
+    const url = this.commentsUrl + roomId;
     return this.http.get(`${url}`);
   }
+
+  loadRoomInfo(roomId: any): Observable<any> {
+    const url = this.roomUrl + roomId;
+    return this.http.get(`${url}`);
+  }
+
+  loadPermissionsForForum(roomId: any, userId: any): Observable<any> {
+    const url = this.permissionsUrl + roomId + "/" + userId;
+    return this.http.get(`${url}`);
+  }
+
 }

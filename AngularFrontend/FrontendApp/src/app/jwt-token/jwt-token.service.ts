@@ -7,16 +7,18 @@ import { jwtDecode } from 'jwt-decode';
 })
 export class JwtTokenService {
 
-  private baseUrl = 'http://localhost:8080/fitness-users/';
-
-  private fixedUrl = 'http://localhost:8080/fitness-users/';
+  private baseUrl = 'http://localhost:8080/users/';
 
   constructor(private http: HttpClient) { }
 
   extractToken() {
     var tokenTemp = localStorage.getItem("user");
+    console.log("tokenTemp " + tokenTemp);
     if(tokenTemp) {
       var token = JSON.parse(tokenTemp);
+
+      console.log("token " + tokenTemp);
+
       return token.token;
     }
     console.log("NULL");
@@ -33,8 +35,6 @@ export class JwtTokenService {
   }
 
   getUserById() : any {
-    
-    this.baseUrl = this.fixedUrl;
     var tokenInfo = this.extractTokenInfo();
     if(tokenInfo) {
       const url = this.baseUrl + tokenInfo.id;

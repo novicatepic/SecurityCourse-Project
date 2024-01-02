@@ -1,8 +1,10 @@
 <div class="container">
-  <!-- Add Comment Button -->
-  <button  class="btn btn-primary btn-lg mr-2" data-bs-toggle="modal" data-bs-target="#add">Add Comment</button>
+  
+  <p class="h1 text-center" style="margin-top: 15px;">{{room?.name}}</p>
 
-  <div *ngFor="let comment of comments" class="card">
+  <button *ngIf="this.permissions?.canCreate" class="btn btn-primary btn-lg mr-2" data-bs-toggle="modal" data-bs-target="#add">Add Comment</button>
+
+  <div style="margin-bottom: 15px;" *ngFor="let comment of getCurrentPageData()" class="card">
     <div class="card-header">
       Comment
     </div>
@@ -13,13 +15,35 @@
       <p class="card-text">Writer: {{comment.writer?.username}}</p>
 
       <!-- Update Comment Button -->
-      <button (click)="toggleUpdate(comment)" class="btn btn-warning mx-2" data-bs-toggle="modal" data-bs-target="#update">Update</button>
+      <button *ngIf="this.permissions?.canUpdate" (click)="toggleUpdate(comment)" class="btn btn-warning mx-2" data-bs-toggle="modal" data-bs-target="#update">Update</button>
 
       <!-- Delete Comment Button -->
-      <button class="btn btn-danger" (click)="deleteComment(comment)">Delete</button>
+      <button *ngIf="this.permissions?.canDelete" class="btn btn-danger" (click)="deleteComment(comment)">Delete</button>
     </div>
   </div>
 </div>
+
+<nav style="margin-top: 10px;" aria-label="Page navigation">
+  <ul class="pagination">
+    <li class="page-item" [class.disabled]="currentPage === 1">
+      <a class="page-link" (click)="setPage(currentPage - 1)" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    <li class="page-item" *ngFor="let page of pages" [class.active]="currentPage === page">
+      <a class="page-link" (click)="setPage(page)">{{ page }}</a>
+    </li>
+    <li class="page-item" [class.disabled]="currentPage === pages.length">
+      <a class="page-link" (click)="setPage(currentPage + 1)" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+
 
 <div class="modal fade" id="add" tabindex="-1" aria-labelledby="enrollLabel" aria-hidden="true">
   <div class="modal-dialog">

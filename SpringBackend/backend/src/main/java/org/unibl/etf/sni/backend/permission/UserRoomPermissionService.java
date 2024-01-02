@@ -3,6 +3,7 @@ package org.unibl.etf.sni.backend.permission;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.unibl.etf.sni.backend.exception.NotFoundException;
 import org.unibl.etf.sni.backend.room.RoomModel;
 import org.unibl.etf.sni.backend.room.RoomService;
 
@@ -41,6 +42,10 @@ public class UserRoomPermissionService {
 
         return repository.findByUserId(userId);
 
+    }
+
+    public UserRoomPermissionEntity getPermissionForProgramAndUser(Integer userId, Integer programId) throws NotFoundException {
+        return repository.findByUserIdAndRoomId(userId, programId).orElseThrow(NotFoundException::new);
     }
 
     public List<RoomModel> getUnsetPermissions(Integer userId) {

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.unibl.etf.sni.backend.comment.CommentModel;
 import org.unibl.etf.sni.backend.comment.CommentRepository;
+import org.unibl.etf.sni.backend.exception.NotFoundException;
 
 import java.util.List;
 
@@ -23,5 +24,9 @@ public class RoomService {
 
     public List<RoomModel> getAllRooms() {
         return roomRepository.findAll();
+    }
+
+    public RoomModel getRoomById(Integer roomId) throws NotFoundException {
+        return roomRepository.findById(roomId).orElseThrow(NotFoundException::new);
     }
 }

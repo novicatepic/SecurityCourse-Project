@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.unibl.etf.sni.backend.exception.NotFoundException;
 import org.unibl.etf.sni.backend.room.RoomModel;
 
 import java.util.List;
@@ -24,6 +25,13 @@ public class UserRoomPermissionController {
     @GetMapping("/set/{userId}")
     public ResponseEntity<List<UserRoomPermissionEntity>> getSetPermissions(@PathVariable("userId") Integer userId) {
         return new ResponseEntity<>(service.getSetPermissions(userId), HttpStatus.OK);
+    }
+
+    @GetMapping("/{programId}/{userId}")
+    public ResponseEntity<UserRoomPermissionEntity> getPermissionsForProgram(
+            @PathVariable("userId") Integer userId,
+            @PathVariable("programId") Integer programId) throws NotFoundException {
+        return new ResponseEntity<>(service.getPermissionForProgramAndUser(userId, programId), HttpStatus.OK);
     }
 
     @GetMapping("/unset/{userId}")

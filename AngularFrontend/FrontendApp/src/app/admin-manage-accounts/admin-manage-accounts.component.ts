@@ -14,12 +14,17 @@ import { User } from '../model/User';
 export class AdminManageAccountsComponent {
 
   users : any = [];
-
+  user: any;
   constructor(
     private router: Router,
     private service: AdminManageAccountsService,
     private jwtService: JwtTokenService,
     private snackBarService: SnackBarService) {
+
+      this.jwtService.getUserById().subscribe((data: any) => {
+        this.user = data;
+        //console.log( "USER="+this.user);
+     });
 
       this.readData();
 
@@ -28,7 +33,7 @@ export class AdminManageAccountsComponent {
   readData() {
 
     //HARD-KODOVANO 1 ISPOD
-    this.service.getWaitingRequests(1).subscribe((data) => {
+    this.service.getWaitingRequests(this.user.id).subscribe((data) => {
       console.log(JSON.stringify(data));
       this.users = data;
     },
@@ -38,12 +43,12 @@ export class AdminManageAccountsComponent {
       });
   }
 
-  terminateRequest(user: User) {
+  terminateRequest(user2: User) {
 
-    user.active = false;
-    user.isTerminated = true;
+    user2.active = false;
+    user2.isTerminated = true;
 
-    this.service.terminateUser(user).subscribe((data) => {
+    this.service.terminateUser(user2, this.user.id).subscribe((data) => {
       console.log(JSON.stringify(data));
       this.snackBarService.triggerSnackBar("User terminated!");
     },
@@ -54,12 +59,12 @@ export class AdminManageAccountsComponent {
 
   }
 
-  acceptRequest(user: User) {
+  acceptRequest(user2: User) {
 
-    user.active = true;
-    user.isTerminated = false;
+    user2.active = true;
+    user2.isTerminated = false;
 
-    this.service.allowUser(user).subscribe((data) => {
+    this.service.allowUser(user2, this.user.id).subscribe((data) => {
       console.log(JSON.stringify(data));
       this.snackBarService.triggerSnackBar("User activated!");
     },

@@ -12,10 +12,12 @@ export class AdminManageAccountsService {
   private accountsUrl = 'http://localhost:8080/admins/waiting-requests/';
 
   //HARD-KODOVAN admin id
-  private accountDisableUrl = 'http://localhost:8080/admins/disable-users/1/';
+  //private accountDisableUrl = 'http://localhost:8080/admins/disable-users/1/';
+  private accountDisableUrl = 'http://localhost:8080/admins/disable-users/';
 
   //HARD-KODOVAN admin id
-  private accountEnableUrl = 'http://localhost:8080/admins/enable-users/1/';
+  //private accountEnableUrl = 'http://localhost:8080/admins/enable-users/1/';
+  private accountEnableUrl = 'http://localhost:8080/admins/enable-users/';
 
   private userByIdUrl = 'http://localhost:8080/admins/users/';
 
@@ -36,15 +38,15 @@ export class AdminManageAccountsService {
     return this.http.get(`${url}`);
   }
 
-  terminateUser(user: User): Observable<any> {
+  terminateUser(user: User, adminId: any): Observable<any> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    const url = this.accountDisableUrl + user.id;
+    const url = this.accountDisableUrl + adminId +"/"+ user.id;
     return this.http.patch(`${url}`, JSON.stringify(user), {headers});
   }
 
-  allowUser(user: User) : Observable<any> {
+  allowUser(user: User, adminId: any) : Observable<any> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    const url = this.accountEnableUrl + user.id;
+    const url = this.accountEnableUrl + adminId + "/" + user.id;
     return this.http.patch(`${url}`, JSON.stringify(user), {headers});
   }
 

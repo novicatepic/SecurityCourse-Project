@@ -40,7 +40,7 @@ export class LoginComponent {
         console.log(JSON.stringify(data));
         if(data.success) {
           this.snackBarService.triggerSnackBar("Correct credentials!");
-          this.router.navigate(['/code/:id']);
+          this.router.navigate(['/code/'+data.userId]);
         } else {
           this.snackBarService.triggerSnackBar("Incorrect credentials!");
         }

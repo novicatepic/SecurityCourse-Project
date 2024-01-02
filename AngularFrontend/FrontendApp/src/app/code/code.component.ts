@@ -40,6 +40,7 @@ export class CodeComponent {
 
       this.service.loginUserCode(code).subscribe((data) => {
         const token = JSON.stringify(data);
+        console.log("token " + token);
         localStorage.setItem("user", token);
         this.snackBarService.triggerSnackBar("Successfull login!");
         //this.router.navigate(['/']);

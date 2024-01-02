@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.unibl.etf.sni.backend.exception.NotFoundException;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -28,6 +29,10 @@ public class UserService implements UserDetailsService {
         user.setActive(false);
         user.setIsTerminated(false);
         return userRepository.save(user);
+    }
+
+    public UserModel findByUserId(Integer id) throws NotFoundException {
+        return userRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
 }

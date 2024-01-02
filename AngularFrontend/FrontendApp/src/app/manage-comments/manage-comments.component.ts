@@ -51,21 +51,4 @@ export class ManageCommentsComponent {
 
   }
 
-  /*acceptComment(comment: Comment) {
-
-    comment.enabled=true;
-    comment.forbidden=false;
-    comment.writer = undefined;
-    console.log(JSON.stringify(comment));
-
-    this.service.allowComment(comment).subscribe((data) => {
-      console.log(JSON.stringify(data));
-      this.snackBarService.triggerSnackBar("Comment activated!");
-    },
-      error => {
-        console.log("ERROR " + JSON.stringify(error));
-        this.snackBarService.triggerSnackBar("Comment not activated!");
-      })
-
-  }*/
 }

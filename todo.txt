@@ -1,0 +1,22 @@
+1) pracenje pristupa na bekend strani, role definisati za jwt
+
+2) valid anotacije i provjere te strane sigurnosti
+
+3) izdavanje sertifikata i potpisivanje zahtjeva (makar unutar spring app.)
+
+4) sertifikat na frontend (angular) strani
+
+5) waf
+
+postavljanje https konekcije
+
+oauth 2.0 (github)
+
+url-ovi u konf. fajl
+
+izgled
+
+
+crud sta, ko i kako?
+
+jwt provjeriti sta, ko i kako?

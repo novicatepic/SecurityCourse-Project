@@ -1,5 +1,6 @@
 package org.unibl.etf.sni.backend.auth;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.unibl.etf.sni.backend.code.Code;
@@ -30,7 +31,7 @@ public class AuthenticationController {
 
         JwtAuthResponse response = authenticationService.codeEntrance(code);
 
-        return ResponseEntity.ok(response);
+        return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
 
