@@ -20,9 +20,10 @@ import { CodeComponent } from './code/code.component';
 import { RegisterComponent } from './register/register.component';
 import { AdminManageAccountsComponent } from './admin-manage-accounts/admin-manage-accounts.component';
 import { AdminManageSingleAccountComponent } from './admin-manage-single-account/admin-manage-single-account.component';
-import { AdminManagePermissionsComponent } from './admin-manage-permissions/admin-manage-permissions.component';
 import { ShowForumComponent } from './show-forum/show-forum.component';
 import { ManageCommentsComponent } from './manage-comments/manage-comments.component';
+import { ChangeUserRoleComponent } from './change-user-role/change-user-role.component';
+import { CommentModificationComponent } from './comment-modification/comment-modification.component';
 
 
 
@@ -34,9 +35,10 @@ import { ManageCommentsComponent } from './manage-comments/manage-comments.compo
     RegisterComponent,
     AdminManageAccountsComponent,
     AdminManageSingleAccountComponent,
-    AdminManagePermissionsComponent,
     ShowForumComponent,
-    ManageCommentsComponent
+    ManageCommentsComponent,
+    ChangeUserRoleComponent,
+    CommentModificationComponent
   ],
   imports: [
     BrowserModule,

@@ -10,6 +10,9 @@ export class AdminManageSingleAccountService {
 
   private accountUpdateUrl = 'http://localhost:8080/admins/update-role';
 
+  private getPermittedRoomsUrl = 'http://localhost:8080/permissions/set/';
+
+  private getNotPermittedRoomsUrl = 'http://localhost:8080/permissions/unset/';
 
   constructor(private http:HttpClient) { }
 
@@ -19,5 +22,14 @@ export class AdminManageSingleAccountService {
     return this.http.patch(`${this.accountUpdateUrl}`, JSON.stringify(user), {headers});
   }
 
+  getPermittedRooms(id: any): Observable<any> {
+    const url = this.getPermittedRoomsUrl + id;
+    return this.http.get(`${url}`);
+  }
+
+  getNotPermittedRooms(id: any): Observable<any> {
+    const url = this.getNotPermittedRoomsUrl + id;
+    return this.http.get(`${url}`);
+  }
 
 }

@@ -12,7 +12,7 @@ export class ManageCommentsService {
   private commentDisableUrl = 'http://localhost:8080/admins/disable-comments';
 
   //HARD-KODOVAN admin id
-  private commentEnableUrl = 'http://localhost:8080/admins/enable-comments';
+  
 
   private commentsUrl = 'http://localhost:8080/admins/comments';
 
@@ -25,11 +25,7 @@ export class ManageCommentsService {
     return this.http.patch(`${this.commentDisableUrl}`, JSON.stringify(comment), {headers});
   }
 
-  allowComment(comment: Comment) : Observable<any> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    /*const url = this.accountEnableUrl + user.id;*/
-    return this.http.patch(`${this.commentEnableUrl}`, JSON.stringify(comment), {headers});
-  }
+  
 
   getComments() : Observable<any> {
     return this.http.get(`${this.commentsUrl}`);

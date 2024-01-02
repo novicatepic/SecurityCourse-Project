@@ -1,0 +1,27 @@
+<div class="container">
+    <div class="jumbotron" style="margin-top: 20px;">
+
+        
+        
+        <h1 class="display-4">Manage comment (this comment will be published once you click Submit)</h1>
+        <!--p class="lead">Comment  title: {{ comment.title }}</p>
+        <p class="lead">Comment text: {{ user.email }}</p-->
+        <p class="lead">Written by {{comment?.writer?.username}}</p>
+        <form (ngSubmit)="updateComment(comment)" [formGroup]="firstForm">
+
+            <div class="form-group">
+              <label for="title">Title:</label>
+              <input formControlName="title" id="title" class="form-control" type="text" value="{{comment?.title}}">
+            </div>
+          
+            <div class="form-group">
+              <label for="content">Content:</label>
+              <input formControlName="content" id="content" class="form-control" type="text" value="{{comment?.content}}">
+            </div>
+          
+            <button [disabled]="firstForm.invalid" type="submit" class="btn btn-primary">Submit</button>
+          </form>
+          
+
+    </div>
+</div>

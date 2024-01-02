@@ -1,14 +1,81 @@
 <div class="container">
-    <div *ngFor="let comment of comments" class="card">
-        <div class="card-header">
-          Comment
-        </div>
-        <div class="card-body">
-          <h5 class="card-title">Title: {{comment.title}}</h5>
-          <p class="card-text">Content: {{comment.content}}</p>
-          <p class="card-text">Date: {{comment.dateCreated}}</p>
-          <p class="card-text">Writer: {{comment.writer?.username}}</p>
-          <a href="#" class="btn btn-primary">Go somewhere</a>
-        </div>
+  <!-- Add Comment Button -->
+  <button  class="btn btn-primary btn-lg mr-2" data-bs-toggle="modal" data-bs-target="#add">Add Comment</button>
+
+  <div *ngFor="let comment of comments" class="card">
+    <div class="card-header">
+      Comment
+    </div>
+    <div class="card-body">
+      <h5 class="card-title">Title: {{comment?.title}}</h5>
+      <p class="card-text">Content: {{comment.content}}</p>
+      <p class="card-text">Date: {{comment.dateCreated}}</p>
+      <p class="card-text">Writer: {{comment.writer?.username}}</p>
+
+      <!-- Update Comment Button -->
+      <button (click)="toggleUpdate(comment)" class="btn btn-warning mx-2" data-bs-toggle="modal" data-bs-target="#update">Update</button>
+
+      <!-- Delete Comment Button -->
+      <button class="btn btn-danger" (click)="deleteComment(comment)">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="add" tabindex="-1" aria-labelledby="enrollLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="enrollLabel">Add New Comment</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
+      <div class="modal-body">
+        <p class="lead">New Comment</p>
+        <form [formGroup]="firstForm" (ngSubmit)="addComment()">
+          <div class="mb-3">
+              <label for="title" class="col-form-label">Title</label>
+              <input formControlName="title" id="title" type="text" class="form-control" placeholder="Title...">
+          </div>
+          <div class="mb-3">
+              <label for="content" class="col-form-label">Content</label>
+              <input formControlName="content" id="content" type="text" class="form-control" placeholder="Content...">
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <button id="btnclose" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+          
+        </form>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="update" tabindex="-1" aria-labelledby="enrollLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="enrollLabel">Update Comment</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="lead">Update Existing Comment</p>
+        <form [formGroup]="updateForm" (ngSubmit)="updateComment()">
+          <div class="mb-3">
+              <label for="updateTitle" class="col-form-label">Title</label>
+              <input formControlName="updateTitle" id="updateTitle" type="text" class="form-control" placeholder="Title...">
+          </div>
+          <div class="mb-3">
+              <label for="updateContent" class="col-form-label">Content</label>
+              <input formControlName="updateContent" id="updateContent" type="text" class="form-control" placeholder="Content...">
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <button id="btnclose" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>

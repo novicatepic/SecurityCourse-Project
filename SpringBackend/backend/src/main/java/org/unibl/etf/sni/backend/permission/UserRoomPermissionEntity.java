@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.unibl.etf.sni.backend.room.RoomModel;
+import org.unibl.etf.sni.backend.user.UserModel;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,5 +40,13 @@ public class UserRoomPermissionEntity {
     @Basic
     @Column(name = "can_delete", nullable = false)
     private Boolean canDelete;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "user_id", nullable = false, updatable = false, insertable = false)
+    private UserModel user;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "room_id", nullable = false, updatable = false, insertable = false)
+    private RoomModel room;
 
 }

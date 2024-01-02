@@ -27,7 +27,7 @@ public class CommentModel {
     private String title;
 
     @Basic
-    @Column(name = "content", nullable = false, length = 45)
+    @Column(name = "content", nullable = false, length = 2000)
     private String content;
 
     @Basic

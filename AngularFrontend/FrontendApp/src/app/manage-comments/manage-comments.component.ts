@@ -51,7 +51,7 @@ export class ManageCommentsComponent {
 
   }
 
-  acceptComment(comment: Comment) {
+  /*acceptComment(comment: Comment) {
 
     comment.enabled=true;
     comment.forbidden=false;
@@ -67,5 +67,5 @@ export class ManageCommentsComponent {
         this.snackBarService.triggerSnackBar("Comment not activated!");
       })
 
-  }
+  }*/
 }

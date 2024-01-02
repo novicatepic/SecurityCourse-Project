@@ -2,28 +2,19 @@
 <div class="container">
     <div class="jumbotron" style="margin-top: 20px;">
 
-        <form (ngSubmit)="updateRole(user)" [formGroup]="secondForm">
-            <div *ngIf="user.role !== 'ROLE_UNDEFINED'">
-                <p class="lead">You can set this only once (the first time)</p>
-                <select formControlName="role">
-                    <option value="ROLE_ADMIN">ADMIN</option>
-                    <option value="ROLE_MODERATOR">MODERATOR</option>
-                    <option selected value="ROLE_FORUM">FORUM USER</option>
-                </select>
-                <button type="submit">Submit</button>
-            </div>
-        </form>
         
+        
+        <h1 class="display-4">Manage permissions for user {{ user.username }}</h1>
+        <p class="lead">User mail: {{ user.email }}</p>
 
-        <form (ngSubmit)="updatePermissions()" [formGroup]="firstForm">
-            <h1 class="display-4">Manage permissions for user {{ user.username }}</h1>
-            <p class="lead">User mail: {{ user.email }}</p>
+        <form (ngSubmit)="updatePermissionsUnpermitted()" [formGroup]="firstForm">
+            
     
-            <p class="lead mt-20">Manage permissions:</p>
+            <p class="lead mt-20">Manage permissions for unpermitted rooms:</p>
             
                 <div>
                     <select formControlName="room">
-                        <option *ngFor="let room of rooms" value="{{room.id}}">{{room.name}}</option>
+                        <option *ngFor="let room of unpermittedRooms" value="{{room.id}}">{{room.name}}</option>
                     </select>
                 </div>
                 
@@ -43,6 +34,37 @@
                 </div>
     
             <button [disabled]="firstForm.invalid" type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+
+        <form  (ngSubmit)="updatePermissionsPermitted()" [formGroup]="thirdForm">
+    
+            <p class="lead mt-20">Manage permissions for configured</p>
+            <div>
+                <select (change)="changeCheckboxes()" formControlName="newRoom">
+                    <option *ngFor="let room of permittedRooms" value="{{room.room?.id}}">{{room.room?.name}}</option>
+                </select>
+            </div>
+                <div >
+                    <div class="form-check">
+                        <input  formControlName="createPermitted" class="form-check-input" type="checkbox">
+                        <label class="form-check-label">Create</label>
+                    </div>
+        
+                    <div class="form-check">
+                        <input  formControlName="updatePermitted"  type="checkbox" class="form-check-input">
+                        <label class="form-check-label">Update</label>
+                    </div>
+        
+                    <div class="form-check">
+                        <input formControlName="deletePermitted" class="form-check-input" type="checkbox">
+                        <label class="form-check-label">Delete</label>
+                    </div>
+                </div>
+                
+                
+    
+            <button [disabled]="thirdForm.invalid" type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
     
