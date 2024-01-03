@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.unibl.etf.sni.backend.role.Role;
+
+import java.sql.Date;
 
 @Data
 @Builder
@@ -20,9 +23,15 @@ public class LogModel {
     private Integer id;
 
     @Basic
-    @Column(name = "info", nullable = false, length = 3000, unique = true)
+    @Column(name = "info", nullable = false, length = 3000)
     private String info;
 
-    public LogModel(String info) {this.info = info; }
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 50)
+    private Status status;
+
+    @Basic
+    @Column(name = "date", nullable = false)
+    private Date date;
 
 }

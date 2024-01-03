@@ -44,8 +44,8 @@ public class UserRoomPermissionService {
 
     }
 
-    public UserRoomPermissionEntity getPermissionForProgramAndUser(Integer userId, Integer programId) throws NotFoundException {
-        return repository.findByUserIdAndRoomId(userId, programId).orElseThrow(NotFoundException::new);
+    public UserRoomPermissionEntity getPermissionForRoomAndUser(Integer userId, Integer roomId) throws NotFoundException {
+        return repository.findByUserIdAndRoomId(userId, roomId).orElseThrow(NotFoundException::new);
     }
 
     public List<RoomModel> getUnsetPermissions(Integer userId) {

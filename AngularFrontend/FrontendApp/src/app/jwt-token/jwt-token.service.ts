@@ -13,12 +13,8 @@ export class JwtTokenService {
 
   extractToken() {
     var tokenTemp = localStorage.getItem("user");
-    console.log("tokenTemp " + tokenTemp);
     if(tokenTemp) {
       var token = JSON.parse(tokenTemp);
-
-      console.log("token " + tokenTemp);
-
       return token.token;
     }
     console.log("NULL");
@@ -29,6 +25,7 @@ export class JwtTokenService {
     var token = this.extractToken();
     if(token) {
       const decodedToken: any = jwtDecode(token);
+      console.log("decoded " + JSON.stringify(decodedToken));
       return decodedToken;
     }
     return null;

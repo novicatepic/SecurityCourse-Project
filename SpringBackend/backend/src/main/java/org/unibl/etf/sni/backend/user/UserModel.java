@@ -1,6 +1,10 @@
 package org.unibl.etf.sni.backend.user;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,26 +32,37 @@ public class UserModel implements UserDetails {
     @Column(name = "id", nullable = false)
     private Integer id;
 
+    @NotBlank(message = "username for user is mandatory!")
+    @Size(max = 45, message = "Maximum character size for username is 45!")
     @Basic
     @Column(name = "username", nullable = false, length = 45, unique = true)
     private String username;
 
+    @NotBlank(message = "password for user is mandatory!")
+    @Size(max = 500, message = "Maximum character size for password is 500!")
     @Basic
     @Column(name = "password", nullable = false, length = 500)
     private String password;
 
+    @NotBlank(message = "role for user is mandatory!")
+    @Size(max = 50, message = "Maximum character size for role is 50!")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
     private Role role;
 
+    @Email
+    @NotBlank(message = "email for user is mandatory!")
+    @Size(max = 200, message = "Maximum character size for email is 200!")
     @Basic
     @Column(name = "email", nullable = false, length = 200, unique = true)
     private String email;
 
+    @NotNull
     @Basic
     @Column(name = "active", nullable = false)
     private Boolean active;
 
+    @NotNull
     @Basic
     @Column(name = "is_terminated", nullable = false)
     private Boolean isTerminated;

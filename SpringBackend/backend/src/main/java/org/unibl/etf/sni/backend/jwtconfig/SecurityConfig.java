@@ -10,11 +10,16 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.unibl.etf.sni.backend.user.UserService;
+
+import java.util.List;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -37,38 +42,33 @@ public class SecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {;
+
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/csrf").permitAll()
-                        /*.requestMatchers(HttpMethod.POST, "/auth/**")
-                        .permitAll()
-                        .requestMatchers("/fitness-programs", "/fitness-programs/{id}").permitAll()
-                        .requestMatchers("/categories").permitAll()
-                        .requestMatchers("/logger").permitAll()
-                        .requestMatchers("/rss").permitAll()
-                        .requestMatchers("/api/exercises").permitAll()
-                        .requestMatchers("/fitness-users/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/questions/{programId}").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/fitness-users/{id}").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/fitness-users/user/{userName}").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/pictures/{programId}").permitAll()
-                        .requestMatchers("/api/files/download/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/**").permitAll() //Authentication controller
+                        .requestMatchers(HttpMethod.POST, "/users/register").permitAll() //UserController
 
-                        .requestMatchers(HttpMethod.PUT, "/fitness-users/password-update").hasRole("USER")
-                        .requestMatchers("/pictures/upload/{programId}/{userId}").hasRole("USER")
-                        .requestMatchers("/locations/**").hasRole("USER")
-                        .requestMatchers("/fitness-programs/**").hasRole("USER")
-                        .requestMatchers("/category-subscriptions/**").hasRole("USER")
-                        .requestMatchers("/messages/**").hasRole("USER")
-                        .requestMatchers("/journals/**").hasRole("USER")
-                        .requestMatchers("/user-messages/**").hasRole("USER")
-                        .requestMatchers(HttpMethod.POST, "/questions").hasRole("USER")
-                        .requestMatchers(HttpMethod.POST, "/questions/consultants").hasRole("USER")
-                        .requestMatchers(HttpMethod.POST, "/questions/respond").hasRole("USER")
-                        .requestMatchers(HttpMethod.PUT, "/fitness-users").hasRole("USER")*/
-                        .requestMatchers("/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/comments/{commentId}/{userId}").hasAnyRole("ADMIN", "MODERATOR")
+                        .requestMatchers("/comments/**").hasAnyRole("ADMIN", "MODERATOR", "FORUM") //CommentController
+                        .requestMatchers("/rooms/**").hasAnyRole("ADMIN", "MODERATOR", "FORUM") //RoomController
+                        .requestMatchers("/permissions/{roomId}/{userId}").hasAnyRole("ADMIN", "MODERATOR", "FORUM") //RoomController
+                        .requestMatchers("/users/{userId}").hasAnyRole("ADMIN", "MODERATOR", "FORUM") //UserController
+
+                        .requestMatchers("/admins/disable-comments").hasAnyRole("ADMIN", "MODERATOR")
+                        .requestMatchers("/admins/enable-comments").hasAnyRole("ADMIN", "MODERATOR") //UserRoomPermissionController
+
+
+                        .requestMatchers("/admins/users/**").permitAll()//.hasRole("ADMIN") //AdminController all until UserRoomPermissionController
+                        .requestMatchers("/admins/waiting-requests/**").hasRole("ADMIN")
+                        .requestMatchers("/admins/update-role").hasRole("ADMIN")
+                        .requestMatchers("/admins/enable-users/**").hasRole("ADMIN")
+                        .requestMatchers("/admins/disable-users/**").hasRole("ADMIN")
+                        .requestMatchers("/admins/users/**").hasRole("ADMIN")
+                        .requestMatchers("/permissions/**").hasRole("ADMIN") //UserRoomPermissionController
+                        .requestMatchers(HttpMethod.GET, "/users/{userId}").hasRole("ADMIN") //UserController
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
@@ -77,6 +77,8 @@ public class SecurityConfig {
                         jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
+
+
 
     @Bean
     DaoAuthenticationProvider daoAuthenticationProvider() {

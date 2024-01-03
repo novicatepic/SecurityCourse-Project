@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -25,20 +27,32 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public void handleNotFound(NotFoundException err) {
         logger.error("Resource not found!");
-        logService.insertNewLog(new LogModel(err.getMessage()));
+        //logService.insertNewLog(new LogModel(err.getMessage()));
     }
 
     @ExceptionHandler(IOException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public void handleIOException(IOException err) {
         logger.error("Error: " + err.getMessage());
-        logService.insertNewLog(new LogModel(err.getMessage()));
+        //logService.insertNewLog(new LogModel(err.getMessage()));
     }
 
     @ExceptionHandler(InvalidRoleException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public void handleInvalidRoleException(InvalidRoleException err) {
         logger.error("No permissions for that action!");
-        logService.insertNewLog(new LogModel(err.getMessage()));
+       // logService.insertNewLog(new LogModel(err.getMessage()));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public void handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            logger.error("Wrong input for field with name " + fieldName + " with message " + errorMessage);
+            //logService.insertNewLog(new LogModel("Wrong input for field with name " + fieldName + " with message " + errorMessage));
+        });
     }
 }

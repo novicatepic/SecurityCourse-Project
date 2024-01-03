@@ -8,10 +8,41 @@
         <p class="lead">Writer: {{comment.writer?.username}}</p>
         <!--div style="margin-bottom: 10px;"><button (click)="acceptComment(comment)" class="btn btn-primary">Accept Comment</button></div-->
 
-        <a class="btn btn-primary" href="/manage-comment/{{comment.id}}">Accept comment</a>
-
+        <!--a class="btn btn-primary" href="/manage-comment/{{comment.id}}">Accept comment</a-->
+        <button (click)="updateCurrentComment(comment)" class="btn btn-primary btn-lg mr-2" data-bs-toggle="modal" data-bs-target="#allow">Allow Comment</button>
         <!--div style="margin-bottom: 10px;"><a target="_blank" href="/manage-account/{{user.id}}" class="btn btn-primary">Show allow user options</a></div-->
         <button (click)="terminateComment(comment)" class="btn btn-primary">Terminate comment</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal fade" id="allow" tabindex="-1" aria-labelledby="enrollLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="enrollLabel">Allow Comment</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="lead">Allow Comment</p>
+          <form [formGroup]="firstForm" (ngSubmit)="updateComment()">
+            <div class="mb-3">
+                <label for="title" class="col-form-label">Title</label>
+                <input formControlName="title" id="title" type="text" class="form-control" placeholder="Title...">
+            </div>
+            <div class="mb-3">
+                <label for="content" class="col-form-label">Content</label>
+                <input formControlName="content" id="content" type="text" class="form-control" placeholder="Content...">
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">Submit</button>
+              <button id="btnclose" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+            
+          </form>
+        </div>
+        
       </div>
     </div>
   </div>

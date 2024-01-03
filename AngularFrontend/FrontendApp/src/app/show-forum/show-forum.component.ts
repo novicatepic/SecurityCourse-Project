@@ -41,7 +41,8 @@ export class ShowForumComponent {
       this.route.paramMap.subscribe(params => {
         this.roomId = params.get('id');
       });
-
+      this.loadRoomInfo();
+      this.loadData();
       this.jwtService.getUserById().subscribe((data: any) => {
         //console.log("data " + JSON.stringify(data));
         this.user = data;
@@ -57,9 +58,8 @@ export class ShowForumComponent {
         });
 
      });
-
-      this.loadData();
-      this.loadRoomInfo();
+     
+      
 
       this.firstForm = formBuilder.group({
         title: [null, [Validators.required, Validators.maxLength(45)]],
@@ -157,7 +157,7 @@ export class ShowForumComponent {
   }
 
   deleteComment(comment: Comment) {
-      this.commentService.deleteComment(comment.id).subscribe((data) => {
+      this.commentService.deleteComment(comment.id, this.user.id, this.roomId).subscribe((data) => {
         this.snackBarService.triggerSnackBar("Deleted comment!");
       }, (err) => {
         console.log(err);

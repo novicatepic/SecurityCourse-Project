@@ -48,7 +48,8 @@ export class ChangeUserRoleComponent {
       this.secondForm.get('role')?.setValue(this.user?.role);
     },
       error => {
-        this.snackBarService.triggerSnackBar("Couldn't get data!");
+        this.snackBarService.triggerSnackBar("404");
+        this.router.navigate(['/login']);
       });
 
   }

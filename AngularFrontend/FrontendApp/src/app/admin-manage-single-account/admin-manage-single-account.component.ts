@@ -62,7 +62,8 @@ export class AdminManageSingleAccountComponent {
       this.user = data;
     },
       error => {
-        this.snackBarService.triggerSnackBar("Couldn't get data!");
+        this.snackBarService.triggerSnackBar("404!");
+        this.router.navigate(['/login']);
       });
 
 
@@ -70,18 +71,38 @@ export class AdminManageSingleAccountComponent {
       this.roleService.getPermittedRooms(this.id).subscribe((data) => {
         this.permittedRooms = data;
       },
-      error => {
-        this.snackBarService.triggerSnackBar("Couldn't get data!");
-      });
+      (error) => {
+        if (error.status === 403) {
+          // Handle forbidden (HTTP 403) error
+          this.snackBarService.triggerSnackBar("Why would you want to change your own permissions?");
+        } else if (error.status === 404) {
+          this.snackBarService.triggerSnackBar("404 Not Found");
+        } else {
+          // Handle other errors
+          console.error("Unexpected error:", error);
+          this.snackBarService.triggerSnackBar("Error");
+        }
+      }
+    );
 
 
 
       this.roleService.getNotPermittedRooms(this.id).subscribe((data) => {
         this.unpermittedRooms = data;
       },
-      error => {
-        this.snackBarService.triggerSnackBar("Couldn't get data!");
-      });
+      (error) => {
+        if (error.status === 403) {
+          // Handle forbidden (HTTP 403) error
+          this.snackBarService.triggerSnackBar("Why would you want to change your own permissions?");
+        } else if (error.status === 404) {
+          this.snackBarService.triggerSnackBar("404 Not Found");
+        } else {
+          // Handle other errors
+          console.error("Unexpected error:", error);
+          this.snackBarService.triggerSnackBar("Error");
+        }
+      }
+    );
 
   }
 

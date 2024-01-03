@@ -1,9 +1,16 @@
 package org.unibl.etf.sni.backend.auth;
 
 
-public class AuthRequest {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
+public class AuthRequest {
+    @NotBlank(message = "username for login is mandatory!")
+    @Size(max = 45, message = "Maximum character size for username for login is 500!")
     private String username;
+
+    @NotBlank(message = "password for login is mandatory!")
+    @Size(max = 500, message = "Maximum character size for password for login is 500!")
     private String password;
 
     public AuthRequest() {}

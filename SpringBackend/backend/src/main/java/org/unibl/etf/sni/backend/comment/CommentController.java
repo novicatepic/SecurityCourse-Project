@@ -1,12 +1,15 @@
 package org.unibl.etf.sni.backend.comment;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.unibl.etf.sni.backend.authorization.BadEntity;
+import org.unibl.etf.sni.backend.certificate.CertificateAliasResolver;
+import org.unibl.etf.sni.backend.certificate.MessageHasher;
 import org.unibl.etf.sni.backend.exception.NotFoundException;
-
-import java.sql.Date;
+import org.unibl.etf.sni.backend.waf.WAFService;
 
 @CrossOrigin("*")
 @RestController
@@ -16,8 +19,27 @@ public class CommentController {
     @Autowired
     private CommentService service;
 
-    @GetMapping("/{commentId}")
-    public ResponseEntity<CommentModel> getCommentById(@PathVariable("commentId") Integer commentId) throws NotFoundException  {
+    @Autowired
+    private WAFService wafService;
+
+    @GetMapping("/{commentId}/{userId}")
+    public ResponseEntity<CommentModel> getCommentById(@PathVariable("commentId") Integer commentId,
+                                                       @PathVariable("userId") Integer userId)
+            throws NotFoundException, Exception  {
+
+        if(!wafService.authorizeUserId(userId)) {
+            return BadEntity.returnForbidden();
+        }
+
+        if(!wafService.authorizeCommentModification()) {
+            return BadEntity.returnForbidden();
+        }
+
+        if(!wafService.checkNumberLength(commentId, "/{commentId}/{userId}/{roomId}", MessageHasher.createDigitalSignature(userId.toString(),
+                CertificateAliasResolver.acAlias))) {
+            return BadEntity.returnBadRequst();
+        }
+
         return new ResponseEntity<>(service.findCommentById(commentId), HttpStatus.OK);
     }
 
@@ -37,17 +59,79 @@ public class CommentController {
     }*/
 
     @PostMapping
-    public ResponseEntity<CommentModel> createComment(@RequestBody CommentModel commentModel)   {
+    public ResponseEntity<CommentModel> createComment(@Valid @RequestBody CommentModel commentModel) throws NotFoundException  {
+
+        //can't create comment for someone else
+        if(!wafService.authorizeUserId(commentModel.getUserId())) {
+            return BadEntity.returnForbidden();
+        }
+
+
+
+        //need to have any of the roles
+        if(!wafService.authorizeCommentCUD()) {
+            return BadEntity.returnForbidden();
+        }
+
+        if(!wafService.authorizeCreationUserPermissionsForRoomAndComment(commentModel.getRoomId(), commentModel.getUserId())) {
+            return BadEntity.returnForbidden();
+        }
+
         return new ResponseEntity<>(service.createComment(commentModel), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{commentId}")
-    public ResponseEntity<SuccessOperation> deleteComment(@PathVariable("commentId") Integer commentId) {
+    @DeleteMapping("/{commentId}/{userId}/{roomId}")
+    public ResponseEntity<SuccessOperation> deleteComment(@PathVariable("commentId") Integer commentId,
+                                                          @PathVariable("userId")Integer userId,
+                                                          @PathVariable("roomId")Integer roomId) throws NotFoundException, Exception {
+
+        if(!wafService.checkNumberLength(userId, "/{commentId}/{userId}/{roomId}", MessageHasher.createDigitalSignature(userId.toString(),
+                CertificateAliasResolver.acAlias))) {
+            return BadEntity.returnBadRequst();
+        }
+        if(!wafService.checkNumberLength(commentId, "/{commentId}/{userId}/{roomId}", MessageHasher.createDigitalSignature(userId.toString(),
+                CertificateAliasResolver.acAlias))) {
+            return BadEntity.returnBadRequst();
+        }
+        if(!wafService.checkNumberLength(roomId, "/{commentId}/{userId}/{roomId}", MessageHasher.createDigitalSignature(userId.toString(),
+                CertificateAliasResolver.acAlias))) {
+            return BadEntity.returnBadRequst();
+        }
+
+        //can't create comment for someone else
+        if(!wafService.authorizeUserId(userId)) {
+            return BadEntity.returnForbidden();
+        }
+
+        //need to have any of the roles
+        if(!wafService.authorizeCommentCUD()) {
+            return BadEntity.returnForbidden();
+        }
+
+        if(!wafService.authorizeDeleteUserPermissionsForRoomAndComment(roomId, userId)) {
+            return BadEntity.returnForbidden();
+        }
+
         return new ResponseEntity<>(service.deleteComment(commentId), HttpStatus.OK);
     }
 
     @PatchMapping
-    public ResponseEntity<CommentModel> deleteComment(@RequestBody CommentModel commentModel) throws NotFoundException  {
+    public ResponseEntity<CommentModel> updateComment(@Valid @RequestBody CommentModel commentModel) throws NotFoundException {
+        //can't create comment for someone else
+        if(!wafService.authorizeUserId(commentModel.getUserId())) {
+            return BadEntity.returnForbidden();
+        }
+
+        //need to have any of the roles
+        if(!wafService.authorizeCommentCUD()) {
+            return BadEntity.returnForbidden();
+        }
+
+        if(!wafService.authorizeUpdateUserPermissionsForRoomAndComment(commentModel.getRoomId(),
+                commentModel.getUserId())) {
+            return BadEntity.returnForbidden();
+        }
+
         return new ResponseEntity<>(service.createComment(commentModel), HttpStatus.OK);
     }
 

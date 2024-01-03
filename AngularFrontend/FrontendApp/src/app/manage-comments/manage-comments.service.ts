@@ -10,7 +10,7 @@ export class ManageCommentsService {
 
   private commentDisableUrl = 'http://localhost:8080/admins/disable-comments';
 
-  private commentsUrl = 'http://localhost:8080/admins/comments';
+  private commentsUrl = 'http://localhost:8080/admins/comments/';
 
   constructor(private http:HttpClient) { }
 
@@ -23,7 +23,8 @@ export class ManageCommentsService {
 
   
 
-  getComments() : Observable<any> {
-    return this.http.get(`${this.commentsUrl}`);
+  getComments(userId: any) : Observable<any> {
+    const url = this.commentsUrl + userId;
+    return this.http.get(`${url}`);
   }
 }

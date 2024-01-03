@@ -1,14 +1,14 @@
-1) pracenje pristupa na bekend strani, role definisati za jwt
 
-2) valid anotacije i provjere te strane sigurnosti
+3) izdavanje sertifikata i potpisivanje zahtjeva (makar unutar spring app., i za spring aplikaciju)
 
-3) izdavanje sertifikata i potpisivanje zahtjeva (makar unutar spring app.)
+5) waf (notes) :
+-provjeravati da li je sertifikat istekao (pa ga "renovirati")
+-za svaki zahtjev poslati id ili toString/json objekta potpisan pa provjeravati sve na isti nacin (core uradjen, mora se prepraviti)
+-testirati preko postmana
 
-4) sertifikat na frontend (angular) strani
+iz exception-a proslijediti ka waf-u
 
-5) waf
-
-postavljanje https konekcije
+csrf
 
 oauth 2.0 (github)
 
@@ -17,6 +17,16 @@ url-ovi u konf. fajl
 izgled
 
 
-crud sta, ko i kako?
 
-jwt provjeriti sta, ko i kako?
+
+
+1) pracenje pristupa na bekend strani, role definisati za jwt
+
+2) valid anotacije i provjere te strane sigurnosti
+
+4) sertifikat na frontend (angular) strani
+
+
+provjeriti moze li se pristupiti pristupu greske prije ulaska u f-ju
+
+pri kraju, popraviti da se ne ucita ni djelic stranice gdje se proslijedi id

@@ -14,8 +14,8 @@ export class CommentModificationService {
   constructor(private http:HttpClient) { }
 
 
-  getComment(id: any): Observable<any> {
-    const url = this.commentUrl + id;
+  getComment(id: any, userId: any): Observable<any> {
+    const url = this.commentUrl + id + "/" + userId;
     return this.http.get(`${url}`);
   }
 

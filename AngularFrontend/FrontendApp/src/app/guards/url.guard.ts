@@ -1,0 +1,30 @@
+import { Injectable } from '@angular/core';
+import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { JwtTokenService } from '../jwt-token/jwt-token.service';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UrlGuard {
+
+  constructor(private router: Router, private jwtService: JwtTokenService) { }
+
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    
+    const id = route.paramMap.get('id');
+    const token = this.jwtService.extractToken();
+    const tokenInfo = this.jwtService.extractTokenInfo();
+    // Assuming AuthService has a method like isAdminWithId
+    if (token && !this.jwtService.checkIfTokenExpired(token) && tokenInfo.id != id) {
+      return true;
+    } else {
+      // Redirect to a forbidden or unauthorized page
+      this.router.navigate(['/login']);
+      return false;
+    }
+  }
+}

@@ -44,13 +44,13 @@ public class AdminService {
         return commentRepository.save(comment);
     }
 
-    public List<CommentModel> unprocessedComments() {
-        return commentRepository.findAll().stream().filter((x) -> !x.getForbidden() && !x.getEnabled()).toList();
+    public List<CommentModel> unprocessedComments(Integer userId) {
+        return commentRepository.findAll().stream().filter((x) -> x.getUserId()!=userId && !x.getForbidden() && !x.getEnabled()).toList();
     }
 
-    public List<UserModel> getWaitingUsers() {
+    public List<UserModel> getWaitingUsers(Integer adminId) {
         List<UserModel> users = userRepository.findAll();
-        return users.stream().filter((x) -> !x.getActive() && !x.getIsTerminated()).toList();
+        return users.stream().filter((x) -> x.getId()!=adminId && !x.getActive() && !x.getIsTerminated()).toList();
     }
 
     public UserModel configureUserEnabled(Integer userId) throws NotFoundException  {

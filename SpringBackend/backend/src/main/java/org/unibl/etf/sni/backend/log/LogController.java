@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/logs")
+/*@RestController
+@RequestMapping("/logs")*/
 public class LogController {
 
-    @Autowired
+    /*@Autowired
     private LogService logService;
 
     @GetMapping
@@ -22,6 +22,6 @@ public class LogController {
     @PostMapping
     public ResponseEntity<LogModel> createNewLog(@RequestBody LogModel logModel) {
         return new ResponseEntity<>(logService.insertNewLog(logModel), HttpStatus.OK);
-    }
+    }*/
 
 }

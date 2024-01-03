@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import {MatToolbarModule} from '@angular/material/toolbar';
@@ -23,7 +23,7 @@ import { AdminManageSingleAccountComponent } from './admin-manage-single-account
 import { ShowForumComponent } from './show-forum/show-forum.component';
 import { ManageCommentsComponent } from './manage-comments/manage-comments.component';
 import { ChangeUserRoleComponent } from './change-user-role/change-user-role.component';
-import { CommentModificationComponent } from './comment-modification/comment-modification.component';
+import { AuthService } from './interceptors/auth.service';
 
 
 
@@ -38,7 +38,6 @@ import { CommentModificationComponent } from './comment-modification/comment-mod
     ShowForumComponent,
     ManageCommentsComponent,
     ChangeUserRoleComponent,
-    CommentModificationComponent
   ],
   imports: [
     BrowserModule,
@@ -54,7 +53,11 @@ import { CommentModificationComponent } from './comment-modification/comment-mod
     MatSnackBarModule,
     BrowserAnimationsModule
   ],
-  providers: [],
+  providers: [{
+    provide: HTTP_INTERCEPTORS,
+    useClass: AuthService,
+    multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,5 +1,6 @@
 package org.unibl.etf.sni.backend.auth;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<BoolAuthResponse> upLogin(@RequestBody AuthRequest request) throws InvalidUsernameException, NotFoundException {
+    public ResponseEntity<BoolAuthResponse> upLogin(@Valid @RequestBody AuthRequest request) throws InvalidUsernameException, NotFoundException {
 
         BoolAuthResponse response = authenticationService.loginUNPW(request);
 
@@ -27,7 +28,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/code")
-    public ResponseEntity<JwtAuthResponse> codeEntrance(@RequestBody Code code) throws InvalidUsernameException, NotFoundException {
+    public ResponseEntity<JwtAuthResponse> codeEntrance(@Valid @RequestBody Code code) throws InvalidUsernameException, NotFoundException {
 
         JwtAuthResponse response = authenticationService.codeEntrance(code);
 

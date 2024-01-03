@@ -12,7 +12,7 @@ export class ForumUserGuard {
   canActivate(): boolean {
     const token = this.jwtService.extractToken();
     const tokenInfo = this.jwtService.extractTokenInfo();
-    if (token && !this.jwtService.checkIfTokenExpired(token) && tokenInfo.role === "ROLE_FORUM") {
+    if (token && !this.jwtService.checkIfTokenExpired(token) && tokenInfo.role !== "ROLE_UNDEFINED") {
       return true;
     } else {
       this.router.navigate(['/login']);

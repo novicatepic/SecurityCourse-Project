@@ -18,8 +18,8 @@ export class NewCommentService {
     return this.http.post(`${this.commentUrl}`, JSON.stringify(comment), {headers});
   }
 
-  deleteComment(id: any) : Observable<any> {
-    const url = this.commentUrl + "/" + id;
+  deleteComment(id: any, userId: any, roomId: any) : Observable<any> {
+    const url = this.commentUrl + "/" + id + "/" + userId + "/" + roomId;
     return this.http.delete(`${url}`);
   }
 

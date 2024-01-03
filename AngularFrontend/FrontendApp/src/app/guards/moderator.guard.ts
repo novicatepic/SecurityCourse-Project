@@ -12,7 +12,7 @@ export class ModeratorGuard {
   canActivate(): boolean {
     const token = this.jwtService.extractToken();
     const tokenInfo = this.jwtService.extractTokenInfo();
-    if (token && !this.jwtService.checkIfTokenExpired(token) && tokenInfo.role === "ROLE_MODERATOR") {
+    if (token && !this.jwtService.checkIfTokenExpired(token) && (tokenInfo.role === "ROLE_MODERATOR" || tokenInfo.role === "ROLE_ADMIN") ) {
       return true;
     } else {
       this.router.navigate(['/login']);
