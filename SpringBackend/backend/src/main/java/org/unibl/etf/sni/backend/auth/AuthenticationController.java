@@ -1,12 +1,15 @@
 package org.unibl.etf.sni.backend.auth;
 
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.unibl.etf.sni.backend.authorization.BadEntity;
 import org.unibl.etf.sni.backend.code.Code;
 import org.unibl.etf.sni.backend.exception.InvalidUsernameException;
 import org.unibl.etf.sni.backend.exception.NotFoundException;
+import org.unibl.etf.sni.backend.waf.WAFService;
 
 //@CrossOrigin("*")
 @CrossOrigin(origins = "https://localhost:4200")
@@ -19,8 +22,21 @@ public class AuthenticationController {
         this.authenticationService = authenticationService;
     }
 
+    @Autowired
+    private WAFService wafService;
+
     @PostMapping("/login")
     public ResponseEntity<BoolAuthResponse> upLogin(@Valid @RequestBody AuthRequest request) throws InvalidUsernameException, NotFoundException {
+
+        if(wafService.checkMySQLInjection(request.getUsername()) || wafService.checkMySQLInjection(request.getPassword())
+        ) {
+            return BadEntity.returnForbidden();
+        }
+
+        if(wafService.checkXSSInjection(request.getUsername()) || wafService.checkXSSInjection(request.getPassword())
+        ) {
+            return BadEntity.returnForbidden();
+        }
 
         BoolAuthResponse response = authenticationService.loginUNPW(request);
 

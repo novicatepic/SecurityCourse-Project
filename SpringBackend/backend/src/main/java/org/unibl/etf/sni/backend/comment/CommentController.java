@@ -86,6 +86,14 @@ public class CommentController {
             return BadEntity.returnForbidden();
         }*/
 
+        if(wafService.checkMySQLInjection(commentModel.getContent()) || wafService.checkMySQLInjection(commentModel.getTitle())) {
+            return BadEntity.returnForbidden();
+        }
+
+        if(wafService.checkXSSInjection(commentModel.getContent()) || wafService.checkXSSInjection(commentModel.getTitle())) {
+            return BadEntity.returnForbidden();
+        }
+
         byte[] response = wafService.authorizeUserId(commentModel.getUserId(), "/comments", MessageHasher.createDigitalSignature(commentModel.getUserId().toString(),
                 CertificateAliasResolver.acAlias));
         if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), response, WAFService.wafCertificate)) {
@@ -135,7 +143,13 @@ public class CommentController {
     public ResponseEntity<CommentModel> updateComment(@Valid @RequestBody CommentModel commentModel)
             throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException, NotFoundException {
 
+        if(wafService.checkMySQLInjection(commentModel.getContent()) || wafService.checkMySQLInjection(commentModel.getTitle())) {
+            return BadEntity.returnForbidden();
+        }
 
+        if(wafService.checkXSSInjection(commentModel.getContent()) || wafService.checkXSSInjection(commentModel.getTitle())) {
+            return BadEntity.returnForbidden();
+        }
 
         byte[] commentResponse = wafService.authorizeUpdateUserPermissionsForRoomAndComment(commentModel.getRoomId(),
                 commentModel.getUserId(), commentModel.getId(),

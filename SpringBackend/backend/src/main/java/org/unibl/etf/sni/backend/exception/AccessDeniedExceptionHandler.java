@@ -2,6 +2,7 @@ package org.unibl.etf.sni.backend.exception;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,13 +11,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 import org.unibl.etf.sni.backend.log.LogService;
 import org.unibl.etf.sni.backend.log.Status;
 
 import java.io.IOException;
 
 @Component
-public class AccessDeniedExceptionHandler implements AccessDeniedHandler {
+public class AccessDeniedExceptionHandler extends OncePerRequestFilter {
 
     @Value("${token.signing.key}")
     private String jwtSecret;
@@ -25,8 +27,9 @@ public class AccessDeniedExceptionHandler implements AccessDeniedHandler {
     private LogService logService;
 
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e)
-            throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        System.out.println("In handle!");
+
         // Extract JWT token from the Authorization header
         String requestedUri = request.getRequestURI();
         String token = request.getHeader("Authorization");
@@ -37,10 +40,8 @@ public class AccessDeniedExceptionHandler implements AccessDeniedHandler {
                 Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
                 String username = claims.getSubject();
 
-                logService.insertNewLog("Access Denied for user: " + username
+                logService.insertNewLog("Access Allowed for user: " + username
                         + " to route: " + requestedUri, Status.DANGER);
-                /*response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied for user: " + username
-                        + " to route: " + requestedUri);*/
             } catch (Exception ex) {
                 logService.insertNewLog("Invalid token: " + " for route: " + requestedUri, Status.DANGER);
                 //response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: Invalid Token");
@@ -49,5 +50,7 @@ public class AccessDeniedExceptionHandler implements AccessDeniedHandler {
             logService.insertNewLog("Access denied - missing token " + " for route: " + requestedUri, Status.DANGER);
             //response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: Missing Token");
         }
+        filterChain.doFilter(request, response);
     }
+
 }

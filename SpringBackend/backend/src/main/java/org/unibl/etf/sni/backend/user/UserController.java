@@ -34,13 +34,20 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<UserModel> registerUser(@RequestBody UserModel userModel) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException {
-        String jsonObject = JSONConverter.convertObjectToString(userModel);
-        byte[] responseXSSSQL = wafService.checkObjectValidity(jsonObject, "/enable-comments", MessageHasher.createDigitalSignature(jsonObject,
-                CertificateAliasResolver.acAlias));
-        if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), responseXSSSQL, WAFService.wafCertificate)) {
+
+
+
+        if(wafService.checkMySQLInjection(userModel.getPassword()) || wafService.checkMySQLInjection(userModel.getUsername())
+                || wafService.checkMySQLInjection(userModel.getEmail()) || wafService.checkMySQLInjection(userModel.getRole().toString())
+        ) {
             return BadEntity.returnForbidden();
         }
 
+        if(wafService.checkXSSInjection(userModel.getPassword()) || wafService.checkXSSInjection(userModel.getUsername())
+                || wafService.checkXSSInjection(userModel.getEmail()) || wafService.checkXSSInjection(userModel.getRole().toString())
+        ) {
+            return BadEntity.returnForbidden();
+        }
         return new ResponseEntity<>(userService.registerUser(userModel), HttpStatus.OK);
     }
 

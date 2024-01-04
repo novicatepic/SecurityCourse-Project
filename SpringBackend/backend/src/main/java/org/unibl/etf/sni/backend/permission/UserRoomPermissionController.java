@@ -38,13 +38,7 @@ public class UserRoomPermissionController {
     @PostMapping
     public ResponseEntity<UserRoomPermissionEntity> createPermissions(@RequestBody UserRoomPermissionEntity entity) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, UnrecoverableKeyException, KeyStoreException {
 
-        //problem because of keywords
-        /*String jsonObject = JSONConverter.convertObjectToString(entity);
-        byte[] responseXSSSQL = wafService.checkObjectValidity(jsonObject, "/enable-comments", MessageHasher.createDigitalSignature(jsonObject,
-                CertificateAliasResolver.acAlias));
-        if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), responseXSSSQL, WAFService.wafCertificate)) {
-            return BadEntity.returnForbidden();
-        }*/
+
 
 
         byte[] response = wafService.authorizePermissionModification(entity.getUserId(), "/update-role", MessageHasher.createDigitalSignature(entity.getUserId().toString(),

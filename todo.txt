@@ -1,12 +1,9 @@
 5) waf (notes) :
--za atribute testirati jesu li validni ili nisu (za xss i sql injection)
--testirati preko postmana
-
-oauth 2.0 (github)
-
-izgled
-
-dos napadi
+-provjeriti xss i mysql injection odvojeno bez kriptovanja
+-podesiti provjeru ruta za naloge
+-oauth 2.0 (github)
+-izgled
+-dos napadi, login spam, Authentication controller!!!
 
 
 

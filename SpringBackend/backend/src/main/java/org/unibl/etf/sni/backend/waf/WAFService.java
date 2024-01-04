@@ -283,7 +283,7 @@ public class WAFService {
 
 
 
-    private Boolean checkMySQLInjection(String request) {
+    public Boolean checkMySQLInjection(String request) {
 
         for (String keyword : SQLProblemKeywords.returnSQLKeywords()) {
             if (request.toUpperCase().contains(keyword)) {
@@ -296,7 +296,7 @@ public class WAFService {
 
 
 
-    private Boolean checkXSSInjection(String request) {
+    public Boolean checkXSSInjection(String request) {
 
         for (String keyword : XSSProblemKeywords.returnXSSPatterns()) {
             if (request.toLowerCase().contains(keyword)) {
