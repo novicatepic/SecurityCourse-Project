@@ -8,10 +8,21 @@ import org.springframework.web.bind.annotation.*;
 import org.unibl.etf.sni.backend.authorization.BadEntity;
 import org.unibl.etf.sni.backend.certificate.CertificateAliasResolver;
 import org.unibl.etf.sni.backend.certificate.MessageHasher;
+import org.unibl.etf.sni.backend.certificate.Validator;
 import org.unibl.etf.sni.backend.exception.NotFoundException;
+import org.unibl.etf.sni.backend.protocol.ProtocolMessages;
 import org.unibl.etf.sni.backend.waf.WAFService;
 
-@CrossOrigin("*")
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.security.InvalidKeyException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+
+//@CrossOrigin("*")
+@CrossOrigin(origins = "https://localhost:4200")
 @RestController
 @RequestMapping("/comments")
 public class CommentController {
@@ -22,23 +33,31 @@ public class CommentController {
     @Autowired
     private WAFService wafService;
 
+    @GetMapping("/test")
+    public String getText() {
+        return "abc";
+    }
+
     @GetMapping("/{commentId}/{userId}")
     public ResponseEntity<CommentModel> getCommentById(@PathVariable("commentId") Integer commentId,
                                                        @PathVariable("userId") Integer userId)
-            throws NotFoundException, Exception  {
+            throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, UnrecoverableKeyException, KeyStoreException, NotFoundException {
 
-        if(!wafService.authorizeUserId(userId)) {
+
+        byte[] response = wafService.authorizeUserId(userId, "/{commentId}/{userId}", MessageHasher.createDigitalSignature(userId.toString(),
+                CertificateAliasResolver.acAlias));
+        if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), response, WAFService.wafCertificate)) {
             return BadEntity.returnForbidden();
         }
 
-        if(!wafService.authorizeCommentModification()) {
+        /*if(!wafService.authorizeCommentModification()) {
             return BadEntity.returnForbidden();
-        }
+        }*/
 
-        if(!wafService.checkNumberLength(commentId, "/{commentId}/{userId}/{roomId}", MessageHasher.createDigitalSignature(userId.toString(),
+        /*if(!wafService.checkNumberLength(commentId, "/{commentId}/{userId}/{roomId}", MessageHasher.createDigitalSignature(userId.toString(),
                 CertificateAliasResolver.acAlias))) {
             return BadEntity.returnBadRequst();
-        }
+        }*/
 
         return new ResponseEntity<>(service.findCommentById(commentId), HttpStatus.OK);
     }
@@ -59,21 +78,35 @@ public class CommentController {
     }*/
 
     @PostMapping
-    public ResponseEntity<CommentModel> createComment(@Valid @RequestBody CommentModel commentModel) throws NotFoundException  {
+    public ResponseEntity<CommentModel> createComment(@Valid @RequestBody CommentModel commentModel)
+            throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException, NotFoundException {
 
         //can't create comment for someone else
-        if(!wafService.authorizeUserId(commentModel.getUserId())) {
+        /*if(!wafService.authorizeUserId(commentModel.getUserId())) {
+            return BadEntity.returnForbidden();
+        }*/
+
+        byte[] response = wafService.authorizeUserId(commentModel.getUserId(), "/comments", MessageHasher.createDigitalSignature(commentModel.getUserId().toString(),
+                CertificateAliasResolver.acAlias));
+        if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), response, WAFService.wafCertificate)) {
             return BadEntity.returnForbidden();
         }
 
 
-
-        //need to have any of the roles
-        if(!wafService.authorizeCommentCUD()) {
+        /*if(!wafService.authorizeCreationUserPermissionsForRoomAndComment(commentModel.getRoomId(), commentModel.getUserId())) {
             return BadEntity.returnForbidden();
+        }*/
+        byte[] commentResponse = wafService.authorizeCreationUserPermissionsForRoomAndComment(commentModel.getRoomId(),
+                commentModel.getUserId(), "/comments", MessageHasher.createDigitalSignature(commentModel.getRoomId().toString(),
+                CertificateAliasResolver.acAlias),
+                MessageHasher.createDigitalSignature(commentModel.getUserId().toString(),
+                        CertificateAliasResolver.acAlias));
+        if(commentResponse == null) {
+            System.out.println("Null");
+        } else {
+            System.out.println("Not null");
         }
-
-        if(!wafService.authorizeCreationUserPermissionsForRoomAndComment(commentModel.getRoomId(), commentModel.getUserId())) {
+        if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), commentResponse, WAFService.wafCertificate)) {
             return BadEntity.returnForbidden();
         }
 
@@ -83,32 +116,15 @@ public class CommentController {
     @DeleteMapping("/{commentId}/{userId}/{roomId}")
     public ResponseEntity<SuccessOperation> deleteComment(@PathVariable("commentId") Integer commentId,
                                                           @PathVariable("userId")Integer userId,
-                                                          @PathVariable("roomId")Integer roomId) throws NotFoundException, Exception {
+                                                          @PathVariable("roomId")Integer roomId) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException, NotFoundException {
 
-        if(!wafService.checkNumberLength(userId, "/{commentId}/{userId}/{roomId}", MessageHasher.createDigitalSignature(userId.toString(),
-                CertificateAliasResolver.acAlias))) {
-            return BadEntity.returnBadRequst();
-        }
-        if(!wafService.checkNumberLength(commentId, "/{commentId}/{userId}/{roomId}", MessageHasher.createDigitalSignature(userId.toString(),
-                CertificateAliasResolver.acAlias))) {
-            return BadEntity.returnBadRequst();
-        }
-        if(!wafService.checkNumberLength(roomId, "/{commentId}/{userId}/{roomId}", MessageHasher.createDigitalSignature(userId.toString(),
-                CertificateAliasResolver.acAlias))) {
-            return BadEntity.returnBadRequst();
-        }
 
-        //can't create comment for someone else
-        if(!wafService.authorizeUserId(userId)) {
-            return BadEntity.returnForbidden();
-        }
-
-        //need to have any of the roles
-        if(!wafService.authorizeCommentCUD()) {
-            return BadEntity.returnForbidden();
-        }
-
-        if(!wafService.authorizeDeleteUserPermissionsForRoomAndComment(roomId, userId)) {
+        byte[] commentResponse = wafService.authorizeDeleteUserPermissionsForRoomAndComment(roomId,
+                userId, commentId,"/{commentId}/{userId}/{roomId}", MessageHasher.createDigitalSignature(roomId.toString(),
+                        CertificateAliasResolver.acAlias),
+                MessageHasher.createDigitalSignature(userId.toString(),
+                        CertificateAliasResolver.acAlias));
+        if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), commentResponse, WAFService.wafCertificate)) {
             return BadEntity.returnForbidden();
         }
 
@@ -116,21 +132,22 @@ public class CommentController {
     }
 
     @PatchMapping
-    public ResponseEntity<CommentModel> updateComment(@Valid @RequestBody CommentModel commentModel) throws NotFoundException {
-        //can't create comment for someone else
-        if(!wafService.authorizeUserId(commentModel.getUserId())) {
+    public ResponseEntity<CommentModel> updateComment(@Valid @RequestBody CommentModel commentModel)
+            throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException, NotFoundException {
+
+
+
+        byte[] commentResponse = wafService.authorizeUpdateUserPermissionsForRoomAndComment(commentModel.getRoomId(),
+                commentModel.getUserId(), commentModel.getId(),
+                "/{commentId}/{userId}/{roomId}",
+                MessageHasher.createDigitalSignature(commentModel.getRoomId().toString(),
+                        CertificateAliasResolver.acAlias),
+                MessageHasher.createDigitalSignature(commentModel.getUserId().toString(),
+                        CertificateAliasResolver.acAlias));
+        if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), commentResponse, WAFService.wafCertificate)) {
             return BadEntity.returnForbidden();
         }
 
-        //need to have any of the roles
-        if(!wafService.authorizeCommentCUD()) {
-            return BadEntity.returnForbidden();
-        }
-
-        if(!wafService.authorizeUpdateUserPermissionsForRoomAndComment(commentModel.getRoomId(),
-                commentModel.getUserId())) {
-            return BadEntity.returnForbidden();
-        }
 
         return new ResponseEntity<>(service.createComment(commentModel), HttpStatus.OK);
     }

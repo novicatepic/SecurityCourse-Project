@@ -7,6 +7,7 @@ import org.unibl.etf.sni.backend.certificate.Validator;
 import org.unibl.etf.sni.backend.protocol.ProtocolMessages;
 
 import java.security.cert.Certificate;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.unibl.etf.sni.backend.certificate.MessageHasher.createDigitalSignature;
@@ -24,8 +25,15 @@ public class LogService {
         return logRepository.findAll();
     }
 
-    public LogModel insertNewLog(LogModel logModel) {
-        return logRepository.save(logModel);
+    public LogModel insertNewLog(String message, Status status) {
+        LogModel model = new LogModel();
+        model.setInfo(message);
+        model.setStatus(status);
+        // Get the current date
+        LocalDate currentDate = LocalDate.now();
+        java.sql.Date sqlDate = java.sql.Date.valueOf(currentDate);
+        model.setDate(sqlDate);
+        return logRepository.save(model);
     }
 
     /*public LogModel insertWAFLog(String log, byte[] message) {

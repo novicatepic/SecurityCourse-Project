@@ -20,7 +20,7 @@ const routes: Routes = [
   {path: 'manage-accounts', component: AdminManageAccountsComponent, canActivate: [AdminGuard]}, //OK
   {path: 'manage-comments', component: ManageCommentsComponent, canActivate: [ModeratorGuard]}, //OK
   {path: 'manage-account/:id', component: AdminManageSingleAccountComponent, canActivate: [AdminGuard, UrlGuard]},
-  {path: 'manage-permissions/:id', component: ChangeUserRoleComponent, canActivate: [AdminGuard, UrlGuard]},
+  //{path: 'manage-permissions/:id', component: ChangeUserRoleComponent, canActivate: [AdminGuard, UrlGuard]},
   {path: 'room/:id', component: ShowForumComponent, canActivate: [ForumUserGuard]} //OK
 ];
 

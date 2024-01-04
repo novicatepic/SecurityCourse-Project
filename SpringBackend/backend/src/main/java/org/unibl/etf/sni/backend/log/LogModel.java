@@ -23,7 +23,7 @@ public class LogModel {
     private Integer id;
 
     @Basic
-    @Column(name = "info", nullable = false, length = 3000)
+    @Column(name = "info", nullable = false, length = 10000)
     private String info;
 
     @Enumerated(EnumType.STRING)

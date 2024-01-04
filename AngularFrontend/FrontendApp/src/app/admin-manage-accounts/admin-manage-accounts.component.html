@@ -4,7 +4,15 @@
       <div class="container">
         <h1 class="display-4">Username: {{user.username}}</h1>
         <p class="lead">Email: {{user.email}}</p>
-        <div style="margin-bottom: 10px;"><button (click)="acceptRequest(user)" class="btn btn-primary">Accept Request (you will be able to change permissions later)</button></div>
+        <form [formGroup]="firstForm" (ngSubmit)="acceptRequest(user)">
+          Select role for user<select name="role" formControlName="role">
+            <option value="ROLE_ADMIN">ADMIN</option>
+            <option value="ROLE_MODERATOR">MODERATOR</option>
+            <option value="ROLE_FORUM">FORUM USER</option>
+          </select>
+          <div style="margin-bottom: 10px;"><button [disabled]="firstForm.invalid" type="submit" class="btn btn-primary">Accept Request (you will be able to change permissions later)</button></div>
+        </form>
+        
         <!--div style="margin-bottom: 10px;"><a target="_blank" href="/manage-account/{{user.id}}" class="btn btn-primary">Show allow user options</a></div-->
         <button (click)="terminateRequest(user)" class="btn btn-primary">Terminate request (won't be shown again)</button>
       </div>

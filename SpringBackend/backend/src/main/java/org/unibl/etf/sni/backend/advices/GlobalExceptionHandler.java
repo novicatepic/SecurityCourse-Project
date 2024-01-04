@@ -13,6 +13,7 @@ import org.unibl.etf.sni.backend.exception.InvalidRoleException;
 import org.unibl.etf.sni.backend.exception.NotFoundException;
 import org.unibl.etf.sni.backend.log.LogModel;
 import org.unibl.etf.sni.backend.log.LogService;
+import org.unibl.etf.sni.backend.log.Status;
 
 import java.io.IOException;
 
@@ -26,33 +27,41 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public void handleNotFound(NotFoundException err) {
-        logger.error("Resource not found!");
-        //logService.insertNewLog(new LogModel(err.getMessage()));
+        logService.insertNewLog(err.getMessage(), Status.ERROR);
     }
 
     @ExceptionHandler(IOException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public void handleIOException(IOException err) {
         logger.error("Error: " + err.getMessage());
-        //logService.insertNewLog(new LogModel(err.getMessage()));
+        logService.insertNewLog(err.getMessage(), Status.ERROR);
     }
 
     @ExceptionHandler(InvalidRoleException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public void handleInvalidRoleException(InvalidRoleException err) {
         logger.error("No permissions for that action!");
-       // logService.insertNewLog(new LogModel(err.getMessage()));
+        logService.insertNewLog(err.getMessage(), Status.ERROR);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public void handleValidationExceptions(
             MethodArgumentNotValidException ex) {
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             logger.error("Wrong input for field with name " + fieldName + " with message " + errorMessage);
-            //logService.insertNewLog(new LogModel("Wrong input for field with name " + fieldName + " with message " + errorMessage));
+            logService.insertNewLog("Wrong input for field with name " + fieldName + " with message " + errorMessage, Status.ERROR);
         });
     }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception.class)
+    public void handleException(
+            MethodArgumentNotValidException ex) {
+            logger.error("No permissions for that action!");
+            logService.insertNewLog(ex.getMessage(), Status.ERROR);
+        }
+
 }

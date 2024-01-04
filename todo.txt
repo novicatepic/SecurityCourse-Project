@@ -1,24 +1,21 @@
-
-3) izdavanje sertifikata i potpisivanje zahtjeva (makar unutar spring app., i za spring aplikaciju)
-
 5) waf (notes) :
--provjeravati da li je sertifikat istekao (pa ga "renovirati")
--za svaki zahtjev poslati id ili toString/json objekta potpisan pa provjeravati sve na isti nacin (core uradjen, mora se prepraviti)
+-za atribute testirati jesu li validni ili nisu (za xss i sql injection)
 -testirati preko postmana
-
-iz exception-a proslijediti ka waf-u
-
-csrf
 
 oauth 2.0 (github)
 
-url-ovi u konf. fajl
-
 izgled
 
+dos napadi
 
 
 
+
+update/delete komentara, da li omoguciti samo za svoje komentare?
+i u bekendu fali
+prilikom inserta kako, sta
+-provjeravati da li je sertifikat istekao (pa ga "renovirati")
+iz exception-a proslijediti ka waf-u
 
 1) pracenje pristupa na bekend strani, role definisati za jwt
 

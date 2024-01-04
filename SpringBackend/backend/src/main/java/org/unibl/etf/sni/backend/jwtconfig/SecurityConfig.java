@@ -16,7 +16,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.unibl.etf.sni.backend.exception.AccessDeniedExceptionHandler;
 import org.unibl.etf.sni.backend.user.UserService;
 
 import java.util.List;
@@ -36,6 +38,9 @@ public class SecurityConfig {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AccessDeniedExceptionHandler accessDeniedHandler;
+
     @Bean
     public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -51,6 +56,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/**").permitAll() //Authentication controller
                         .requestMatchers(HttpMethod.POST, "/users/register").permitAll() //UserController
 
+                        .requestMatchers("/comments/test").permitAll()
+
                         .requestMatchers(HttpMethod.GET, "/comments/{commentId}/{userId}").hasAnyRole("ADMIN", "MODERATOR")
                         .requestMatchers("/comments/**").hasAnyRole("ADMIN", "MODERATOR", "FORUM") //CommentController
                         .requestMatchers("/rooms/**").hasAnyRole("ADMIN", "MODERATOR", "FORUM") //RoomController
@@ -63,7 +70,7 @@ public class SecurityConfig {
 
                         .requestMatchers("/admins/users/**").permitAll()//.hasRole("ADMIN") //AdminController all until UserRoomPermissionController
                         .requestMatchers("/admins/waiting-requests/**").hasRole("ADMIN")
-                        .requestMatchers("/admins/update-role").hasRole("ADMIN")
+                        .requestMatchers("/admins/update-role").permitAll()//.hasRole("ADMIN")
                         .requestMatchers("/admins/enable-users/**").hasRole("ADMIN")
                         .requestMatchers("/admins/disable-users/**").hasRole("ADMIN")
                         .requestMatchers("/admins/users/**").hasRole("ADMIN")
@@ -78,7 +85,10 @@ public class SecurityConfig {
         return http.build();
     }
 
-
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return new AccessDeniedExceptionHandler();
+    }
 
     @Bean
     DaoAuthenticationProvider daoAuthenticationProvider() {

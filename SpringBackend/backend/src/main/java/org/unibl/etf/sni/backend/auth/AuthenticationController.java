@@ -8,7 +8,8 @@ import org.unibl.etf.sni.backend.code.Code;
 import org.unibl.etf.sni.backend.exception.InvalidUsernameException;
 import org.unibl.etf.sni.backend.exception.NotFoundException;
 
-@CrossOrigin("*")
+//@CrossOrigin("*")
+@CrossOrigin(origins = "https://localhost:4200")
 @RestController
 @RequestMapping("/auth")
 public class AuthenticationController {

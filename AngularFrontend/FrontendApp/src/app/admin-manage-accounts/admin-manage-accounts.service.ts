@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { User } from '../model/User';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -9,21 +10,17 @@ import { User } from '../model/User';
 export class AdminManageAccountsService {
 
 
-  private accountsUrl = 'http://localhost:8080/admins/waiting-requests/';
+  private accountsUrl = environment.accountsUrl;
 
-  //HARD-KODOVAN admin id
-  //private accountDisableUrl = 'http://localhost:8080/admins/disable-users/1/';
-  private accountDisableUrl = 'http://localhost:8080/admins/disable-users/';
+  private accountDisableUrl = environment.accountDisableUrl;
 
-  //HARD-KODOVAN admin id
-  //private accountEnableUrl = 'http://localhost:8080/admins/enable-users/1/';
-  private accountEnableUrl = 'http://localhost:8080/admins/enable-users/';
+  private accountEnableUrl = environment.accountEnableUrl;
 
-  private userByIdUrl = 'http://localhost:8080/admins/users/';
+  private userByIdUrl = environment.userByIdUrl;
 
-  private roomsUrl = 'http://localhost:8080/rooms';
+  private roomsUrl = environment.roomsUrl;
 
-  private permissionsUrl = 'http://localhost:8080/permissions';
+  private permissionsUrl = environment.permissionsUrl;
 
   constructor(private http:HttpClient) { }
 
@@ -46,7 +43,7 @@ export class AdminManageAccountsService {
 
   allowUser(user: User, adminId: any) : Observable<any> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    const url = this.accountEnableUrl + adminId + "/" + user.id;
+    const url = this.accountEnableUrl + adminId;
     return this.http.patch(`${url}`, JSON.stringify(user), {headers});
   }
 

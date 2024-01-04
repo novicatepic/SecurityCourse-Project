@@ -2,15 +2,16 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Comment } from '../model/Comment';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ManageCommentsService {
 
-  private commentDisableUrl = 'http://localhost:8080/admins/disable-comments';
+  private commentDisableUrl = environment.commentDisableUrl;
 
-  private commentsUrl = 'http://localhost:8080/admins/comments/';
+  private commentsUrl = environment.commentsUrl;
 
   constructor(private http:HttpClient) { }
 

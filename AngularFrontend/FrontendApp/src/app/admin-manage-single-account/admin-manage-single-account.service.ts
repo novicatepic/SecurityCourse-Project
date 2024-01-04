@@ -2,17 +2,18 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { User } from '../model/User';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminManageSingleAccountService {
 
-  private accountUpdateUrl = 'http://localhost:8080/admins/update-role';
+  private accountUpdateUrl = environment.accountUpdateUrl;
 
-  private getPermittedRoomsUrl = 'http://localhost:8080/permissions/set/';
+  private getPermittedRoomsUrl = environment.getPermittedRoomsUrl;
 
-  private getNotPermittedRoomsUrl = 'http://localhost:8080/permissions/unset/';
+  private getNotPermittedRoomsUrl = environment.getNotPermittedRoomsUrl;
 
   constructor(private http:HttpClient) { }
 

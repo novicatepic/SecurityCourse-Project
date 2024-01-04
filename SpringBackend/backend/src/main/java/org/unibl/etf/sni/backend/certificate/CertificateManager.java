@@ -187,8 +187,21 @@ public class CertificateManager {
             try (FileOutputStream fos = new FileOutputStream(KEYSTORE_FILE_PATH)) {
                 keyStore.store(fos, KEYSTORE_PASSWORD.toCharArray());
             }
+
         } catch (Exception e) {
             throw new RuntimeException("Error disabling certificate", e);
+        }
+
+    }
+
+    public void renewCertificate(String alias) {
+        try {
+            disableCertificate(alias);
+            generateCertificate(alias, 365, MY_KEY_ALIAS);
+
+            System.out.println("Renewed certificate");
+        } catch(Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -199,28 +212,4 @@ public class CertificateManager {
             throw new RuntimeException("Error getting certificate from keystore", e);
         }
     }
-
-    /*public void disableCertificate(String alias) {
-        try {
-            Certificate certificate = keyStore.getCertificate(alias);
-
-            if (certificate instanceof X509Certificate) {
-                X509Certificate x509Certificate = (X509Certificate) certificate;
-
-                // Set the certificate's NotAfter to a past date
-                Date expiredDate = new Date(System.currentTimeMillis() - 86400000); // One day ago
-                x509Certificate.setNotAfter;
-
-                // Save the updated keystore
-                try (FileOutputStream fos = new FileOutputStream(KEYSTORE_FILE_PATH)) {
-                    keyStore.store(fos, KEYSTORE_PASSWORD.toCharArray());
-                }
-            } else {
-                throw new RuntimeException("Certificate is not an X.509 certificate");
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Error disabling certificate", e);
-        }
-    }*/
-
 }

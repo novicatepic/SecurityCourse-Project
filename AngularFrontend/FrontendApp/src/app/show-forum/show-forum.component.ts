@@ -8,6 +8,7 @@ import { NewCommentService } from '../new-comment/new-comment.service';
 import { Room } from '../model/Room';
 import { JwtTokenService } from '../jwt-token/jwt-token.service';
 import { UserPermissionsRoom } from '../model/UserPermissionsRoom';
+import { User } from '../model/User';
 
 @Component({
   selector: 'app-show-forum',
@@ -22,7 +23,7 @@ export class ShowForumComponent {
   public updateForm: FormGroup;
   toUpdate?: Comment;
 
-  permissions? : UserPermissionsRoom;
+  permissions : UserPermissionsRoom = new UserPermissionsRoom();
 
   user: any;
 
@@ -50,7 +51,8 @@ export class ShowForumComponent {
 
         this.service.loadPermissionsForForum(this.roomId, this.user.id).subscribe((permissionsUser) => {
           this.permissions = permissionsUser;
-          console.log("perm " + JSON.stringify(permissionsUser));
+          console.log("perm " + this.permissions.userId);
+          console.log("usr " + this.user.id);
         },
         error => {
           //console.log(error);
@@ -118,7 +120,7 @@ export class ShowForumComponent {
     if(this.firstForm.valid) {
 
       const comment = new Comment(this.firstForm.get("title")?.value, 
-      this.firstForm.get("content")?.value, this.roomId, 3, false, false, new Date());
+      this.firstForm.get("content")?.value, this.roomId, this.user.id, false, false, new Date());
 
       this.commentService.saveComment(comment).subscribe((data) => {
         this.snackBarService.triggerSnackBar("Saved message!");

@@ -15,10 +15,10 @@
       <p class="card-text">Writer: {{comment.writer?.username}}</p>
 
       <!-- Update Comment Button -->
-      <button *ngIf="this.permissions?.canUpdate" (click)="toggleUpdate(comment)" class="btn btn-warning mx-2" data-bs-toggle="modal" data-bs-target="#update">Update</button>
+      <button *ngIf="this.permissions?.canUpdate && this.permissions.userId==comment.writer?.id" (click)="toggleUpdate(comment)" class="btn btn-warning mx-2" data-bs-toggle="modal" data-bs-target="#update">Update</button>
 
       <!-- Delete Comment Button -->
-      <button *ngIf="this.permissions?.canDelete" class="btn btn-danger" (click)="deleteComment(comment)">Delete</button>
+      <button *ngIf="this.permissions?.canDelete && this.permissions.userId==comment.writer?.id" class="btn btn-danger" (click)="deleteComment(comment)">Delete</button>
     </div>
   </div>
 </div>

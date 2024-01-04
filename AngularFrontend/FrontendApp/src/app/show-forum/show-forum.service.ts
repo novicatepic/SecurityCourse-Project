@@ -1,17 +1,18 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ShowForumService {
 
-  private commentsUrl = 'http://localhost:8080/rooms/comments/';
+  private commentsUrl = environment.commentsForumUrl;
 
-  private roomUrl = 'http://localhost:8080/rooms/';
+  private roomUrl = environment.roomForumUrl;
 
-  private permissionsUrl = 'http://localhost:8080/permissions/';
+  private permissionsUrl = environment.permissionsForumUrl;
   
   constructor(private http:HttpClient) { }
 

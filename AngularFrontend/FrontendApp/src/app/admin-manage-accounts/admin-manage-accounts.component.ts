@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AdminManageAccountsService } from './admin-manage-accounts.service';
 import { JwtTokenService } from '../jwt-token/jwt-token.service';
@@ -15,14 +15,21 @@ export class AdminManageAccountsComponent {
 
   users : any = [];
   userId: any;
+  public firstForm: FormGroup;
+
   constructor(
     private router: Router,
     private service: AdminManageAccountsService,
     private jwtService: JwtTokenService,
-    private snackBarService: SnackBarService) {
+    private snackBarService: SnackBarService,
+    private formBuilder: FormBuilder) {
 
       var temp = this.jwtService.extractTokenInfo();
       this.userId = temp.id;
+
+      this.firstForm = formBuilder.group({
+        role: [null, [Validators.required, Validators.maxLength(45)]]
+      });
 
       this.readData();
 
@@ -57,11 +64,12 @@ export class AdminManageAccountsComponent {
 
   }
 
-  acceptRequest(user2: User) {
-
-    user2.active = true;
-    user2.isTerminated = false;
-
+  acceptRequest(user2: any) {
+    if(this.firstForm.valid) {
+      user2.active = true;
+      user2.isTerminated = false;
+      user2.role = this.firstForm.get("role")?.value;
+      user2.authorities = null;
     this.service.allowUser(user2, this.userId).subscribe((data) => {
       console.log(JSON.stringify(data));
       this.snackBarService.triggerSnackBar("User activated!");
@@ -70,6 +78,8 @@ export class AdminManageAccountsComponent {
         console.log("ERROR " + JSON.stringify(error));
         this.snackBarService.triggerSnackBar("Error!");
       })
+    }
+    
 
   }
 }

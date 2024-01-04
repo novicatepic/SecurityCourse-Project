@@ -1,13 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class JwtTokenService {
 
-  private baseUrl = 'http://localhost:8080/users/';
+  private baseUrl = environment.baseUsersUrl;
 
   constructor(private http: HttpClient) { }
 

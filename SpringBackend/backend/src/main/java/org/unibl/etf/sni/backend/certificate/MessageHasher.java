@@ -1,8 +1,10 @@
 package org.unibl.etf.sni.backend.certificate;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
 
 public class MessageHasher {
 
@@ -24,7 +26,7 @@ public class MessageHasher {
         return hexString.toString();
     }
 
-    public static byte[] createDigitalSignature(String message, String alias) throws Exception {
+    public static byte[] createDigitalSignature(String message, String alias) throws NoSuchAlgorithmException, UnrecoverableKeyException, KeyStoreException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         String hashedMessage = MessageHasher.hashMessage(message);
         return MessageRSAManipulator.encryptMessage(hashedMessage,
                 CertificateAliasResolver.getPrivateKey(alias));

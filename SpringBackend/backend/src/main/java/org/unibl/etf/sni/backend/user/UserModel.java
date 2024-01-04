@@ -44,8 +44,7 @@ public class UserModel implements UserDetails {
     @Column(name = "password", nullable = false, length = 500)
     private String password;
 
-    @NotBlank(message = "role for user is mandatory!")
-    @Size(max = 50, message = "Maximum character size for role is 50!")
+    @NotNull(message = "role for user is mandatory!")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
     private Role role;

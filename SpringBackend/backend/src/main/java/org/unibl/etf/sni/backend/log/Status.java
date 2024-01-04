@@ -1,9 +1,9 @@
 package org.unibl.etf.sni.backend.log;
 
 public enum Status {
-
-    DOUBLE_CHANGED,
+    DANGER,
     CHANGED,
-    CORRECT
+    CORRECT,
+    ERROR
 
 }

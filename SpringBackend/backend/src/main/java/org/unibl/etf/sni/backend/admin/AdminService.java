@@ -53,11 +53,13 @@ public class AdminService {
         return users.stream().filter((x) -> x.getId()!=adminId && !x.getActive() && !x.getIsTerminated()).toList();
     }
 
-    public UserModel configureUserEnabled(Integer userId) throws NotFoundException  {
-        UserModel user = userRepository.findById(userId).orElseThrow(NotFoundException::new);
+    public UserModel configureUserEnabled(UserModel usr) throws NotFoundException  {
+        UserModel user = userRepository.findById(usr.getId()).orElseThrow(NotFoundException::new);
 
         user.setActive(true);
         user.setIsTerminated(false);
+        user.setRole(usr.getRole());
+
         mailService.sendEmail(user.getEmail(), "Account activation notification",
                     "Your account with username " + user.getUsername() + " activated!");
         return userRepository.save(user);
@@ -80,7 +82,7 @@ public class AdminService {
 
     public UserModel update(UserModel user) throws NotFoundException {
         UserModel u =  this.userRepository.findById(user.getId()).orElseThrow(NotFoundException::new);
-        System.out.println("Found");
+        //System.out.println("Found");
         u.setRole(user.getRole());
         return userRepository.save(u);
     }

@@ -2,13 +2,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Comment } from '../model/Comment';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NewCommentService {
 
-  private commentUrl = 'http://localhost:8080/comments';
+  private commentUrl = environment.newCommentUrl;
 
   constructor(private http:HttpClient) { }
 
