@@ -41,6 +41,10 @@ export const environment = {
 
     roomForumUrl:  'https://localhost:8080/rooms/',
 
-  permissionsForumUrl: 'https://localhost:8080/permissions/'
+  permissionsForumUrl: 'https://localhost:8080/permissions/',
+
+  usersToModifyUrl: 'https://localhost:8080/admins/users-to-modify',
+
+  logoutUrl: 'https://localhost:8080/auth/logout'
 
 };

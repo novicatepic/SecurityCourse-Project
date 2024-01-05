@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
 import { environment } from '../../environments/environment';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -40,6 +41,12 @@ export class JwtTokenService {
     }
     console.log("NULL");
     return null;
+  }
+
+  getUserById2(id: any) : Observable<any> {
+    const url = this.baseUrl + id;
+    return this.http.get<any[]>(`${url}`);
+
   }
 
   checkIfTokenExpired(token: any) {

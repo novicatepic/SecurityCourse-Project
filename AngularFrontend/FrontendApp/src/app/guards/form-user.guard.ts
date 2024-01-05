@@ -15,7 +15,7 @@ export class ForumUserGuard {
     if (token && !this.jwtService.checkIfTokenExpired(token) && tokenInfo.role !== "ROLE_UNDEFINED") {
       return true;
     } else {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/']);
       return false;
     }
   }

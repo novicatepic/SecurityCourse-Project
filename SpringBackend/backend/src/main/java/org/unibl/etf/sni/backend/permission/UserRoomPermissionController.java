@@ -1,5 +1,6 @@
 package org.unibl.etf.sni.backend.permission;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.unibl.etf.sni.backend.certificate.MessageHasher;
 import org.unibl.etf.sni.backend.certificate.Validator;
 import org.unibl.etf.sni.backend.exception.NotFoundException;
 import org.unibl.etf.sni.backend.jsonconverter.JSONConverter;
+import org.unibl.etf.sni.backend.jwtconfig.TokenExtractor;
 import org.unibl.etf.sni.backend.protocol.ProtocolMessages;
 import org.unibl.etf.sni.backend.room.RoomModel;
 import org.unibl.etf.sni.backend.waf.WAFService;
@@ -36,7 +38,10 @@ public class UserRoomPermissionController {
     private WAFService wafService;
 
     @PostMapping
-    public ResponseEntity<UserRoomPermissionEntity> createPermissions(@RequestBody UserRoomPermissionEntity entity) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, UnrecoverableKeyException, KeyStoreException {
+    public ResponseEntity<UserRoomPermissionEntity> createPermissions(@RequestBody UserRoomPermissionEntity entity,
+                                                                      HttpServletRequest request) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, UnrecoverableKeyException, KeyStoreException {
+
+        tokenExtractor(request);
 
         byte[] response = wafService.authorizePermissionModification(entity.getUserId(), "/permissions/update-role", MessageHasher.createDigitalSignature(entity.getUserId().toString(),
                 CertificateAliasResolver.acAlias));
@@ -48,7 +53,10 @@ public class UserRoomPermissionController {
     }
 
     @GetMapping("/set/{userId}")
-    public ResponseEntity<List<UserRoomPermissionEntity>> getSetPermissions(@PathVariable("userId") Integer userId) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException {
+    public ResponseEntity<List<UserRoomPermissionEntity>> getSetPermissions(@PathVariable("userId") Integer userId,
+                                                                            HttpServletRequest request) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException {
+
+        tokenExtractor(request);
 
         if(!wafService.checkNumberLength(userId, "/permissions/set/"+userId)) {
             return BadEntity.returnBadRequst();
@@ -67,7 +75,10 @@ public class UserRoomPermissionController {
     @GetMapping("/{roomId}/{userId}")
     public ResponseEntity<UserRoomPermissionEntity> getPermissionsForProgram(
             @PathVariable("userId") Integer userId,
-            @PathVariable("roomId") Integer roomId) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException, NotFoundException {
+            @PathVariable("roomId") Integer roomId,
+            HttpServletRequest request) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException, NotFoundException {
+
+        tokenExtractor(request);
 
         if(!wafService.checkNumberLength(userId, "/permissions/"+roomId+"/"+userId)) {
             return BadEntity.returnBadRequst();
@@ -80,7 +91,10 @@ public class UserRoomPermissionController {
     }
 
     @GetMapping("/unset/{userId}")
-    public ResponseEntity<List<RoomModel>> getUnsetPermissions(@PathVariable("userId") Integer userId) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException {
+    public ResponseEntity<List<RoomModel>> getUnsetPermissions(@PathVariable("userId") Integer userId,
+                                                               HttpServletRequest request) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException {
+
+        tokenExtractor(request);
 
         if(!wafService.checkNumberLength(userId, "/permissions/unset/"+userId)) {
             return BadEntity.returnBadRequst();
@@ -93,6 +107,11 @@ public class UserRoomPermissionController {
         }
 
         return new ResponseEntity<>(service.getUnsetPermissions(userId), HttpStatus.OK);
+    }
+
+    private void tokenExtractor(HttpServletRequest request) {
+        String token = TokenExtractor.extractToken(request);
+        wafService.setToken(token);
     }
 
 }

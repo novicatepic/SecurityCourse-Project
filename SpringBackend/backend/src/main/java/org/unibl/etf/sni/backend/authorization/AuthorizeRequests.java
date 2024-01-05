@@ -19,14 +19,4 @@ public class AuthorizeRequests {
         }
         return true;
     }
-
-    public static boolean checkRoleValidity(String expectedRole) {
-        UserModel k = extractCredentials();
-        if(!(k.getRole().toString().equals(expectedRole))) {
-            return false;
-        }
-        return true;
-    }
-
-
 }

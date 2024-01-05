@@ -2,11 +2,14 @@ import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { JwtTokenService } from '../jwt-token/jwt-token.service';
+import { environment } from '../../environments/environment';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UrlGuard {
+
 
   constructor(private router: Router, private jwtService: JwtTokenService) { }
 
@@ -16,6 +19,18 @@ export class UrlGuard {
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     
     const id = route.paramMap.get('id');
+    //console.log("INNN !!!");
+    this.jwtService.getUserById2(id).subscribe((user: any) => {
+        //console.log(" USER   == = = =" + user.role);
+        if(user.role == "ROLE_ADMIN") {
+          this.router.navigate(['/']);
+          return false;
+        }
+        return true;
+    })
+
+
+
     const token = this.jwtService.extractToken();
     const tokenInfo = this.jwtService.extractTokenInfo();
     // Assuming AuthService has a method like isAdminWithId
@@ -23,8 +38,9 @@ export class UrlGuard {
       return true;
     } else {
       // Redirect to a forbidden or unauthorized page
-      this.router.navigate(['/login']);
+      this.router.navigate(['/']);
       return false;
     }
+    
   }
 }

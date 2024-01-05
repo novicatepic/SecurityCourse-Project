@@ -24,6 +24,11 @@ import { ShowForumComponent } from './show-forum/show-forum.component';
 import { ManageCommentsComponent } from './manage-comments/manage-comments.component';
 import { ChangeUserRoleComponent } from './change-user-role/change-user-role.component';
 import { AuthService } from './interceptors/auth.service';
+import { MainNavComponent } from './main-nav/main-nav.component';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { ChooseAccountComponent } from './choose-account/choose-account.component';
+import { HomeComponent } from './home/home.component';
 
 
 
@@ -38,6 +43,9 @@ import { AuthService } from './interceptors/auth.service';
     ShowForumComponent,
     ManageCommentsComponent,
     ChangeUserRoleComponent,
+    MainNavComponent,
+    ChooseAccountComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
@@ -51,7 +59,9 @@ import { AuthService } from './interceptors/auth.service';
     MatIconModule,
     MatMenuModule,
     MatSnackBarModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatSidenavModule,
+    MatListModule
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

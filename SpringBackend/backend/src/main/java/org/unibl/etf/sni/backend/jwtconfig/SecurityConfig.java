@@ -1,7 +1,6 @@
 package org.unibl.etf.sni.backend.jwtconfig;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -9,26 +8,16 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.ExceptionHandlingConfigurer;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.unibl.etf.sni.backend.exception.AccessDeniedExceptionHandler;
 import org.unibl.etf.sni.backend.user.UserService;
-
-import java.util.List;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -51,9 +40,6 @@ public class SecurityConfig {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private AccessDeniedExceptionHandler accessDeniedHandler;
-
     @Bean
     public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -68,6 +54,7 @@ public class SecurityConfig {
                             try {
                                 authorize
                                         .requestMatchers("/csrf").permitAll()
+                                        .requestMatchers(HttpMethod.GET, "/auth/logout").hasAnyRole("ADMIN", "MODERATOR", "FORUM") //Authentication controller
                                         .requestMatchers(HttpMethod.POST, "/auth/**").permitAll() //Authentication controller
                                         .requestMatchers(HttpMethod.POST, "/users/register").permitAll() //UserController
 
@@ -85,6 +72,7 @@ public class SecurityConfig {
 
                                         .requestMatchers("/admins/users/**").permitAll()//.hasRole("ADMIN") //AdminController all until UserRoomPermissionController
                                         .requestMatchers("/admins/waiting-requests/**").hasRole("ADMIN")
+                                        .requestMatchers("/admins/users-to-modify").hasRole("ADMIN")
                                         .requestMatchers("/admins/update-role").hasRole("ADMIN")
                                         .requestMatchers("/admins/enable-users/**").hasRole("ADMIN")
                                         .requestMatchers("/admins/disable-users/**").hasRole("ADMIN")

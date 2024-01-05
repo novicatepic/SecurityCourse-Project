@@ -1,5 +1,6 @@
 package org.unibl.etf.sni.backend.auth;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.unibl.etf.sni.backend.authorization.BadEntity;
 import org.unibl.etf.sni.backend.code.Code;
 import org.unibl.etf.sni.backend.exception.InvalidUsernameException;
 import org.unibl.etf.sni.backend.exception.NotFoundException;
+import org.unibl.etf.sni.backend.jwtconfig.TokenExtractor;
 import org.unibl.etf.sni.backend.waf.WAFService;
 
 //@CrossOrigin("*")
@@ -73,6 +75,19 @@ public class AuthenticationController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
 
+    }
+
+    @GetMapping("/logout")
+    public void logout(HttpServletRequest request) throws  NotFoundException {
+        tokenExtractor(request);
+
+        wafService.logoutUser();
+
+    }
+
+    private void tokenExtractor(HttpServletRequest request) {
+        String token = TokenExtractor.extractToken(request);
+        wafService.setToken(token);
     }
 
 }

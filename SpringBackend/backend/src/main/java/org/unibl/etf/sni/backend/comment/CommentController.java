@@ -1,5 +1,6 @@
 package org.unibl.etf.sni.backend.comment;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import org.unibl.etf.sni.backend.certificate.CertificateAliasResolver;
 import org.unibl.etf.sni.backend.certificate.MessageHasher;
 import org.unibl.etf.sni.backend.certificate.Validator;
 import org.unibl.etf.sni.backend.exception.NotFoundException;
+import org.unibl.etf.sni.backend.jwtconfig.TokenExtractor;
 import org.unibl.etf.sni.backend.protocol.ProtocolMessages;
 import org.unibl.etf.sni.backend.waf.WAFService;
 
@@ -33,16 +35,14 @@ public class CommentController {
     @Autowired
     private WAFService wafService;
 
-    @GetMapping("/test")
-    public String getText() {
-        return "abc";
-    }
-
     @GetMapping("/{commentId}/{userId}")
     public ResponseEntity<CommentModel> getCommentById(@PathVariable("commentId") Integer commentId,
-                                                       @PathVariable("userId") Integer userId)
+                                                       @PathVariable("userId") Integer userId,
+                                                       HttpServletRequest request)
             throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, UnrecoverableKeyException, KeyStoreException, NotFoundException {
 
+
+        tokenExtractor(request);
 
         byte[] response = wafService.authorizeUserId(userId, "comments/"+commentId+"/"+userId, MessageHasher.createDigitalSignature(userId.toString(),
                 CertificateAliasResolver.acAlias));
@@ -73,8 +73,11 @@ public class CommentController {
     }*/
 
     @PostMapping
-    public ResponseEntity<CommentModel> createComment(@Valid @RequestBody CommentModel commentModel)
+    public ResponseEntity<CommentModel> createComment(@Valid @RequestBody CommentModel commentModel,
+                                                      HttpServletRequest request)
             throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException, NotFoundException {
+
+        tokenExtractor(request);
 
         if(wafService.checkMySQLInjection(commentModel.getContent()) || wafService.checkMySQLInjection(commentModel.getTitle())) {
             return BadEntity.returnForbidden();
@@ -106,8 +109,11 @@ public class CommentController {
     @DeleteMapping("/{commentId}/{userId}/{roomId}")
     public ResponseEntity<SuccessOperation> deleteComment(@PathVariable("commentId") Integer commentId,
                                                           @PathVariable("userId")Integer userId,
-                                                          @PathVariable("roomId")Integer roomId) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException, NotFoundException {
+                                                          @PathVariable("roomId")Integer roomId,
+                                                          HttpServletRequest request) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException, NotFoundException {
 
+
+        tokenExtractor(request);
 
         byte[] commentResponse = wafService.authorizeDeleteUserPermissionsForRoomAndComment(roomId,
                 userId, commentId,"/{commentId}/{userId}/{roomId}", MessageHasher.createDigitalSignature(roomId.toString(),
@@ -122,8 +128,11 @@ public class CommentController {
     }
 
     @PatchMapping
-    public ResponseEntity<CommentModel> updateComment(@Valid @RequestBody CommentModel commentModel)
+    public ResponseEntity<CommentModel> updateComment(@Valid @RequestBody CommentModel commentModel,
+                                                      HttpServletRequest request)
             throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException, NotFoundException {
+
+        tokenExtractor(request);
 
         if(wafService.checkMySQLInjection(commentModel.getContent()) || wafService.checkMySQLInjection(commentModel.getTitle())) {
             return BadEntity.returnForbidden();
@@ -146,6 +155,11 @@ public class CommentController {
 
 
         return new ResponseEntity<>(service.createComment(commentModel), HttpStatus.OK);
+    }
+
+    private void tokenExtractor(HttpServletRequest request) {
+        String token = TokenExtractor.extractToken(request);
+        wafService.setToken(token);
     }
 
 }

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { LoginService } from './login.service';
 import { JwtTokenService } from '../jwt-token/jwt-token.service';
 import { SnackBarService } from '../snack-bar/snack-bar.service';
+import { AuthServiceService } from '../auth-service/auth-service.service';
 
 @Component({
   selector: 'app-login',

@@ -56,12 +56,11 @@ public class GlobalExceptionHandler {
         });
     }
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    /*ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public void handleException(
             MethodArgumentNotValidException ex) {
             logger.error("No permissions for that action!");
             logService.insertNewLog(ex.getMessage(), Status.ERROR);
-        }
-
+        }*/
 }

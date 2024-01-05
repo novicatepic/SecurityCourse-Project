@@ -1,0 +1,75 @@
+<mat-sidenav-container class="sidenav-container" style="margin-bottom: 0px;">
+  <mat-sidenav #drawer class="sidenav" fixedInViewport [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+  [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="(isHandset$ | async) === false">
+  <mat-toolbar>Menu</mat-toolbar>
+  <mat-nav-list *ngIf="!this.loggedIn">
+    <a mat-list-item routerLink="/">Home</a>
+    <a mat-list-item routerLink="/login">Login</a>
+    <a mat-list-item routerLink="/register">Register</a>
+    <!--a mat-list-item routerLink="/fitness-programs">Fitness programs</a>
+    <a mat-list-item routerLink="/ninja">Ninja API News</a-->
+  </mat-nav-list>
+  <mat-nav-list *ngIf="this.loggedIn">
+    <a mat-list-item routerLink="/">Home</a>
+    <a *ngIf="this.user.role=='ROLE_ADMIN'" mat-list-item routerLink="/manage-accounts">Account Requests</a>
+    <a *ngIf="this.user.role=='ROLE_ADMIN'" mat-list-item routerLink="/manage-account-permissions">Account Permissions</a>
+    <a mat-list-item routerLink="/manage-comments">Manage Comments</a>
+    <a routerLink="/" mat-list-item (click)="logout()">Logout</a>
+  </mat-nav-list>
+  <span *ngIf="this.loggedIn">
+
+    <a mat-button [matMenuTriggerFor]="phoneDropdown">Rooms&nbsp;&nbsp;&nbsp;&nbsp;</a>
+    <mat-menu #phoneDropdown="matMenu" class="full-width-menu">
+      <a mat-menu-item  (click)="goToPage(1)">Science</a>
+      <a mat-menu-item  (click)="goToPage(2)">Culture</a>
+      <a mat-menu-item  (click)="goToPage(3)">Sport</a>
+      <a mat-menu-item  (click)="goToPage(4)">Music</a>
+    </mat-menu>
+
+  </span>
+
+</mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button *ngIf="isHandset$ | async" type="button" aria-label="Toggle sidenav" mat-icon-button
+        (click)="drawer.toggle()">
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      <span>FrontendAngular</span>
+      <span class="spacer"></span>
+
+      <span *ngIf="this.loggedIn" class="right-links">
+        <a routerLink="/">Home</a>
+        <a *ngIf="this.user.role=='ROLE_ADMIN'" routerLink="/manage-accounts">Account Requests</a>
+        <a *ngIf="this.user.role=='ROLE_ADMIN'" routerLink="/manage-account-permissions">Account Permissions</a>
+
+        <a  routerLink="/manage-comments">Comment requests</a>
+
+        <!-- Text near the dropdown menu -->
+        <span class="dropdown-text" *ngIf="!(isHandset$ | async)">
+          Rooms
+        </span>
+        <!-- Show dropdown only on larger screens -->
+        <button mat-icon-button *ngIf="!(isHandset$ | async)" [matMenuTriggerFor]="myDropdownMenu" aria-label="My Dropdown Menu">
+          <mat-icon class="dropdown-icon" aria-label="Dropdown menu icon">arrow_drop_down</mat-icon>
+        </button>
+        <mat-menu #myDropdownMenu="matMenu">
+          <a mat-menu-item (click)="goToPage(1)">Science</a>
+          <a mat-menu-item (click)="goToPage(2)">Culture</a>
+          <a mat-menu-item (click)="goToPage(3)">Sport</a>
+          <a mat-menu-item (click)="goToPage(4)">Music</a>
+        </mat-menu>
+        <a routerLink="/" (click)="logout()">Logout</a>
+      </span>
+      <span *ngIf="!this.loggedIn" class="right-links">
+        <a routerLink="/">Home</a>
+        <a routerLink="/login">Login</a>
+        <a routerLink="/register">Register</a>
+      </span>
+
+
+    </mat-toolbar>
+    <ng-content></ng-content>
+  </mat-sidenav-content>
+</mat-sidenav-container>

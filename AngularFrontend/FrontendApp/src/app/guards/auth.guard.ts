@@ -15,7 +15,7 @@ export class AuthGuard {
     if (token && !this.jwtService.checkIfTokenExpired(token)) {
       return true;
     } else {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/']);
       return false;
     }
   }

@@ -17,15 +17,21 @@ import org.unibl.etf.sni.backend.log.Status;
 import org.unibl.etf.sni.backend.permission.UserRoomPermissionEntity;
 import org.unibl.etf.sni.backend.permission.UserRoomPermissionService;
 import org.unibl.etf.sni.backend.protocol.ProtocolMessages;
+import org.unibl.etf.sni.backend.role.Role;
 import org.unibl.etf.sni.backend.siem.SIEMService;
+import org.unibl.etf.sni.backend.user.UserModel;
+import org.unibl.etf.sni.backend.user.UserService;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.swing.text.html.Option;
 import java.security.InvalidKeyException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
+import java.util.Optional;
 
 import static org.unibl.etf.sni.backend.certificate.MessageHasher.createDigitalSignature;
 
@@ -52,7 +58,16 @@ public class WAFService {
     private LogService logService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private TokenBlackListService tokenBlackListService;
+
+    private String token = "t";
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 
     public Boolean checkNumberLength(Integer number, String route)  {
 
@@ -82,10 +97,17 @@ public class WAFService {
         //can't modify your own permission
         if(userAuthorization) {
             String message = "User with id " + userId + " tried to enable his own comment!";
+            blackListToken();
             dangerousActionWritter(message);
             return returnBadMessage();
         }
         return MessageHasher.createDigitalSignature(ProtocolMessages.OK.toString(), CertificateAliasResolver.wafAlias);
+    }
+
+    private void blackListToken() {
+        if (!tokenBlackListService.isTokenBlacklisted(token)) {
+            tokenBlackListService.addToBlacklist(token);
+        }
     }
 
     public byte[] authorizeUserId(Integer userId, String route, byte[] numberByte) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, KeyStoreException, InvalidKeyException {
@@ -95,6 +117,7 @@ public class WAFService {
         Boolean userAuthorization = authorizeUserIdInternal(userId);
         //can't modify your own permission
         if(!userAuthorization) {
+            blackListToken();
             String message = "User with id " + userId + " tried to post comment for someone else!";
             dangerousActionWritter(message);
             return returnBadMessage();
@@ -124,6 +147,7 @@ public class WAFService {
         Boolean userAuthorization = authorizeUserIdInternal(userId);
         //can't modify your own permission
         if(!userAuthorization) {
+            blackListToken();
             String message = "User with id " + userId + " tried to change his own permission!";
             dangerousActionWritter(message);
             return returnBadMessage();
@@ -154,6 +178,7 @@ public class WAFService {
             System.out.println("Can create");
             return MessageHasher.createDigitalSignature(ProtocolMessages.OK.toString(), CertificateAliasResolver.wafAlias);
         } else {
+            blackListToken();
             return returnBadMessage();
         }
 
@@ -180,6 +205,7 @@ public class WAFService {
         if(userRoomPermissionEntity.getCanDelete() && m.getUserId()==userId) {
             return MessageHasher.createDigitalSignature(ProtocolMessages.OK.toString(), CertificateAliasResolver.wafAlias);
         } else {
+            blackListToken();
             writeBadRequestDirectlly("No permissions to delete comment, user "
                     + userId + " and comment " + commentId, route);
             return returnBadMessage();
@@ -199,6 +225,7 @@ public class WAFService {
         if(userRoomPermissionEntity.getCanUpdate() && m.getUserId()==userId) {
             return MessageHasher.createDigitalSignature(ProtocolMessages.OK.toString(), CertificateAliasResolver.wafAlias);
         } else {
+            blackListToken();
             return returnBadMessage();
         }
     }
@@ -243,7 +270,7 @@ public class WAFService {
         for (String keyword : SQLProblemKeywords.returnSQLKeywords()) {
             if (request.toUpperCase().contains(keyword)) {
                 logService.insertNewLog("SQL Injection potential try for " + request, Status.DANGER);
-
+                blackListToken();
                 return true;
             }
         }
@@ -251,13 +278,22 @@ public class WAFService {
         return false;
     }
 
-
+    public Boolean checkIfUserIsAdmin(Integer id) throws NotFoundException {
+        UserModel user = userService.findByUserId(id);
+        if(user.getRole().toString().equals(Role.ROLE_ADMIN.toString())) {
+            logService.insertNewLog("Tried to change admin permissions for admin " + id, Status.DANGER);
+            blackListToken();
+            return true;
+        }
+        return false;
+    }
 
     public Boolean checkXSSInjection(String request) {
 
         for (String keyword : XSSProblemKeywords.returnXSSPatterns()) {
             if (request.toLowerCase().contains(keyword)) {
                 logService.insertNewLog("XSS potential try for " + request, Status.DANGER);
+                blackListToken();
                 return true;
             }
         }
@@ -280,5 +316,10 @@ public class WAFService {
 
     public void handleGoodLogin(String username) {
         logService.insertNewLog("Correct login credentials for user with username " + username, Status.CORRECT);
+    }
+
+    public void logoutUser() {
+        //System.out.println("Added token " + token + " to blacklist");
+        this.tokenBlackListService.addToBlacklist(token);
     }
 }

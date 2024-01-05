@@ -58,6 +58,7 @@ export class ManageCommentsComponent {
     this.service.terminateComment(comment).subscribe((data) => {
       console.log(JSON.stringify(data));
       this.snackBarService.triggerSnackBar("Comment terminated!");
+      this.router.navigate(['/manage-comments']);
     },
       error => {
         console.log("ERROR " + JSON.stringify(error));
@@ -87,6 +88,7 @@ export class ManageCommentsComponent {
       this.commentModificationService.allowComment(this.toAllow).subscribe((data) => {
         console.log(JSON.stringify(data));
         this.snackBarService.triggerSnackBar("Comment activated!");
+        this.router.navigate(['/manage-comments']);
       },
         error => {
           console.log("ERROR " + JSON.stringify(error));

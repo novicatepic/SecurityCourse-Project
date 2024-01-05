@@ -1,5 +1,4 @@
 export const environment = {
-    production: true,
     accountsUrl: 'https://localhost:8080/admins/waiting-requests/',
     accountDisableUrl:'https://localhost:8080/admins/disable-users/',
 
@@ -41,6 +40,10 @@ export const environment = {
 
     roomForumUrl:  'https://localhost:8080/rooms/',
 
-  permissionsForumUrl: 'https://localhost:8080/permissions/'
+  permissionsForumUrl: 'https://localhost:8080/permissions/',
+
+  usersToModifyUrl: 'https://localhost:8080/admins/users-to-modify',
+
+  logoutUrl: 'https://localhost:8080/auth/logout'
 
 };

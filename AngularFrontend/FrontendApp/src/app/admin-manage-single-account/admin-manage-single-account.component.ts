@@ -38,6 +38,8 @@ export class AdminManageSingleAccountComponent {
       this.id = params.get('id');
     });
 
+    console.log("IN HERE!!!");
+
     this.readData();
 
     this.firstForm = formBuilder.group({
@@ -136,6 +138,7 @@ export class AdminManageSingleAccountComponent {
       this.service.addPermissions(permissions).subscribe((data) => {
         console.log(JSON.stringify(data));
         this.snackBarService.triggerSnackBar("Permission added!");
+        this.router.navigate(['/manage-account-permissions']);
     },
     error => {
       console.log("ERROR " + JSON.stringify(error));
@@ -165,6 +168,7 @@ export class AdminManageSingleAccountComponent {
       this.service.addPermissions(permissions).subscribe((data) => {
           console.log(JSON.stringify(data));
           this.snackBarService.triggerSnackBar("Permission added!");
+          this.router.navigate(['/manage-account-permissions']);
       },
       error => {
         console.log("ERROR " + JSON.stringify(error));

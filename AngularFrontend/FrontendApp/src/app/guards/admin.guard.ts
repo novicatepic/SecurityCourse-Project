@@ -18,7 +18,7 @@ export class AdminGuard {
     if (token && !this.jwtService.checkIfTokenExpired(token) && tokenInfo.role === "ROLE_ADMIN") {
       return true;
     } else {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/']);
       return false;
     }
   }

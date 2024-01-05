@@ -27,7 +27,7 @@ public class UserService implements UserDetailsService {
     public UserModel registerUser(UserModel user) {
         user.setPassword(passwordEncoder().encode(user.getPassword()) );
         user.setActive(false);
-        user.setIsTerminated(false);
+        //user.setIsTerminated(false);
         return userRepository.save(user);
     }
 

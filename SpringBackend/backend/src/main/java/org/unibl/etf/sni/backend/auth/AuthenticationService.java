@@ -40,22 +40,28 @@ public class AuthenticationService {
         UserModel user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(InvalidUsernameException::new);
 
-        if(!user.getActive() || user.getIsTerminated()) {
+        if(!user.getActive() /*|| user.getIsTerminated()*/) {
             return new BoolAuthResponse(false, user.getId());
         }
+
+        System.out.println("Active user");
+
         return loginCredentials(request);
     }
 
     private BoolAuthResponse loginCredentials(AuthRequest request) throws InvalidUsernameException, NotFoundException {
         UserModel k = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(InvalidUsernameException::new);
-        if(k != null && k.getActive() && !k.getIsTerminated()) {
+
+        if(k != null && k.getActive()) {
+            System.out.println("User " + k.getUsername());
             Code codeFromDatabase = codeService.getById(k.getId());
             if(codeFromDatabase != null) {
                 codeService.deleteCode(k.getId());
             }
             String code = codeService.saveCodeToDB(k);
             mailService.sendEmail(k.getEmail(), "Code for logging in", code);
+            System.out.println("Return true! ");
             return new BoolAuthResponse(true, k.getId());
         }
         return new BoolAuthResponse(false, 0);

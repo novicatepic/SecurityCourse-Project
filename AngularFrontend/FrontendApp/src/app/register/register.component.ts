@@ -42,6 +42,7 @@ export class RegisterComponent {
         const user = JSON.stringify(data);
         console.log("user " + user);
         this.snackService.triggerSnackBar("Registration sent, waiting for admin to approve!");
+        this.router.navigate(['/']);
       },
       error => {
         console.log(error);

@@ -51,8 +51,9 @@ export class ShowForumComponent {
 
         this.service.loadPermissionsForForum(this.roomId, this.user.id).subscribe((permissionsUser) => {
           this.permissions = permissionsUser;
-          console.log("perm " + this.permissions.userId);
-          console.log("usr " + this.user.id);
+          /*console.log("permission create " + this.permissions.canCreate);
+          console.log("permission create " + this.permissions.canUpdate);
+          console.log("permission create " + this.permissions.canDelete);*/
         },
         error => {
           //console.log(error);
@@ -124,6 +125,7 @@ export class ShowForumComponent {
 
       this.commentService.saveComment(comment).subscribe((data) => {
         this.snackBarService.triggerSnackBar("Saved message!");
+        this.router.navigate(['/room'+this.roomId]);
       }, (err) => {
         this.snackBarService.triggerSnackBar("Error saving message!");
         console.log(err);
@@ -148,6 +150,7 @@ export class ShowForumComponent {
       this.toUpdate.writer = undefined;
       this.commentService.updateComment(this.toUpdate).subscribe((data) => {
         this.snackBarService.triggerSnackBar("Updated comment!");
+        this.router.navigate(['/room'+this.roomId]);
       }, (err) => {
         this.snackBarService.triggerSnackBar("Error updating comment!");
         console.log(err);
@@ -161,6 +164,7 @@ export class ShowForumComponent {
   deleteComment(comment: Comment) {
       this.commentService.deleteComment(comment.id, this.user.id, this.roomId).subscribe((data) => {
         this.snackBarService.triggerSnackBar("Deleted comment!");
+        this.router.navigate(['/room'+this.roomId]);
       }, (err) => {
         console.log(err);
         this.snackBarService.triggerSnackBar("Error deleting comment!");

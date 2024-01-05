@@ -1,5 +1,6 @@
 package org.unibl.etf.sni.backend.user;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.unibl.etf.sni.backend.certificate.MessageHasher;
 import org.unibl.etf.sni.backend.certificate.Validator;
 import org.unibl.etf.sni.backend.exception.NotFoundException;
 import org.unibl.etf.sni.backend.jsonconverter.JSONConverter;
+import org.unibl.etf.sni.backend.jwtconfig.TokenExtractor;
 import org.unibl.etf.sni.backend.protocol.ProtocolMessages;
 import org.unibl.etf.sni.backend.waf.WAFService;
 
@@ -33,7 +35,10 @@ public class UserController {
     private WAFService wafService;
 
     @PostMapping("/register")
-    public ResponseEntity<UserModel> registerUser(@RequestBody UserModel userModel) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException {
+    public ResponseEntity<UserModel> registerUser(@RequestBody UserModel userModel,
+                                                  HttpServletRequest request)  {
+
+        tokenExtractor(request);
 
         if(wafService.checkMySQLInjection(userModel.getPassword()) || wafService.checkMySQLInjection(userModel.getUsername())
                 || wafService.checkMySQLInjection(userModel.getEmail()) || wafService.checkMySQLInjection(userModel.getRole().toString())
@@ -50,11 +55,20 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserModel> findUserById(@PathVariable("userId") Integer userId) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException, NotFoundException {
+    public ResponseEntity<UserModel> findUserById(@PathVariable("userId") Integer userId,
+                                                  HttpServletRequest request) throws NotFoundException {
+
+        tokenExtractor(request);
+
         if(!wafService.checkNumberLength(userId, "/users/"+userId)) {
             return BadEntity.returnBadRequst();
         }
 
         return new ResponseEntity<>(userService.findByUserId(userId), HttpStatus.OK);
+    }
+
+    private void tokenExtractor(HttpServletRequest request) {
+        String token = TokenExtractor.extractToken(request);
+        wafService.setToken(token);
     }
 }

@@ -1,5 +1,6 @@
 package org.unibl.etf.sni.backend.admin;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.unibl.etf.sni.backend.certificate.Validator;
 import org.unibl.etf.sni.backend.comment.CommentModel;
 import org.unibl.etf.sni.backend.exception.NotFoundException;
 import org.unibl.etf.sni.backend.jsonconverter.JSONConverter;
+import org.unibl.etf.sni.backend.jwtconfig.TokenExtractor;
 import org.unibl.etf.sni.backend.log.MessageProcessor;
 import org.unibl.etf.sni.backend.user.UserModel;
 import org.unibl.etf.sni.backend.protocol.ProtocolMessages;
@@ -43,7 +45,9 @@ public class AdminController {
     private WAFService wafService;
 
     @GetMapping("/users/{userId}")
-    public ResponseEntity<UserModel> findUserById(@PathVariable("userId") Integer userId) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException, NotFoundException {
+    public ResponseEntity<UserModel> findUserById(@PathVariable("userId") Integer userId, HttpServletRequest request) throws NotFoundException {
+
+        tokenExtractor(request);
 
         if(!wafService.checkNumberLength(userId, "/admins/users/"+userId)) {
             return BadEntity.returnBadRequst();
@@ -52,9 +56,22 @@ public class AdminController {
         return new ResponseEntity<>(service.getUserById(userId), HttpStatus.OK);
     }
 
+    private void tokenExtractor(HttpServletRequest request) {
+        String token = TokenExtractor.extractToken(request);
+        wafService.setToken(token);
+    }
+
+    @GetMapping("/users-to-modify")
+    public ResponseEntity<List<UserModel>> findUsersToModifyPermissions() {
+        return new ResponseEntity<>(service.getUsersToModifyPermissions(), HttpStatus.OK);
+    }
+
 
     @GetMapping("/comments/{userId}")
-    public ResponseEntity<List<CommentModel>> findUnprocessedComments(@PathVariable("userId") Integer userId) throws Exception {
+    public ResponseEntity<List<CommentModel>> findUnprocessedComments(
+            @PathVariable("userId") Integer userId, HttpServletRequest request) {
+
+        tokenExtractor(request);
 
         if(!wafService.checkNumberLength(userId, "/admins/comments/{userId}/"+userId)) {
             return BadEntity.returnBadRequst();
@@ -64,7 +81,10 @@ public class AdminController {
     }
 
     @GetMapping("/waiting-requests/{adminId}")
-    public ResponseEntity<List<UserModel>> getWaitingRequests(@PathVariable("adminId") Integer adminId) throws Exception {
+    public ResponseEntity<List<UserModel>> getWaitingRequests(
+            @PathVariable("adminId") Integer adminId, HttpServletRequest request) {
+
+        tokenExtractor(request);
 
         if(!wafService.checkNumberLength(adminId, "/admins/waiting-requests/"+adminId)) {
             return BadEntity.returnBadRequst();
@@ -76,7 +96,9 @@ public class AdminController {
     }
 
     @PatchMapping("/update-role")
-    public ResponseEntity<UserModel> updateRole(@RequestBody UserModel user) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, UnrecoverableKeyException, KeyStoreException, NotFoundException {
+    public ResponseEntity<UserModel> updateRole(@RequestBody UserModel user, HttpServletRequest request) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, UnrecoverableKeyException, KeyStoreException, NotFoundException {
+
+        tokenExtractor(request);
 
         if(wafService.checkMySQLInjection(user.getUsername()) || wafService.checkMySQLInjection(user.getEmail())
         ||wafService.checkMySQLInjection(user.getPassword()) || wafService.checkMySQLInjection(user.getRole().toString()
@@ -94,6 +116,9 @@ public class AdminController {
             return BadEntity.returnBadRequst();
         }
 
+        if(wafService.checkIfUserIsAdmin(user.getId())) {
+            return BadEntity.returnForbidden();
+        }
 
         byte[] response = wafService.authorizePermissionModification(user.getId(), "/update-role", MessageHasher.createDigitalSignature(user.getId().toString(),
                 CertificateAliasResolver.acAlias));
@@ -106,7 +131,10 @@ public class AdminController {
 
     @PatchMapping("/enable-users/{adminId}")
     public ResponseEntity<UserModel> configureUserEnabled(@PathVariable("adminId") Integer adminId,
-                                                          @RequestBody UserModel user) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, UnrecoverableKeyException, KeyStoreException, NotFoundException {
+                                                          @RequestBody UserModel user
+            , HttpServletRequest request) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, UnrecoverableKeyException, KeyStoreException, NotFoundException {
+
+        tokenExtractor(request);
 
         if(!wafService.checkNumberLength(adminId, "/admins/enable-users/"+adminId)) {
             return BadEntity.returnBadRequst();
@@ -135,7 +163,10 @@ public class AdminController {
 
     @PatchMapping("/disable-users/{adminId}/{userId}")
     public ResponseEntity<UserModel> configureUserDisabled(@PathVariable("adminId") Integer adminId,
-                                                           @PathVariable("userId") Integer userId) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, NotFoundException, UnrecoverableKeyException, KeyStoreException {
+                                                           @PathVariable("userId") Integer userId
+            , HttpServletRequest request) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, NotFoundException, UnrecoverableKeyException, KeyStoreException {
+
+        tokenExtractor(request);
 
         if(!wafService.checkNumberLength(adminId, "/admins/disable-users/"+adminId+"/"+userId)) {
             return BadEntity.returnBadRequst();
@@ -154,7 +185,10 @@ public class AdminController {
     }
 
     @PatchMapping("/enable-comments")
-    public ResponseEntity<CommentModel> enableComment(@RequestBody CommentModel comment) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, UnrecoverableKeyException, KeyStoreException {
+    public ResponseEntity<CommentModel> enableComment(@RequestBody CommentModel comment
+            , HttpServletRequest request) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, UnrecoverableKeyException, KeyStoreException {
+
+        tokenExtractor(request);
 
         if(wafService.checkMySQLInjection(comment.getContent()) || wafService.checkMySQLInjection(comment.getTitle())) {
             return BadEntity.returnForbidden();
@@ -178,7 +212,10 @@ public class AdminController {
     }
 
     @PatchMapping("/disable-comments")
-    public ResponseEntity<CommentModel> disableComment(@RequestBody CommentModel comment) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException {
+    public ResponseEntity<CommentModel> disableComment(@RequestBody CommentModel comment
+            , HttpServletRequest request) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException {
+
+        tokenExtractor(request);
 
         if(wafService.checkMySQLInjection(comment.getContent()) || wafService.checkMySQLInjection(comment.getTitle())) {
             return BadEntity.returnForbidden();

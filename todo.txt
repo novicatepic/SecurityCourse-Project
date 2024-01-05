@@ -2,26 +2,5 @@
 
 
 -oauth 2.0 (github)
-3) izgled
-cross origin provjeriti
-
 pri kraju, popraviti da se ne ucita ni djelic stranice gdje se proslijedi id
-
-
-
-
-update/delete komentara, da li omoguciti samo za svoje komentare?
-i u bekendu fali
-prilikom inserta kako, sta
--provjeravati da li je sertifikat istekao (pa ga "renovirati")
-iz exception-a proslijediti ka waf-u
-
-1) pracenje pristupa na bekend strani, role definisati za jwt
-
-2) valid anotacije i provjere te strane sigurnosti
-
-4) sertifikat na frontend (angular) strani
-
-
-provjeriti moze li se pristupiti pristupu greske prije ulaska u f-ju
 
