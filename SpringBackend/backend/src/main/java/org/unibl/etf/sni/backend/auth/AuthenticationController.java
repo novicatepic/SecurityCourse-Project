@@ -40,6 +40,12 @@ public class AuthenticationController {
 
         BoolAuthResponse response = authenticationService.loginUNPW(request);
 
+        if(!response.isSuccess()) {
+            wafService.handleBadLogin(request.getUsername());
+        } else {
+            wafService.handleGoodLogin(request.getUsername());
+        }
+
         return ResponseEntity.ok(response);
 
     }
@@ -47,7 +53,23 @@ public class AuthenticationController {
     @PostMapping("/code")
     public ResponseEntity<JwtAuthResponse> codeEntrance(@Valid @RequestBody Code code) throws InvalidUsernameException, NotFoundException {
 
+        if(wafService.checkMySQLInjection(code.getCode())
+        ) {
+            return BadEntity.returnForbidden();
+        }
+
+        if(wafService.checkXSSInjection(code.getCode())
+        ) {
+            return BadEntity.returnForbidden();
+        }
+
         JwtAuthResponse response = authenticationService.codeEntrance(code);
+
+        if(response == null) {
+            wafService.handleBadCode(code);
+        } else {
+            wafService.handleGoodCode(code);
+        }
 
         return new ResponseEntity<>(response, HttpStatus.OK);
 

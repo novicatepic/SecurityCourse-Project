@@ -44,20 +44,15 @@ public class CommentController {
             throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, UnrecoverableKeyException, KeyStoreException, NotFoundException {
 
 
-        byte[] response = wafService.authorizeUserId(userId, "/{commentId}/{userId}", MessageHasher.createDigitalSignature(userId.toString(),
+        byte[] response = wafService.authorizeUserId(userId, "comments/"+commentId+"/"+userId, MessageHasher.createDigitalSignature(userId.toString(),
                 CertificateAliasResolver.acAlias));
         if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), response, WAFService.wafCertificate)) {
             return BadEntity.returnForbidden();
         }
 
-        /*if(!wafService.authorizeCommentModification()) {
-            return BadEntity.returnForbidden();
-        }*/
-
-        /*if(!wafService.checkNumberLength(commentId, "/{commentId}/{userId}/{roomId}", MessageHasher.createDigitalSignature(userId.toString(),
-                CertificateAliasResolver.acAlias))) {
+        if(!wafService.checkNumberLength(commentId, "comments/"+commentId+"/"+userId)) {
             return BadEntity.returnBadRequst();
-        }*/
+        }
 
         return new ResponseEntity<>(service.findCommentById(commentId), HttpStatus.OK);
     }
@@ -81,11 +76,6 @@ public class CommentController {
     public ResponseEntity<CommentModel> createComment(@Valid @RequestBody CommentModel commentModel)
             throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException, NotFoundException {
 
-        //can't create comment for someone else
-        /*if(!wafService.authorizeUserId(commentModel.getUserId())) {
-            return BadEntity.returnForbidden();
-        }*/
-
         if(wafService.checkMySQLInjection(commentModel.getContent()) || wafService.checkMySQLInjection(commentModel.getTitle())) {
             return BadEntity.returnForbidden();
         }
@@ -100,20 +90,12 @@ public class CommentController {
             return BadEntity.returnForbidden();
         }
 
-
-        /*if(!wafService.authorizeCreationUserPermissionsForRoomAndComment(commentModel.getRoomId(), commentModel.getUserId())) {
-            return BadEntity.returnForbidden();
-        }*/
         byte[] commentResponse = wafService.authorizeCreationUserPermissionsForRoomAndComment(commentModel.getRoomId(),
                 commentModel.getUserId(), "/comments", MessageHasher.createDigitalSignature(commentModel.getRoomId().toString(),
                 CertificateAliasResolver.acAlias),
                 MessageHasher.createDigitalSignature(commentModel.getUserId().toString(),
                         CertificateAliasResolver.acAlias));
-        if(commentResponse == null) {
-            System.out.println("Null");
-        } else {
-            System.out.println("Not null");
-        }
+
         if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), commentResponse, WAFService.wafCertificate)) {
             return BadEntity.returnForbidden();
         }

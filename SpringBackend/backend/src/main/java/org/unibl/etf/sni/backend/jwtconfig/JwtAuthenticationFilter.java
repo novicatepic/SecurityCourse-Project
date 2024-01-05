@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDecisionVoter;
@@ -23,6 +24,8 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.unibl.etf.sni.backend.log.LogService;
+import org.unibl.etf.sni.backend.log.Status;
 import org.unibl.etf.sni.backend.user.UserService;
 
 import java.io.IOException;
@@ -32,6 +35,12 @@ import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    @Autowired
+    private LogService logService;
+
+    @Autowired
+    private TokenBlackListService tokenBlackListService;
 
     private final JwtService jwtService;
     private final UserService userService;
@@ -53,62 +62,37 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         jwt = authHeader.substring(7);
-        username = jwtService.extractUserName(jwt);
-        if (!StringUtils.isEmpty(username)
-                && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userService.loadUserByUsername(username);
-            if (jwtService.isTokenValid(jwt, userDetails)) {
-                SecurityContext context = SecurityContextHolder.createEmptyContext();
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                context.setAuthentication(authToken);
-                SecurityContextHolder.setContext(context);
 
-                String requestedUri = request.getRequestURI();
-                boolean hasPermission = checkUserPermission(userDetails, requestedUri, request);
-
-                System.out.println("Has permissions " + hasPermission + " for " + requestedUri);
-
-            }
-        } else {
-            handleUnauthorizedAccess(request, response);
+        System.out.println("Processing token " + jwt);
+        if(tokenBlackListService.isTokenBlacklisted(jwt)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"Token is blacklisted\"}");
+            //filterChain.doFilter(request, response);
             return;
+        } else {
+            username = jwtService.extractUserName(jwt);
+            if (!StringUtils.isEmpty(username)
+                    && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = userService.loadUserByUsername(username);
+                if (jwtService.isTokenValid(jwt, userDetails)) {
+                    SecurityContext context = SecurityContextHolder.createEmptyContext();
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    context.setAuthentication(authToken);
+                    SecurityContextHolder.setContext(context);
+
+                    String requestedUri = request.getRequestURI();
+
+                    logService.insertNewLog("User with username " + username + " tried to access uri "
+                            + requestedUri, Status.DANGER);
+                }
+            }
         }
+
+
         filterChain.doFilter(request, response);
-    }
-
-    private boolean checkUserPermission(UserDetails userDetails, String requestedUri, HttpServletRequest request) {
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        FilterInvocation filterInvocation = new FilterInvocation(requestedUri, request.getMethod());
-
-        System.out.println("Name = " + authentication.getName());
-
-        try {
-            AccessDecisionManager accessDecisionManager = accessDecisionManager(); // Inject or create your AccessDecisionManager
-            accessDecisionManager.decide(authentication, filterInvocation, Collections.emptyList());
-            return true; // If no exceptions are thrown, the user has permission
-        } catch (AccessDeniedException e) {
-            return false; // Access is denied
-        }
-    }
-
-    private AccessDecisionManager accessDecisionManager() {
-        // Implement or inject your AccessDecisionManager here
-        // You might need to customize this based on your security configuration
-
-        List<AccessDecisionVoter<?>> decisionVoters = Arrays.asList(new WebExpressionVoter(), new RoleVoter(), new AuthenticatedVoter());
-        return new AffirmativeBased(decisionVoters);
-    }
-
-    private void handleUnauthorizedAccess(HttpServletRequest request, HttpServletResponse response) {
-        // Log or handle unauthorized access here
-        // For example, you can log the request details or send a custom response to the client
-        //log.warn("Unauthorized access attempt to URI: {}", request.getRequestURI());
-
-        System.out.println("Bad request!");
-
-        // You can send a custom response to the client, e.g., response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized Access");
     }
 
 }

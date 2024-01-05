@@ -36,8 +36,7 @@ public class RoomController {
     @GetMapping("/comments/{roomId}")
     public ResponseEntity<List<CommentModel>> commentsForRoom(@PathVariable("roomId") Integer roomId) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException {
 
-        if(!wafService.checkNumberLength(roomId, "/users/{userId}", MessageHasher.createDigitalSignature(roomId.toString(),
-                CertificateAliasResolver.acAlias))) {
+        if(!wafService.checkNumberLength(roomId, "/rooms/comments/"+roomId)) {
             return BadEntity.returnBadRequst();
         }
 
@@ -52,8 +51,7 @@ public class RoomController {
     @GetMapping("/{roomId}")
     public ResponseEntity<RoomModel> getRoomById(@PathVariable("roomId") Integer roomId) throws NotFoundException, UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException {
 
-        if(!wafService.checkNumberLength(roomId, "/users/{userId}", MessageHasher.createDigitalSignature(roomId.toString(),
-                CertificateAliasResolver.acAlias))) {
+        if(!wafService.checkNumberLength(roomId, "/rooms/"+roomId)) {
             return BadEntity.returnBadRequst();
         }
 

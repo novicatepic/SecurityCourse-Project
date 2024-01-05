@@ -45,8 +45,7 @@ public class AdminController {
     @GetMapping("/users/{userId}")
     public ResponseEntity<UserModel> findUserById(@PathVariable("userId") Integer userId) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException, NotFoundException {
 
-        if(!wafService.checkNumberLength(userId, "/users/{userId}", MessageHasher.createDigitalSignature(userId.toString(),
-                CertificateAliasResolver.acAlias))) {
+        if(!wafService.checkNumberLength(userId, "/admins/users/"+userId)) {
             return BadEntity.returnBadRequst();
         }
 
@@ -57,16 +56,9 @@ public class AdminController {
     @GetMapping("/comments/{userId}")
     public ResponseEntity<List<CommentModel>> findUnprocessedComments(@PathVariable("userId") Integer userId) throws Exception {
 
-        /*if(!wafService.authorizeCommentModification()) {
-            return BadEntity.returnForbidden();
-        }*/
-
-        if(!wafService.checkNumberLength(userId, "/comments/{userId}", MessageHasher.createDigitalSignature(userId.toString(),
-                CertificateAliasResolver.acAlias))) {
+        if(!wafService.checkNumberLength(userId, "/admins/comments/{userId}/"+userId)) {
             return BadEntity.returnBadRequst();
         }
-
-
 
         return new ResponseEntity<>(service.unprocessedComments(userId), HttpStatus.OK);
     }
@@ -74,23 +66,17 @@ public class AdminController {
     @GetMapping("/waiting-requests/{adminId}")
     public ResponseEntity<List<UserModel>> getWaitingRequests(@PathVariable("adminId") Integer adminId) throws Exception {
 
-        if(!wafService.checkNumberLength(adminId, "/waiting-requests/{adminId}", MessageHasher.createDigitalSignature(adminId.toString(),
-                CertificateAliasResolver.acAlias))) {
+        if(!wafService.checkNumberLength(adminId, "/admins/waiting-requests/"+adminId)) {
             return BadEntity.returnBadRequst();
         }
+
+        System.out.println("In waiting request!!!");
 
         return new ResponseEntity<>(service.getWaitingUsers(adminId), HttpStatus.OK);
     }
 
     @PatchMapping("/update-role")
     public ResponseEntity<UserModel> updateRole(@RequestBody UserModel user) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, UnrecoverableKeyException, KeyStoreException, NotFoundException {
-
-        /*String jsonObject = JSONConverter.convertObjectToString(user);
-        byte[] responseXSSSQL = wafService.checkObjectValidity(jsonObject, "/enable-comments", MessageHasher.createDigitalSignature(jsonObject,
-                CertificateAliasResolver.acAlias));
-        if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), responseXSSSQL, WAFService.wafCertificate)) {
-            return BadEntity.returnForbidden();
-        }*/
 
         if(wafService.checkMySQLInjection(user.getUsername()) || wafService.checkMySQLInjection(user.getEmail())
         ||wafService.checkMySQLInjection(user.getPassword()) || wafService.checkMySQLInjection(user.getRole().toString()
@@ -104,8 +90,7 @@ public class AdminController {
             return BadEntity.returnForbidden();
         }
 
-        if(!wafService.checkNumberLength(user.getId(), "/update-role", MessageHasher.createDigitalSignature(user.getId().toString(),
-                CertificateAliasResolver.acAlias))) {
+        if(!wafService.checkNumberLength(user.getId(), "/admins/update-role/"+user.getId())) {
             return BadEntity.returnBadRequst();
         }
 
@@ -123,6 +108,10 @@ public class AdminController {
     public ResponseEntity<UserModel> configureUserEnabled(@PathVariable("adminId") Integer adminId,
                                                           @RequestBody UserModel user) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, UnrecoverableKeyException, KeyStoreException, NotFoundException {
 
+        if(!wafService.checkNumberLength(adminId, "/admins/enable-users/"+adminId)) {
+            return BadEntity.returnBadRequst();
+        }
+
         if(wafService.checkMySQLInjection(user.getUsername()) || wafService.checkMySQLInjection(user.getEmail())
                 ||wafService.checkMySQLInjection(user.getPassword()) || wafService.checkMySQLInjection(user.getRole().toString()
         )) {
@@ -135,7 +124,7 @@ public class AdminController {
             return BadEntity.returnForbidden();
         }
 
-        byte[] response = wafService.authorizePermissionModification(user.getId(), "/update-role", MessageHasher.createDigitalSignature(user.getId().toString(),
+        byte[] response = wafService.authorizePermissionModification(user.getId(), "/admins/update-role", MessageHasher.createDigitalSignature(user.getId().toString(),
                 CertificateAliasResolver.acAlias));
         if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), response, WAFService.wafCertificate)) {
             return BadEntity.returnForbidden();
@@ -148,16 +137,14 @@ public class AdminController {
     public ResponseEntity<UserModel> configureUserDisabled(@PathVariable("adminId") Integer adminId,
                                                            @PathVariable("userId") Integer userId) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, NotFoundException, UnrecoverableKeyException, KeyStoreException {
 
-        if(!wafService.checkNumberLength(adminId, "/waiting-requests/{adminId}", MessageHasher.createDigitalSignature(adminId.toString(),
-                CertificateAliasResolver.acAlias))) {
+        if(!wafService.checkNumberLength(adminId, "/admins/disable-users/"+adminId+"/"+userId)) {
             return BadEntity.returnBadRequst();
         }
-        if(!wafService.checkNumberLength(userId, "/waiting-requests/{adminId}", MessageHasher.createDigitalSignature(adminId.toString(),
-                CertificateAliasResolver.acAlias))) {
+        if(!wafService.checkNumberLength(userId, "/admins/disable-users/"+adminId+"/"+userId)) {
             return BadEntity.returnBadRequst();
         }
 
-        byte[] response = wafService.authorizePermissionModification(userId, "/update-role", MessageHasher.createDigitalSignature(userId.toString(),
+        byte[] response = wafService.authorizePermissionModification(userId, "/admins/update-role", MessageHasher.createDigitalSignature(userId.toString(),
                 CertificateAliasResolver.acAlias));
         if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), response, WAFService.wafCertificate)) {
             return BadEntity.returnForbidden();
@@ -169,13 +156,6 @@ public class AdminController {
     @PatchMapping("/enable-comments")
     public ResponseEntity<CommentModel> enableComment(@RequestBody CommentModel comment) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, UnrecoverableKeyException, KeyStoreException {
 
-        /*String jsonObject = JSONConverter.convertObjectToString(comment);
-        byte[] responseXSSSQL = wafService.checkObjectValidity(jsonObject, "/enable-comments", MessageHasher.createDigitalSignature(jsonObject,
-                CertificateAliasResolver.acAlias));
-        if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), responseXSSSQL, WAFService.wafCertificate)) {
-            return BadEntity.returnForbidden();
-        }*/
-
         if(wafService.checkMySQLInjection(comment.getContent()) || wafService.checkMySQLInjection(comment.getTitle())) {
             return BadEntity.returnForbidden();
         }
@@ -185,7 +165,7 @@ public class AdminController {
         }
 
 
-        byte[] response = wafService.authorizeCommentsEnablingDisabling(comment.getUserId(), "/enable-comments",
+        byte[] response = wafService.authorizeCommentsEnablingDisabling(comment.getUserId(), "/admins/enable-comments",
                 MessageHasher.createDigitalSignature(comment.getUserId().toString(),
                         CertificateAliasResolver.acAlias));
         if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), response, WAFService.wafCertificate)) {
@@ -200,13 +180,6 @@ public class AdminController {
     @PatchMapping("/disable-comments")
     public ResponseEntity<CommentModel> disableComment(@RequestBody CommentModel comment) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException {
 
-        /*String jsonObject = JSONConverter.convertObjectToString(comment);
-        byte[] responseXSSSQL = wafService.checkObjectValidity(jsonObject, "/enable-comments", MessageHasher.createDigitalSignature(jsonObject,
-                CertificateAliasResolver.acAlias));
-        if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), responseXSSSQL, WAFService.wafCertificate)) {
-            return BadEntity.returnForbidden();
-        }*/
-
         if(wafService.checkMySQLInjection(comment.getContent()) || wafService.checkMySQLInjection(comment.getTitle())) {
             return BadEntity.returnForbidden();
         }
@@ -215,11 +188,7 @@ public class AdminController {
             return BadEntity.returnForbidden();
         }
 
-        /*if(!wafService.authorizeCommentModification()) {
-            return BadEntity.returnForbidden();
-        }*/
-
-        byte[] response = wafService.authorizeCommentsEnablingDisabling(comment.getUserId(), "/disable-comments",
+        byte[] response = wafService.authorizeCommentsEnablingDisabling(comment.getUserId(), "/admins/disable-comments",
                 MessageHasher.createDigitalSignature(comment.getUserId().toString(),
                         CertificateAliasResolver.acAlias));
         if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), response, WAFService.wafCertificate)) {

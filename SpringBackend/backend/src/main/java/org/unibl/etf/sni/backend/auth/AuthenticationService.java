@@ -43,7 +43,6 @@ public class AuthenticationService {
         if(!user.getActive() || user.getIsTerminated()) {
             return new BoolAuthResponse(false, user.getId());
         }
-        System.out.println("HERE 1");
         return loginCredentials(request);
     }
 

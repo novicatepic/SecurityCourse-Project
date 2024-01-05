@@ -38,10 +38,7 @@ public class UserRoomPermissionController {
     @PostMapping
     public ResponseEntity<UserRoomPermissionEntity> createPermissions(@RequestBody UserRoomPermissionEntity entity) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, UnrecoverableKeyException, KeyStoreException {
 
-
-
-
-        byte[] response = wafService.authorizePermissionModification(entity.getUserId(), "/update-role", MessageHasher.createDigitalSignature(entity.getUserId().toString(),
+        byte[] response = wafService.authorizePermissionModification(entity.getUserId(), "/permissions/update-role", MessageHasher.createDigitalSignature(entity.getUserId().toString(),
                 CertificateAliasResolver.acAlias));
         if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), response, WAFService.wafCertificate)) {
             return BadEntity.returnForbidden();
@@ -53,12 +50,11 @@ public class UserRoomPermissionController {
     @GetMapping("/set/{userId}")
     public ResponseEntity<List<UserRoomPermissionEntity>> getSetPermissions(@PathVariable("userId") Integer userId) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException {
 
-        /*if(!wafService.checkNumberLength(userId, "/users/{userId}", MessageHasher.createDigitalSignature(userId.toString(),
-                CertificateAliasResolver.acAlias))) {
+        if(!wafService.checkNumberLength(userId, "/permissions/set/"+userId)) {
             return BadEntity.returnBadRequst();
-        }*/
+        }
 
-        byte[] response = wafService.authorizePermissionModification(userId, "/update-role", MessageHasher.createDigitalSignature(userId.toString(),
+        byte[] response = wafService.authorizePermissionModification(userId, "/permissions/set/"+userId, MessageHasher.createDigitalSignature(userId.toString(),
                 CertificateAliasResolver.acAlias));
         if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), response, WAFService.wafCertificate)) {
             return BadEntity.returnForbidden();
@@ -73,11 +69,12 @@ public class UserRoomPermissionController {
             @PathVariable("userId") Integer userId,
             @PathVariable("roomId") Integer roomId) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException, NotFoundException {
 
-        /*byte[] response = wafService.authorizePermissionModification(userId, "/update-role", MessageHasher.createDigitalSignature(userId.toString(),
-                CertificateAliasResolver.acAlias));
-        if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), response, WAFService.wafCertificate)) {
-            return BadEntity.returnForbidden();
-        }*/
+        if(!wafService.checkNumberLength(userId, "/permissions/"+roomId+"/"+userId)) {
+            return BadEntity.returnBadRequst();
+        }
+        if(!wafService.checkNumberLength(roomId, "/permissions/"+roomId+"/"+userId)) {
+            return BadEntity.returnBadRequst();
+        }
 
         return new ResponseEntity<>(service.getPermissionForRoomAndUser(userId, roomId), HttpStatus.OK);
     }
@@ -85,25 +82,15 @@ public class UserRoomPermissionController {
     @GetMapping("/unset/{userId}")
     public ResponseEntity<List<RoomModel>> getUnsetPermissions(@PathVariable("userId") Integer userId) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException {
 
-        /*if(!wafService.authorizePermissionRequests()) {
-            return BadEntity.returnForbidden();
-        }*/
-
-        /*if(!wafService.checkNumberLength(userId, "/users/{userId}", MessageHasher.createDigitalSignature(userId.toString(),
-                CertificateAliasResolver.acAlias))) {
+        if(!wafService.checkNumberLength(userId, "/permissions/unset/"+userId)) {
             return BadEntity.returnBadRequst();
-        }*/
+        }
 
-        byte[] response = wafService.authorizePermissionModification(userId, "/update-role", MessageHasher.createDigitalSignature(userId.toString(),
+        byte[] response = wafService.authorizePermissionModification(userId, "/permissions/unset/"+userId, MessageHasher.createDigitalSignature(userId.toString(),
                 CertificateAliasResolver.acAlias));
         if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), response, WAFService.wafCertificate)) {
             return BadEntity.returnForbidden();
         }
-
-        //hashing problems
-        /*if(!wafService.checkNumberLength(userId)) {
-            return BadEntity.returnBadRequst();
-        }*/
 
         return new ResponseEntity<>(service.getUnsetPermissions(userId), HttpStatus.OK);
     }

@@ -1,9 +1,11 @@
 5) waf (notes) :
--provjeriti xss i mysql injection odvojeno bez kriptovanja
--podesiti provjeru ruta za naloge
+
+
 -oauth 2.0 (github)
--izgled
--dos napadi, login spam, Authentication controller!!!
+3) izgled
+cross origin provjeriti
+
+pri kraju, popraviti da se ne ucita ni djelic stranice gdje se proslijedi id
 
 
 
@@ -23,4 +25,3 @@ iz exception-a proslijediti ka waf-u
 
 provjeriti moze li se pristupiti pristupu greske prije ulaska u f-ju
 
-pri kraju, popraviti da se ne ucita ni djelic stranice gdje se proslijedi id

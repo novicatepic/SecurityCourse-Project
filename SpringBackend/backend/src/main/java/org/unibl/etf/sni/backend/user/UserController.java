@@ -35,8 +35,6 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<UserModel> registerUser(@RequestBody UserModel userModel) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException {
 
-
-
         if(wafService.checkMySQLInjection(userModel.getPassword()) || wafService.checkMySQLInjection(userModel.getUsername())
                 || wafService.checkMySQLInjection(userModel.getEmail()) || wafService.checkMySQLInjection(userModel.getRole().toString())
         ) {
@@ -53,8 +51,7 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<UserModel> findUserById(@PathVariable("userId") Integer userId) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException, NotFoundException {
-        if(!wafService.checkNumberLength(userId, "/comments/{userId}", MessageHasher.createDigitalSignature(userId.toString(),
-                CertificateAliasResolver.acAlias))) {
+        if(!wafService.checkNumberLength(userId, "/users/"+userId)) {
             return BadEntity.returnBadRequst();
         }
 

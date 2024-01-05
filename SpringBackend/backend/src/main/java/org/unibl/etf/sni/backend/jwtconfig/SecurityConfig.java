@@ -1,6 +1,7 @@
 package org.unibl.etf.sni.backend.jwtconfig;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -13,6 +14,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.ExceptionHandlingConfigurer;
 import org.springframework.security.core.Authentication;
@@ -37,13 +39,14 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final AccessDeniedExceptionHandler accessDeniedExceptionHandlerFilter;
 
-    public SecurityConfig(JwtAuthenticationFilter filter ,
-                          AccessDeniedExceptionHandler accessFilter) {
+    public SecurityConfig(JwtAuthenticationFilter filter) {
         this.jwtAuthenticationFilter = filter;
-        this.accessDeniedExceptionHandlerFilter = accessFilter;
     }
+
+
+    @Autowired
+    private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Autowired
     private UserService userService;
@@ -58,7 +61,7 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {;
-
+        http.exceptionHandling((exception)-> exception.authenticationEntryPoint(customAuthenticationEntryPoint));
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> {
@@ -68,7 +71,7 @@ public class SecurityConfig {
                                         .requestMatchers(HttpMethod.POST, "/auth/**").permitAll() //Authentication controller
                                         .requestMatchers(HttpMethod.POST, "/users/register").permitAll() //UserController
 
-                                        .requestMatchers("/comments/test").permitAll()
+                                        //.requestMatchers("/comments/test").permitAll()
 
                                         .requestMatchers(HttpMethod.GET, "/comments/{commentId}/{userId}").hasAnyRole("ADMIN", "MODERATOR")
                                         .requestMatchers("/comments/**").hasAnyRole("ADMIN", "MODERATOR", "FORUM") //CommentController
@@ -82,13 +85,14 @@ public class SecurityConfig {
 
                                         .requestMatchers("/admins/users/**").permitAll()//.hasRole("ADMIN") //AdminController all until UserRoomPermissionController
                                         .requestMatchers("/admins/waiting-requests/**").hasRole("ADMIN")
-                                        .requestMatchers("/admins/update-role").permitAll()//.hasRole("ADMIN")
+                                        .requestMatchers("/admins/update-role").hasRole("ADMIN")
                                         .requestMatchers("/admins/enable-users/**").hasRole("ADMIN")
                                         .requestMatchers("/admins/disable-users/**").hasRole("ADMIN")
                                         .requestMatchers("/admins/users/**").hasRole("ADMIN")
                                         .requestMatchers("/permissions/**").hasRole("ADMIN") //UserRoomPermissionController
                                         .requestMatchers(HttpMethod.GET, "/users/{userId}").hasRole("ADMIN") //UserController
                                         .anyRequest().authenticated();
+
 
 
 
@@ -99,16 +103,10 @@ public class SecurityConfig {
                 )
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(daoAuthenticationProvider())
-                //.addFilterBefore(accessDeniedExceptionHandlerFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(
-                        jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
-    /*@Bean
-    public AccessDeniedHandler accessDeniedHandler() {
-        return new AccessDeniedExceptionHandler();
-    }*/
 
     @Bean
     DaoAuthenticationProvider daoAuthenticationProvider() {

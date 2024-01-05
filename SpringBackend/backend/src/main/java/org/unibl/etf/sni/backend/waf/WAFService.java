@@ -6,9 +6,11 @@ import org.unibl.etf.sni.backend.authorization.AuthorizeRequests;
 import org.unibl.etf.sni.backend.certificate.CertificateAliasResolver;
 import org.unibl.etf.sni.backend.certificate.MessageHasher;
 import org.unibl.etf.sni.backend.certificate.Validator;
+import org.unibl.etf.sni.backend.code.Code;
 import org.unibl.etf.sni.backend.comment.CommentModel;
 import org.unibl.etf.sni.backend.comment.CommentService;
 import org.unibl.etf.sni.backend.exception.NotFoundException;
+import org.unibl.etf.sni.backend.jwtconfig.TokenBlackListService;
 import org.unibl.etf.sni.backend.log.LogModel;
 import org.unibl.etf.sni.backend.log.LogService;
 import org.unibl.etf.sni.backend.log.Status;
@@ -16,17 +18,14 @@ import org.unibl.etf.sni.backend.permission.UserRoomPermissionEntity;
 import org.unibl.etf.sni.backend.permission.UserRoomPermissionService;
 import org.unibl.etf.sni.backend.protocol.ProtocolMessages;
 import org.unibl.etf.sni.backend.siem.SIEMService;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
-import java.sql.Date;
 
 import static org.unibl.etf.sni.backend.certificate.MessageHasher.createDigitalSignature;
 
@@ -49,21 +48,21 @@ public class WAFService {
     @Autowired
     private CommentService commentService;
 
-    //Direct writting if message is bad
     @Autowired
     private LogService logService;
 
-    public Boolean checkNumberLength(Integer number, String route, byte[] numberByte) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException {
-        Boolean x = checkRequestValidity(number.toString(), route, numberByte);
-        if (x != null) return x;
+    @Autowired
+    private TokenBlackListService tokenBlackListService;
 
-        if(number < MIN_LENGTH || number > MAX_LENGTH) {
-            String message = "Integer parameter for route " + route + " too long or too short!";
-            dangerousActionWritter(message);
+    public Boolean checkNumberLength(Integer number, String route)  {
+
+        if(number < MIN_LENGTH) {
+            logService.insertNewLog("Tried to access id for less than " + MIN_LENGTH + " on route " + route, Status.DANGER);
+            return false;
+        } else if (number > MAX_LENGTH) {
+            logService.insertNewLog("Tried to access id for more than " + MAX_LENGTH + " on route " + route, Status.DANGER);
             return false;
         }
-
-        System.out.println("Fine");
 
         return true;
     }
@@ -116,34 +115,15 @@ public class WAFService {
         return null;
     }
 
-
-
-    public byte[] checkObjectValidity(String object, String route, byte[] byteObject) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, KeyStoreException, InvalidKeyException {
-        Boolean x = checkRequestValidity(object, route, byteObject);
-        if (x != null) return returnBadMessage();
-
-        if(checkMySQLInjection(object)) {
-            returnBadMessage();
-        }
-
-        if(checkXSSInjection(object)) {
-            return returnBadMessage();
-        }
-
-        return MessageHasher.createDigitalSignature(ProtocolMessages.OK.toString(), CertificateAliasResolver.wafAlias);
-    }
-
     public byte[] authorizePermissionModification(Integer userId, String route, byte[] numberByte) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, KeyStoreException, InvalidKeyException {
         Boolean x = checkRequestValidity(userId.toString(), route, numberByte);
         if (x != null) {
-            System.out.println("a");
             return returnBadMessage();
         }
 
         Boolean userAuthorization = authorizeUserIdInternal(userId);
         //can't modify your own permission
         if(!userAuthorization) {
-            System.out.println("b");
             String message = "User with id " + userId + " tried to change his own permission!";
             dangerousActionWritter(message);
             return returnBadMessage();
@@ -258,35 +238,12 @@ public class WAFService {
         return true;
     }
 
-    /*public Boolean authorizeUserProfileRequests() {
-        if(!AuthorizeRequests.checkRoleValidity("ROLE_ADMIN")) {
-            return false;
-        }
-        return true;
-    }*/
-
-
-
-    /*public Boolean authorizePermissionRequests() {
-        return authorizeUserProfileRequests();
-    }*/
-
-
-    /*public Boolean authorizeCommentCUD() {
-        if(!AuthorizeRequests.checkRoleValidity("ROLE_ADMIN") &&
-                !AuthorizeRequests.checkRoleValidity("ROLE_MODERATOR") &&
-                !AuthorizeRequests.checkRoleValidity("ROLE_FORUM")) {
-            return false;
-        }
-        return true;
-    }*/
-
-
-
     public Boolean checkMySQLInjection(String request) {
 
         for (String keyword : SQLProblemKeywords.returnSQLKeywords()) {
             if (request.toUpperCase().contains(keyword)) {
+                logService.insertNewLog("SQL Injection potential try for " + request, Status.DANGER);
+
                 return true;
             }
         }
@@ -300,6 +257,7 @@ public class WAFService {
 
         for (String keyword : XSSProblemKeywords.returnXSSPatterns()) {
             if (request.toLowerCase().contains(keyword)) {
+                logService.insertNewLog("XSS potential try for " + request, Status.DANGER);
                 return true;
             }
         }
@@ -308,4 +266,19 @@ public class WAFService {
     }
 
 
+    public void handleBadLogin(String username) {
+        logService.insertNewLog("Bad login tried for username " + username, Status.DANGER);
+    }
+
+    public void handleBadCode(Code code) {
+        logService.insertNewLog("Bad code entrance tried for user id" + code.getUserId(), Status.DANGER);
+    }
+
+    public void handleGoodCode(Code code) {
+        logService.insertNewLog("Good code entrance for user id" + code.getUserId(), Status.CORRECT);
+    }
+
+    public void handleGoodLogin(String username) {
+        logService.insertNewLog("Correct login credentials for user with username " + username, Status.CORRECT);
+    }
 }

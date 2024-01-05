@@ -1,5 +1,5 @@
 export const environment = {
-
+    production: true,
     accountsUrl: 'https://localhost:8080/admins/waiting-requests/',
     accountDisableUrl:'https://localhost:8080/admins/disable-users/',
 
