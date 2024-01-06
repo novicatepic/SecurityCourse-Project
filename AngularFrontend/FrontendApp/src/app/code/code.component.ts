@@ -42,14 +42,14 @@ export class CodeComponent {
 
       this.service.loginUserCode(code).subscribe((data) => {
         const token = JSON.stringify(data);
-        console.log("token " + token);
+        //console.log("token " + token);
         localStorage.setItem("user", token);
         this.authService.notifyLoginSuccess();
         this.snackBarService.triggerSnackBar("Successfull login!");
-        this.router.navigate(['/']);
+        //this.router.navigate(['/']);
       },
       error => {
-        console.log(error);
+        //console.log(error);
         this.snackBarService.triggerSnackBar("Code not correct!");
       } );
   }

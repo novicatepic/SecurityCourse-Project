@@ -3,6 +3,7 @@ package org.unibl.etf.sni.backend.auth;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,10 @@ import org.unibl.etf.sni.backend.waf.WAFService;
 @RestController
 @RequestMapping("/auth")
 public class AuthenticationController {
+
+    @Value("${spring.mail.username}")
+    private String email;
+
     private final AuthenticationService authenticationService;
 
     public AuthenticationController(AuthenticationService authenticationService) {

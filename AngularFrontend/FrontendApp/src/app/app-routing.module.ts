@@ -14,11 +14,13 @@ import { ForumUserGuard } from './guards/form-user.guard';
 import { UrlGuard } from './guards/url.guard';
 import { ChooseAccountComponent } from './choose-account/choose-account.component';
 import { HomeComponent } from './home/home.component';
+import { CallbackComponent } from './callback/callback.component';
 
 const routes: Routes = [
   {path: 'login', component: LoginComponent}, //OK
   {path: 'code/:id', component: CodeComponent}, //OK 
   {path: 'register', component: RegisterComponent}, //OK
+  {path: 'callback', component: CallbackComponent}, 
   {path: 'manage-accounts', component: AdminManageAccountsComponent, canActivate: [AdminGuard]}, //OK
   {path: 'manage-comments', component: ManageCommentsComponent, canActivate: [ModeratorGuard]}, //OK
   {path: 'manage-account-permissions', component: ChooseAccountComponent, canActivate: [AdminGuard]},

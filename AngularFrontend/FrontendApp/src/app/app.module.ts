@@ -29,6 +29,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { ChooseAccountComponent } from './choose-account/choose-account.component';
 import { HomeComponent } from './home/home.component';
+import { CallbackComponent } from './callback/callback.component';
 
 
 
@@ -45,7 +46,8 @@ import { HomeComponent } from './home/home.component';
     ChangeUserRoleComponent,
     MainNavComponent,
     ChooseAccountComponent,
-    HomeComponent
+    HomeComponent,
+    CallbackComponent
   ],
   imports: [
     BrowserModule,

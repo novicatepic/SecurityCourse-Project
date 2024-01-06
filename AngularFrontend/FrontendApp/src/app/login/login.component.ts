@@ -5,6 +5,7 @@ import { LoginService } from './login.service';
 import { JwtTokenService } from '../jwt-token/jwt-token.service';
 import { SnackBarService } from '../snack-bar/snack-bar.service';
 import { AuthServiceService } from '../auth-service/auth-service.service';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -53,4 +54,12 @@ export class LoginComponent {
 
     }
   }
+
+
+  private clientId = environment.clientId;
+  private redirectUri = environment.redirectUri;
+  loginWithGithub() {
+    window.location.href=`https://github.com/login/oauth/authorize?client_id=${this.clientId}&redirect_uri=${this.redirectUri}`
+  }
+
 }

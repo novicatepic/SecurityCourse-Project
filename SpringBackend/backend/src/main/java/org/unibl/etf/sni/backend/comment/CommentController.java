@@ -57,6 +57,11 @@ public class CommentController {
         return new ResponseEntity<>(service.findCommentById(commentId), HttpStatus.OK);
     }
 
+    @GetMapping("/test")
+    public String getStr() {
+        return "abc";
+    }
+
     /*@PostMapping("/mock")
     public void createComments()   {
         for(int i=1; i<=20; i++) {

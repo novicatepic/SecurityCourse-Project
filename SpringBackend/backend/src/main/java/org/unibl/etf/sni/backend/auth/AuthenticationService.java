@@ -40,11 +40,9 @@ public class AuthenticationService {
         UserModel user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(InvalidUsernameException::new);
 
-        if(!user.getActive() /*|| user.getIsTerminated()*/) {
+        if(!user.getActive()) {
             return new BoolAuthResponse(false, user.getId());
         }
-
-        System.out.println("Active user");
 
         return loginCredentials(request);
     }
@@ -54,14 +52,14 @@ public class AuthenticationService {
                 .orElseThrow(InvalidUsernameException::new);
 
         if(k != null && k.getActive()) {
-            System.out.println("User " + k.getUsername());
+
             Code codeFromDatabase = codeService.getById(k.getId());
             if(codeFromDatabase != null) {
                 codeService.deleteCode(k.getId());
             }
             String code = codeService.saveCodeToDB(k);
             mailService.sendEmail(k.getEmail(), "Code for logging in", code);
-            System.out.println("Return true! ");
+
             return new BoolAuthResponse(true, k.getId());
         }
         return new BoolAuthResponse(false, 0);
@@ -71,7 +69,7 @@ public class AuthenticationService {
     public JwtAuthResponse codeEntrance(Code code) throws NotFoundException {
 
         Code c = codeService.getById(code.getUserId());
-        //System.out.println("Code " + c.getCode());
+
         if(c == null) {
             return null;
         }
@@ -81,19 +79,25 @@ public class AuthenticationService {
         if(!c.getCode().equals(code.getCode())) {
             return null;
         }
-        System.out.println("Equals" );
+
         var user = userRepository.findById(code.getUserId());
         UserModel extractedUser;
         if(!user.isPresent()) {
             throw new NotFoundException();
         }
-        System.out.println("Found user" );
         extractedUser = user.get();
         var jwt = jwtService.generateToken(extractedUser);
         JwtAuthResponse response = new JwtAuthResponse(jwt);
-        System.out.println("Token " + response );
         return response;
 
 
     }
+
+
+    public JwtAuthResponse githubLogin(UserModel user) {
+        String jwt = jwtService.generateToken(user);
+        JwtAuthResponse response = new JwtAuthResponse(jwt);
+        return response;
+    }
+
 }

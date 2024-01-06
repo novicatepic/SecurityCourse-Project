@@ -35,4 +35,8 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
+    public UserModel findByEmail(String email) throws NotFoundException {
+        return userRepository.findByEmail(email).orElseThrow(NotFoundException::new);
+    }
+
 }

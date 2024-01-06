@@ -8,8 +8,9 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -21,8 +22,7 @@ import org.unibl.etf.sni.backend.user.UserService;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
-@Order(Ordered.HIGHEST_PRECEDENCE)
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -58,6 +58,7 @@ public class SecurityConfig {
                                         .requestMatchers(HttpMethod.POST, "/auth/**").permitAll() //Authentication controller
                                         .requestMatchers(HttpMethod.POST, "/users/register").permitAll() //UserController
 
+                                        .requestMatchers("/api/**").permitAll()
                                         //.requestMatchers("/comments/test").permitAll()
 
                                         .requestMatchers(HttpMethod.GET, "/comments/{commentId}/{userId}").hasAnyRole("ADMIN", "MODERATOR")
@@ -89,11 +90,15 @@ public class SecurityConfig {
                             }
                         }
                 )
+                //.oauth2Login(Customizer.withDefaults())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(daoAuthenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
+
+
+
 
 
     @Bean

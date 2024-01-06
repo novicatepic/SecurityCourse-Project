@@ -45,6 +45,12 @@ export const environment = {
 
   usersToModifyUrl: 'https://localhost:8080/admins/users-to-modify',
 
-  logoutUrl: 'https://localhost:8080/auth/logout'
+  logoutUrl: 'https://localhost:8080/auth/logout',
+
+
+  base8080Url: 'https://localhost:8080',
+
+  clientId: '3bff39eca726cbbc11e0',
+  redirectUri: 'https://localhost:4200/callback'
 
 };
