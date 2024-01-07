@@ -22,6 +22,7 @@ import java.security.InvalidKeyException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
+import java.sql.Date;
 
 //@CrossOrigin("*")
 @CrossOrigin(origins = "https://localhost:4200")
@@ -66,11 +67,11 @@ public class CommentController {
     public void createComments()   {
         for(int i=1; i<=20; i++) {
             CommentModel comment = new CommentModel();
-            comment.setRoomId(1);
+            comment.setRoomId(4);
             comment.setEnabled(true);
             comment.setForbidden(false);
-            comment.setContent("Contentt"+i);
-            comment.setTitle("Titlee"+i);
+            comment.setContent("Content Room id 4 " +i);
+            comment.setTitle("Title Room id 4 "+i);
             comment.setDateCreated(new Date(2024, 1, 2));
             comment.setUserId(3);
             service.createComment(comment);
@@ -92,7 +93,7 @@ public class CommentController {
             return BadEntity.returnForbidden();
         }
 
-        byte[] response = wafService.authorizeUserId(commentModel.getUserId(), request.getRequestURI(), MessageHasher.createDigitalSignature(commentModel.getUserId().toString(),
+        byte[] response = wafService.authorizePostComment(commentModel.getUserId(), request.getRequestURI(), MessageHasher.createDigitalSignature(commentModel.getUserId().toString(),
                 CertificateAliasResolver.acAlias));
         if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), response, WAFService.wafCertificate)) {
             return BadEntity.returnForbidden();

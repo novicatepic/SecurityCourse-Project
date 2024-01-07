@@ -93,9 +93,14 @@ public class WAFService {
         Boolean x = checkRequestValidity(userId.toString(), route, numberByte);
         if (x != null) return returnBadMessage();
 
+        //System.out.println("In enabling disabling");
+
         Boolean userAuthorization = authorizeUserIdInternal(userId);
         //can't modify your own permission
-        if(userAuthorization) {
+        if(!userAuthorization) {
+            //System.out.println("Doesn't work");
+
+
             String message = "User with id " + userId + " tried to enable his own comment!";
             blackListToken();
             dangerousActionWritter(message);
@@ -117,6 +122,21 @@ public class WAFService {
         Boolean userAuthorization = authorizeUserIdInternal(userId);
         //can't modify your own permission
         if(!userAuthorization) {
+            blackListToken();
+            String message = "User with id " + userId + " tried to post comment for someone else!";
+            dangerousActionWritter(message);
+            return returnBadMessage();
+        }
+        return MessageHasher.createDigitalSignature(ProtocolMessages.OK.toString(), CertificateAliasResolver.wafAlias);
+    }
+
+    public byte[] authorizePostComment(Integer userId, String route, byte[] numberByte) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, KeyStoreException, InvalidKeyException {
+        Boolean x = checkRequestValidity(userId.toString(), route, numberByte);
+        if (x != null) return returnBadMessage();
+
+        Boolean userAuthorization = authorizeUserIdInternal(userId);
+        //can't modify your own permission
+        if(userAuthorization) {
             blackListToken();
             String message = "User with id " + userId + " tried to post comment for someone else!";
             dangerousActionWritter(message);
@@ -252,8 +272,10 @@ public class WAFService {
 
     private Boolean authorizeUserIdInternal(Integer userId) {
         if(AuthorizeRequests.checkIdValidity(userId)) {
+            //System.out.println("false");
             return false;
         }
+        //System.out.println("true");
         return true;
     }
 

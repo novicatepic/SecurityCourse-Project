@@ -1,0 +1,53 @@
+{
+  "properties": [
+    {
+      "name": "spring.github.clientId",
+      "type": "java.lang.String",
+      "description": "Description for spring.github.clientId."
+    },
+    {
+      "name": "spring.github.clientSecret",
+      "type": "java.lang.String",
+      "description": "Description for spring.github.clientSecret."
+    },
+    {
+      "name": "spring.github.redirectUri",
+      "type": "java.lang.String",
+      "description": "Description for spring.github.redirectUri."
+    },
+    {
+      "name": "spring.certificate.alias.waf",
+      "type": "java.lang.String",
+      "description": "Description for spring.certificate.alias.waf."
+    },
+    {
+      "name": "spring.certificate.alias.ac",
+      "type": "java.lang.String",
+      "description": "Description for spring.certificate.alias.ac."
+    },
+    {
+      "name": "spring.certificate.alias.siem",
+      "type": "java.lang.String",
+      "description": "Description for spring.certificate.alias.siem."
+    },
+    {
+      "name": "spring.keystore.password",
+      "type": "java.lang.String",
+      "description": "Description for spring.keystore.password."
+    },
+    {
+      "name": "spring.keystore.file-path",
+      "type": "java.lang.String",
+      "description": "Description for spring.keystore.file-path."
+    },
+    {
+      "name": "spring.keystore.type",
+      "type": "java.lang.String",
+      "description": "Description for spring.keystore.type."
+    },
+    {
+      "name": "spring.keystore.alias",
+      "type": "java.lang.String",
+      "description": "Description for spring.keystore.alias."
+    }
+  ] }

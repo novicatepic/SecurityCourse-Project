@@ -12,7 +12,7 @@
       <h5 class="card-title">Title: {{comment?.title}}</h5>
       <p class="card-text">Content: {{comment.content}}</p>
       <p class="card-text">Date: {{comment.dateCreated}}</p>
-      <p class="card-text">Writer: {{comment.writer?.username}}</p>
+      <p class="card-text">Writer: {{comment.writer?.username}}  Role: {{comment.writer?.role}}</p>
 
       <!-- Update Comment Button -->
       <button *ngIf="this.permissions?.canUpdate && this.permissions.userId==comment.writer?.id" (click)="toggleUpdate(comment)" class="btn btn-warning mx-2" data-bs-toggle="modal" data-bs-target="#update">Update</button>
@@ -65,7 +65,7 @@
           </div>
           <div class="modal-footer">
             <button type="submit" class="btn btn-primary">Submit</button>
-            <button id="btnclose" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button id="btnclose1" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
           </div>
           
         </form>
@@ -96,7 +96,7 @@
           </div>
           <div class="modal-footer">
             <button type="submit" class="btn btn-primary">Submit</button>
-            <button id="btnclose" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button id="btnclose2" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
           </div>
         </form>
       </div>

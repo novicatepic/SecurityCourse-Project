@@ -6,11 +6,12 @@
         <p class="lead">Content: {{comment.content}}</p>
         <p class="lead">Date created: {{comment.dateCreated}}</p>
         <p class="lead">Writer: {{comment.writer?.username}}</p>
-        <!--div style="margin-bottom: 10px;"><button (click)="acceptComment(comment)" class="btn btn-primary">Accept Comment</button></div-->
+        <p *ngIf="comment.roomId==1" class="lead">Room: Science</p>
+        <p *ngIf="comment.roomId==2" class="lead">Room: Culture</p>
+        <p *ngIf="comment.roomId==3" class="lead">Room: Sport</p>
+        <p *ngIf="comment.roomId==4" class="lead">Room: Music</p>
 
-        <!--a class="btn btn-primary" href="/manage-comment/{{comment.id}}">Accept comment</a-->
         <button (click)="updateCurrentComment(comment)" class="btn btn-primary btn-lg mr-2" data-bs-toggle="modal" data-bs-target="#allow">Allow Comment</button>
-        <!--div style="margin-bottom: 10px;"><a target="_blank" href="/manage-account/{{user.id}}" class="btn btn-primary">Show allow user options</a></div-->
         <button (click)="terminateComment(comment)" class="btn btn-primary">Terminate comment</button>
       </div>
     </div>

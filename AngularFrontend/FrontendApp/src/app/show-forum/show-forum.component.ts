@@ -108,6 +108,7 @@ export class ShowForumComponent {
   }
 
   addComment() {
+    document.getElementById("btnclose1")?.click();
     if(this.firstForm.valid) {
 
       const comment = new Comment(this.firstForm.get("title")?.value, 
@@ -115,9 +116,9 @@ export class ShowForumComponent {
 
       this.commentService.saveComment(comment).subscribe((data) => {
         this.snackBarService.triggerSnackBar("Saved message!");
-        this.router.navigate(['/room'+this.roomId]);
+        this.router.navigate(['/room/'+this.roomId]);
       }, (err) => {
-        this.snackBarService.triggerSnackBar("Error saving message!");
+        this.snackBarService.triggerSnackBar("Error saving message, your token is possibly not valid anymore!");
       })
 
     }
@@ -130,15 +131,17 @@ export class ShowForumComponent {
   }
 
   updateComment() {
+    document.getElementById("btnclose2")?.click();
     if(this.toUpdate != undefined && this.updateForm.valid) {
       this.toUpdate.title = this.updateForm.get("updateTitle")?.value;
       this.toUpdate.content = this.updateForm.get("updateContent")?.value;
       this.toUpdate.writer = undefined;
       this.commentService.updateComment(this.toUpdate).subscribe((data) => {
         this.snackBarService.triggerSnackBar("Updated comment!");
-        this.router.navigate(['/room'+this.roomId]);
+
+        this.router.navigate(['/room/'+this.roomId]);
       }, (err) => {
-        this.snackBarService.triggerSnackBar("Error updating comment!");
+        this.snackBarService.triggerSnackBar("Error updating comment, your token is possibly not valid anymore!");
       })
 
     }
@@ -149,9 +152,9 @@ export class ShowForumComponent {
   deleteComment(comment: Comment) {
       this.commentService.deleteComment(comment.id, this.user.id, this.roomId).subscribe((data) => {
         this.snackBarService.triggerSnackBar("Deleted comment!");
-        this.router.navigate(['/room'+this.roomId]);
+        this.router.navigate(['/room/'+this.roomId]);
       }, (err) => {
-        this.snackBarService.triggerSnackBar("Error deleting comment!");
+        this.snackBarService.triggerSnackBar("Error deleting comment, your token is possibly not valid anymore!");
       });
   }
 

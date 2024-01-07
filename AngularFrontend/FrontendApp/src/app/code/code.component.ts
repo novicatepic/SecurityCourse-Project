@@ -46,7 +46,7 @@ export class CodeComponent {
         localStorage.setItem("user", token);
         this.authService.notifyLoginSuccess();
         this.snackBarService.triggerSnackBar("Successfull login!");
-        //this.router.navigate(['/']);
+        this.router.navigate(['/']);
       },
       error => {
         //console.log(error);

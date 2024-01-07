@@ -67,7 +67,7 @@ export class ChangeUserRoleComponent {
       },
       error => {
         //console.log("ERROR " + JSON.stringify(error));
-        this.snackBarService.triggerSnackBar("Couldn't modify role!");
+        this.snackBarService.triggerSnackBar("Couldn't modify role, your token is possibly not valid anymore!");
       })
     }
   }

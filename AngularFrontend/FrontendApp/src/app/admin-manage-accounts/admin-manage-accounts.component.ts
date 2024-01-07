@@ -60,7 +60,7 @@ export class AdminManageAccountsComponent {
     },
       error => {
         //console.log("ERROR " + JSON.stringify(error));
-        this.snackBarService.triggerSnackBar("Error!");
+        this.snackBarService.triggerSnackBar("Error, your token is possibly not valid anymore!");
       })
 
   }
@@ -78,7 +78,7 @@ export class AdminManageAccountsComponent {
     },
       error => {
         //console.log("ERROR " + JSON.stringify(error));
-        this.snackBarService.triggerSnackBar("Error!");
+        this.snackBarService.triggerSnackBar("Error, your token is possibly not valid anymore!");
       })
     }
     

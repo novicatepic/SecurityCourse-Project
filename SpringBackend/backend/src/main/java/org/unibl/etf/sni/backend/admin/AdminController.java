@@ -189,6 +189,7 @@ public class AdminController {
             return BadEntity.returnForbidden();
         }
 
+        System.out.println("comment " + comment.getUserId());
 
         byte[] response = wafService.authorizeCommentsEnablingDisabling(comment.getUserId(), request.getRequestURI(),
                 MessageHasher.createDigitalSignature(comment.getUserId().toString(),

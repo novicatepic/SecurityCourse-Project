@@ -62,7 +62,7 @@ export class ManageCommentsComponent {
     },
       error => {
         //console.log("ERROR " + JSON.stringify(error));
-        this.snackBarService.triggerSnackBar("Error!");
+        this.snackBarService.triggerSnackBar("Error, your token is possibly not valid anymore!");
       })
 
   }
@@ -74,7 +74,7 @@ export class ManageCommentsComponent {
   }
 
   updateComment() {
-
+    document.getElementById("btnclose")?.click();
     if (this.firstForm.valid && this.toAllow) {
 
       this.toAllow.title = this.firstForm.get("title")?.value;
@@ -92,7 +92,7 @@ export class ManageCommentsComponent {
       },
         error => {
           //console.log("ERROR " + JSON.stringify(error));
-          this.snackBarService.triggerSnackBar("Comment not activated!");
+          this.snackBarService.triggerSnackBar("Comment not activated, your token is possibly not valid anymore!");
         })
     }
 

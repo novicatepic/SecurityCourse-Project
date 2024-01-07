@@ -172,7 +172,7 @@ export class AdminManageSingleAccountComponent {
       },
       error => {
         //console.log("ERROR " + JSON.stringify(error));
-        this.snackBarService.triggerSnackBar("Couldn't add permissions!");
+        this.snackBarService.triggerSnackBar("Couldn't add permissions, your token is possibly not valid anymore!");
       })
     
     }

@@ -59,7 +59,7 @@ public class SecurityConfig {
                                         .requestMatchers(HttpMethod.POST, "/users/register").permitAll() //UserController
 
                                         .requestMatchers("/api/**").permitAll()
-                                        //.requestMatchers("/comments/test").permitAll()
+                                        .requestMatchers("/comments/mock").permitAll()
 
                                         .requestMatchers(HttpMethod.GET, "/comments/{commentId}/{userId}").hasAnyRole("ADMIN", "MODERATOR")
                                         .requestMatchers("/comments/**").hasAnyRole("ADMIN", "MODERATOR", "FORUM") //CommentController

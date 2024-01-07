@@ -20,9 +20,6 @@ import org.unibl.etf.sni.backend.waf.WAFService;
 @RequestMapping("/auth")
 public class AuthenticationController {
 
-    @Value("${spring.mail.username}")
-    private String email;
-
     private final AuthenticationService authenticationService;
 
     public AuthenticationController(AuthenticationService authenticationService) {

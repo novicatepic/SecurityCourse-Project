@@ -13,7 +13,7 @@
     <a mat-list-item routerLink="/">Home</a>
     <a *ngIf="this.user.role=='ROLE_ADMIN'" mat-list-item routerLink="/manage-accounts">Account Requests</a>
     <a *ngIf="this.user.role=='ROLE_ADMIN'" mat-list-item routerLink="/manage-account-permissions">Account Permissions</a>
-    <a mat-list-item routerLink="/manage-comments">Manage Comments</a>
+    <a *ngIf="this.user.role=='ROLE_ADMIN' || this.user.role=='ROLE_MODERATOR'" mat-list-item routerLink="/manage-comments">Manage Comments</a>
     <a routerLink="/" mat-list-item (click)="logout()">Logout</a>
   </mat-nav-list>
   <span *ngIf="this.loggedIn">
@@ -44,7 +44,7 @@
         <a *ngIf="this.user.role=='ROLE_ADMIN'" routerLink="/manage-accounts">Account Requests</a>
         <a *ngIf="this.user.role=='ROLE_ADMIN'" routerLink="/manage-account-permissions">Account Permissions</a>
 
-        <a  routerLink="/manage-comments">Comment requests</a>
+        <a *ngIf="this.user.role=='ROLE_ADMIN' || this.user.role=='ROLE_MODERATOR'" routerLink="/manage-comments">Comment requests</a>
 
         <!-- Text near the dropdown menu -->
         <span class="dropdown-text" *ngIf="!(isHandset$ | async)">

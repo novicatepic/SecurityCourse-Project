@@ -10,15 +10,14 @@ import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.*;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 
@@ -28,6 +27,18 @@ public class CertificateManager {
     private static final String KEYSTORE_FILE_PATH = "./keystore.jks";
     private static final String KEYSTORE_TYPE = "JKS";
     private static final String MY_KEY_ALIAS = "myKeyAlias";
+
+    /*@Value("${spring.keystore.password}")
+    private static String KEYSTORE_PASSWORD;
+
+    @Value("${spring.keystore.file-path}")
+    private static String KEYSTORE_FILE_PATH;
+
+    @Value("${spring.keystore.type}")
+    private static String KEYSTORE_TYPE;
+
+    @Value("${spring.keystore.alias}")
+    private static String MY_KEY_ALIAS;*/
 
     private KeyStore keyStore;
 
