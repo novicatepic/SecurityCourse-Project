@@ -161,21 +161,17 @@ public class WAFService {
 
     public byte[] authorizeCreationUserPermissionsForRoomAndComment(Integer roomId, Integer userId, String route, byte[] roomIdByte,
                                                                      byte[] userIdByte) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, KeyStoreException, InvalidKeyException, NotFoundException {
-        //System.out.println("a");
         Boolean x = checkRequestValidity(roomId.toString(), route, roomIdByte);
         if (x != null) {
             return returnBadMessage();
         }
-        //System.out.println("b");
         Boolean y = checkRequestValidity(userId.toString(), route, userIdByte);
         if (y != null) {
             return returnBadMessage();
         }
-        //System.out.println("c");
 
         UserRoomPermissionEntity userRoomPermissionEntity = userRoomPermissionService.getPermissionForRoomAndUser(userId, roomId);
         if(userRoomPermissionEntity.getCanCreate()) {
-            System.out.println("Can create");
             return MessageHasher.createDigitalSignature(ProtocolMessages.OK.toString(), CertificateAliasResolver.wafAlias);
         } else {
             blackListToken();
@@ -238,11 +234,7 @@ public class WAFService {
     }
 
     public ProtocolMessages checkDigitallySignedMessage(String messageStr, String route, byte[] message) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, UnrecoverableKeyException, KeyStoreException {
-        System.out.println("message " + messageStr);
         if(!Validator.checkMessageValidity(messageStr, message, accessControllerCertificate)) {
-            //byte[] mssg = createDigitalSignature(messageStr, CertificateAliasResolver.wafAlias);
-            //siemService.checkDigitallySignedMessage(messageStr, mssg, route, Status.CHANGED);
-
             return ProtocolMessages.NOT_OK_FIRST_LEVEL;
         } else {
             byte[] mssg = createDigitalSignature(messageStr, CertificateAliasResolver.wafAlias);
@@ -319,7 +311,6 @@ public class WAFService {
     }
 
     public void logoutUser() {
-        //System.out.println("Added token " + token + " to blacklist");
         this.tokenBlackListService.addToBlacklist(token);
     }
 }

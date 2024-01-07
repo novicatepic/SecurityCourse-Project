@@ -10,7 +10,6 @@ import org.unibl.etf.sni.backend.certificate.CertificateAliasResolver;
 import org.unibl.etf.sni.backend.certificate.MessageHasher;
 import org.unibl.etf.sni.backend.certificate.Validator;
 import org.unibl.etf.sni.backend.exception.NotFoundException;
-import org.unibl.etf.sni.backend.jsonconverter.JSONConverter;
 import org.unibl.etf.sni.backend.jwtconfig.TokenExtractor;
 import org.unibl.etf.sni.backend.protocol.ProtocolMessages;
 import org.unibl.etf.sni.backend.room.RoomModel;
@@ -43,7 +42,7 @@ public class UserRoomPermissionController {
 
         tokenExtractor(request);
 
-        byte[] response = wafService.authorizePermissionModification(entity.getUserId(), "/permissions/update-role", MessageHasher.createDigitalSignature(entity.getUserId().toString(),
+        byte[] response = wafService.authorizePermissionModification(entity.getUserId(), request.getRequestURI(), MessageHasher.createDigitalSignature(entity.getUserId().toString(),
                 CertificateAliasResolver.acAlias));
         if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), response, WAFService.wafCertificate)) {
             return BadEntity.returnForbidden();
@@ -58,11 +57,11 @@ public class UserRoomPermissionController {
 
         tokenExtractor(request);
 
-        if(!wafService.checkNumberLength(userId, "/permissions/set/"+userId)) {
+        if(!wafService.checkNumberLength(userId, request.getRequestURI())) {
             return BadEntity.returnBadRequst();
         }
 
-        byte[] response = wafService.authorizePermissionModification(userId, "/permissions/set/"+userId, MessageHasher.createDigitalSignature(userId.toString(),
+        byte[] response = wafService.authorizePermissionModification(userId, request.getRequestURI(), MessageHasher.createDigitalSignature(userId.toString(),
                 CertificateAliasResolver.acAlias));
         if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), response, WAFService.wafCertificate)) {
             return BadEntity.returnForbidden();
@@ -76,14 +75,14 @@ public class UserRoomPermissionController {
     public ResponseEntity<UserRoomPermissionEntity> getPermissionsForProgram(
             @PathVariable("userId") Integer userId,
             @PathVariable("roomId") Integer roomId,
-            HttpServletRequest request) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException, NotFoundException {
+            HttpServletRequest request) throws NotFoundException {
 
         tokenExtractor(request);
 
-        if(!wafService.checkNumberLength(userId, "/permissions/"+roomId+"/"+userId)) {
+        if(!wafService.checkNumberLength(userId, request.getRequestURI())) {
             return BadEntity.returnBadRequst();
         }
-        if(!wafService.checkNumberLength(roomId, "/permissions/"+roomId+"/"+userId)) {
+        if(!wafService.checkNumberLength(roomId, request.getRequestURI())) {
             return BadEntity.returnBadRequst();
         }
 
@@ -96,11 +95,11 @@ public class UserRoomPermissionController {
 
         tokenExtractor(request);
 
-        if(!wafService.checkNumberLength(userId, "/permissions/unset/"+userId)) {
+        if(!wafService.checkNumberLength(userId, request.getRequestURI())) {
             return BadEntity.returnBadRequst();
         }
 
-        byte[] response = wafService.authorizePermissionModification(userId, "/permissions/unset/"+userId, MessageHasher.createDigitalSignature(userId.toString(),
+        byte[] response = wafService.authorizePermissionModification(userId, request.getRequestURI(), MessageHasher.createDigitalSignature(userId.toString(),
                 CertificateAliasResolver.acAlias));
         if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), response, WAFService.wafCertificate)) {
             return BadEntity.returnForbidden();

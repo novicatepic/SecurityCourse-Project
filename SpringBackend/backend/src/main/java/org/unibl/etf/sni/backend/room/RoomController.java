@@ -1,5 +1,6 @@
 package org.unibl.etf.sni.backend.room;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,9 +35,10 @@ public class RoomController {
     private WAFService wafService;
 
     @GetMapping("/comments/{roomId}")
-    public ResponseEntity<List<CommentModel>> commentsForRoom(@PathVariable("roomId") Integer roomId) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException {
+    public ResponseEntity<List<CommentModel>> commentsForRoom(@PathVariable("roomId") Integer roomId
+            , HttpServletRequest request)  {
 
-        if(!wafService.checkNumberLength(roomId, "/rooms/comments/"+roomId)) {
+        if(!wafService.checkNumberLength(roomId, request.getRequestURI())) {
             return BadEntity.returnBadRequst();
         }
 
@@ -49,9 +51,9 @@ public class RoomController {
     }
 
     @GetMapping("/{roomId}")
-    public ResponseEntity<RoomModel> getRoomById(@PathVariable("roomId") Integer roomId) throws NotFoundException, UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException {
+    public ResponseEntity<RoomModel> getRoomById(@PathVariable("roomId") Integer roomId, HttpServletRequest request) throws NotFoundException {
 
-        if(!wafService.checkNumberLength(roomId, "/rooms/"+roomId)) {
+        if(!wafService.checkNumberLength(roomId, request.getRequestURI())) {
             return BadEntity.returnBadRequst();
         }
 

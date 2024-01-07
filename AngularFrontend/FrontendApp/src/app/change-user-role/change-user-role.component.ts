@@ -59,14 +59,14 @@ export class ChangeUserRoleComponent {
     if(this.secondForm.valid && roleValue != user.role) {
       user.role = roleValue;
       user.authorities = null;
-      console.log("USER " + JSON.stringify(user));
+      //console.log("USER " + JSON.stringify(user));
       
       this.roleService.modifyUser(user).subscribe((data) => {
-        console.log(data);
+        //console.log(data);
         this.snackBarService.triggerSnackBar("Role modified!");
       },
       error => {
-        console.log("ERROR " + JSON.stringify(error));
+        //console.log("ERROR " + JSON.stringify(error));
         this.snackBarService.triggerSnackBar("Couldn't modify role!");
       })
     }

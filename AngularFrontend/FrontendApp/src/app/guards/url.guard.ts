@@ -19,9 +19,7 @@ export class UrlGuard {
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     
     const id = route.paramMap.get('id');
-    //console.log("INNN !!!");
     this.jwtService.getUserById2(id).subscribe((user: any) => {
-        //console.log(" USER   == = = =" + user.role);
         if(user.role == "ROLE_ADMIN") {
           this.router.navigate(['/']);
           return false;

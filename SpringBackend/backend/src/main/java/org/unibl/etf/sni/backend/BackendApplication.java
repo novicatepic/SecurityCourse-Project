@@ -12,10 +12,7 @@ import java.security.cert.Certificate;
 @SpringBootApplication
 public class BackendApplication {
 
-	public static void main(String[] args) throws Exception {
-
-		//new CertificateManager().renewCertificate("siem");
-
+	public static void main(String[] args) {
 		SpringApplication.run(BackendApplication.class, args);
 	}
 

@@ -8,13 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import org.unibl.etf.sni.backend.authorization.BadEntity;
 import org.unibl.etf.sni.backend.certificate.CertificateAliasResolver;
 import org.unibl.etf.sni.backend.certificate.MessageHasher;
-import org.unibl.etf.sni.backend.certificate.SymmetricKeyGenerator;
 import org.unibl.etf.sni.backend.certificate.Validator;
 import org.unibl.etf.sni.backend.comment.CommentModel;
 import org.unibl.etf.sni.backend.exception.NotFoundException;
-import org.unibl.etf.sni.backend.jsonconverter.JSONConverter;
 import org.unibl.etf.sni.backend.jwtconfig.TokenExtractor;
-import org.unibl.etf.sni.backend.log.MessageProcessor;
 import org.unibl.etf.sni.backend.user.UserModel;
 import org.unibl.etf.sni.backend.protocol.ProtocolMessages;
 import org.unibl.etf.sni.backend.waf.WAFService;
@@ -22,15 +19,11 @@ import org.unibl.etf.sni.backend.waf.WAFService;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
 import java.security.InvalidKeyException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
-import java.security.cert.Certificate;
 import java.util.List;
-
-import static org.unibl.etf.sni.backend.certificate.MessageHasher.createDigitalSignature;
 
 //@CrossOrigin("*")
 @CrossOrigin(origins = "https://localhost:4200")
@@ -49,7 +42,7 @@ public class AdminController {
 
         tokenExtractor(request);
 
-        if(!wafService.checkNumberLength(userId, "/admins/users/"+userId)) {
+        if(!wafService.checkNumberLength(userId, request.getRequestURI())) {
             return BadEntity.returnBadRequst();
         }
 
@@ -73,7 +66,7 @@ public class AdminController {
 
         tokenExtractor(request);
 
-        if(!wafService.checkNumberLength(userId, "/admins/comments/{userId}/"+userId)) {
+        if(!wafService.checkNumberLength(userId, request.getRequestURI())) {
             return BadEntity.returnBadRequst();
         }
 
@@ -86,11 +79,9 @@ public class AdminController {
 
         tokenExtractor(request);
 
-        if(!wafService.checkNumberLength(adminId, "/admins/waiting-requests/"+adminId)) {
+        if(!wafService.checkNumberLength(adminId, request.getRequestURI())) {
             return BadEntity.returnBadRequst();
         }
-
-        System.out.println("In waiting request!!!");
 
         return new ResponseEntity<>(service.getWaitingUsers(adminId), HttpStatus.OK);
     }
@@ -112,7 +103,7 @@ public class AdminController {
             return BadEntity.returnForbidden();
         }
 
-        if(!wafService.checkNumberLength(user.getId(), "/admins/update-role/"+user.getId())) {
+        if(!wafService.checkNumberLength(user.getId(), request.getRequestURI())) {
             return BadEntity.returnBadRequst();
         }
 
@@ -120,7 +111,7 @@ public class AdminController {
             return BadEntity.returnForbidden();
         }
 
-        byte[] response = wafService.authorizePermissionModification(user.getId(), "/update-role", MessageHasher.createDigitalSignature(user.getId().toString(),
+        byte[] response = wafService.authorizePermissionModification(user.getId(), request.getRequestURI(), MessageHasher.createDigitalSignature(user.getId().toString(),
                 CertificateAliasResolver.acAlias));
         if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), response, WAFService.wafCertificate)) {
             return BadEntity.returnForbidden();
@@ -136,7 +127,7 @@ public class AdminController {
 
         tokenExtractor(request);
 
-        if(!wafService.checkNumberLength(adminId, "/admins/enable-users/"+adminId)) {
+        if(!wafService.checkNumberLength(adminId, request.getRequestURI())) {
             return BadEntity.returnBadRequst();
         }
 
@@ -152,7 +143,7 @@ public class AdminController {
             return BadEntity.returnForbidden();
         }
 
-        byte[] response = wafService.authorizePermissionModification(user.getId(), "/admins/update-role", MessageHasher.createDigitalSignature(user.getId().toString(),
+        byte[] response = wafService.authorizePermissionModification(user.getId(), request.getRequestURI(), MessageHasher.createDigitalSignature(user.getId().toString(),
                 CertificateAliasResolver.acAlias));
         if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), response, WAFService.wafCertificate)) {
             return BadEntity.returnForbidden();
@@ -168,14 +159,14 @@ public class AdminController {
 
         tokenExtractor(request);
 
-        if(!wafService.checkNumberLength(adminId, "/admins/disable-users/"+adminId+"/"+userId)) {
+        if(!wafService.checkNumberLength(adminId, request.getRequestURI())) {
             return BadEntity.returnBadRequst();
         }
-        if(!wafService.checkNumberLength(userId, "/admins/disable-users/"+adminId+"/"+userId)) {
+        if(!wafService.checkNumberLength(userId, request.getRequestURI())) {
             return BadEntity.returnBadRequst();
         }
 
-        byte[] response = wafService.authorizePermissionModification(userId, "/admins/update-role", MessageHasher.createDigitalSignature(userId.toString(),
+        byte[] response = wafService.authorizePermissionModification(userId, request.getRequestURI(), MessageHasher.createDigitalSignature(userId.toString(),
                 CertificateAliasResolver.acAlias));
         if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), response, WAFService.wafCertificate)) {
             return BadEntity.returnForbidden();
@@ -199,7 +190,7 @@ public class AdminController {
         }
 
 
-        byte[] response = wafService.authorizeCommentsEnablingDisabling(comment.getUserId(), "/admins/enable-comments",
+        byte[] response = wafService.authorizeCommentsEnablingDisabling(comment.getUserId(), request.getRequestURI(),
                 MessageHasher.createDigitalSignature(comment.getUserId().toString(),
                         CertificateAliasResolver.acAlias));
         if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), response, WAFService.wafCertificate)) {
@@ -225,7 +216,7 @@ public class AdminController {
             return BadEntity.returnForbidden();
         }
 
-        byte[] response = wafService.authorizeCommentsEnablingDisabling(comment.getUserId(), "/admins/disable-comments",
+        byte[] response = wafService.authorizeCommentsEnablingDisabling(comment.getUserId(), request.getRequestURI(),
                 MessageHasher.createDigitalSignature(comment.getUserId().toString(),
                         CertificateAliasResolver.acAlias));
         if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), response, WAFService.wafCertificate)) {

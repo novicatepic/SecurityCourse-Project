@@ -45,18 +45,12 @@ export class ShowForumComponent {
       this.loadRoomInfo();
       this.loadData();
       this.jwtService.getUserById().subscribe((data: any) => {
-        //console.log("data " + JSON.stringify(data));
         this.user = data;
-        //console.log( "USER="+this.user.role);
 
         this.service.loadPermissionsForForum(this.roomId, this.user.id).subscribe((permissionsUser) => {
           this.permissions = permissionsUser;
-          /*console.log("permission create " + this.permissions.canCreate);
-          console.log("permission create " + this.permissions.canUpdate);
-          console.log("permission create " + this.permissions.canDelete);*/
         },
         error => {
-          //console.log(error);
           this.snackBarService.triggerSnackBar("Error loading permissions!");
         });
 
@@ -89,13 +83,10 @@ export class ShowForumComponent {
   loadData() {
 
       this.service.loadComments(this.roomId).subscribe(async (data) => {
-        //console.log(data);
         this.comments = data;
-        //console.log(this.comments);
         await this.updatePages();
       },
       error => {
-        //console.log(error);
         this.snackBarService.triggerSnackBar("Error creating user!");
       });
 
@@ -106,7 +97,6 @@ export class ShowForumComponent {
       this.room = data;
     },
     error => {
-      //console.log(error);
       this.snackBarService.triggerSnackBar("404");
     })
   }
@@ -128,7 +118,6 @@ export class ShowForumComponent {
         this.router.navigate(['/room'+this.roomId]);
       }, (err) => {
         this.snackBarService.triggerSnackBar("Error saving message!");
-        console.log(err);
       })
 
     }
@@ -138,22 +127,18 @@ export class ShowForumComponent {
     this.toUpdate = comment;
     this.updateForm.get("updateTitle")?.setValue(comment.title);
     this.updateForm.get("updateContent")?.setValue(comment.content);
-    console.log("toupdt " + JSON.stringify(comment));
   }
 
   updateComment() {
     if(this.toUpdate != undefined && this.updateForm.valid) {
       this.toUpdate.title = this.updateForm.get("updateTitle")?.value;
       this.toUpdate.content = this.updateForm.get("updateContent")?.value;
-
-      console.log("to updt: " + JSON.stringify(this.toUpdate));
       this.toUpdate.writer = undefined;
       this.commentService.updateComment(this.toUpdate).subscribe((data) => {
         this.snackBarService.triggerSnackBar("Updated comment!");
         this.router.navigate(['/room'+this.roomId]);
       }, (err) => {
         this.snackBarService.triggerSnackBar("Error updating comment!");
-        console.log(err);
       })
 
     }
@@ -166,7 +151,6 @@ export class ShowForumComponent {
         this.snackBarService.triggerSnackBar("Deleted comment!");
         this.router.navigate(['/room'+this.roomId]);
       }, (err) => {
-        console.log(err);
         this.snackBarService.triggerSnackBar("Error deleting comment!");
       });
   }

@@ -39,7 +39,7 @@ export class LoginComponent {
 
 
       this.service.loginUserUPW(user).subscribe((data) => {
-        console.log(JSON.stringify(data));
+        //console.log(JSON.stringify(data));
         if(data.success) {
           this.snackBarService.triggerSnackBar("Correct credentials!");
           this.router.navigate(['/code/'+data.userId]);
@@ -48,7 +48,7 @@ export class LoginComponent {
         }
       },
       error => {
-        console.log("ERROR " + JSON.stringify(error));
+        //console.log("ERROR " + JSON.stringify(error));
         this.snackBarService.triggerSnackBar("Incorrect credentials!");
       } );
 

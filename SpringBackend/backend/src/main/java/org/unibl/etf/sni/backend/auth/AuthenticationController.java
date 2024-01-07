@@ -58,7 +58,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/code")
-    public ResponseEntity<JwtAuthResponse> codeEntrance(@Valid @RequestBody Code code) throws InvalidUsernameException, NotFoundException {
+    public ResponseEntity<JwtAuthResponse> codeEntrance(@Valid @RequestBody Code code) throws  NotFoundException {
 
         if(wafService.checkMySQLInjection(code.getCode())
         ) {
@@ -83,7 +83,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("/logout")
-    public void logout(HttpServletRequest request) throws  NotFoundException {
+    public void logout(HttpServletRequest request) {
         tokenExtractor(request);
 
         wafService.logoutUser();

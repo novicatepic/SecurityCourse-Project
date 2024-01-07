@@ -38,11 +38,11 @@ export class ManageCommentsComponent {
 
   readData() {
     this.service.getComments(this.userId).subscribe((data) => {
-      console.log(JSON.stringify(data));
+      //console.log(JSON.stringify(data));
       this.comments = data;
     },
       error => {
-        console.log("ERROR " + JSON.stringify(error));
+        //console.log("ERROR " + JSON.stringify(error));
         this.snackBarService.triggerSnackBar("Couldn't get data!");
       });
   }
@@ -56,12 +56,12 @@ export class ManageCommentsComponent {
     comment.writer = undefined;
 
     this.service.terminateComment(comment).subscribe((data) => {
-      console.log(JSON.stringify(data));
+      //console.log(JSON.stringify(data));
       this.snackBarService.triggerSnackBar("Comment terminated!");
       this.router.navigate(['/manage-comments']);
     },
       error => {
-        console.log("ERROR " + JSON.stringify(error));
+        //console.log("ERROR " + JSON.stringify(error));
         this.snackBarService.triggerSnackBar("Error!");
       })
 
@@ -83,15 +83,15 @@ export class ManageCommentsComponent {
       this.toAllow.enabled = true;
       this.toAllow.forbidden = false;
       this.toAllow.writer = undefined;
-      console.log(JSON.stringify(this.toAllow));
+      //console.log(JSON.stringify(this.toAllow));
 
       this.commentModificationService.allowComment(this.toAllow).subscribe((data) => {
-        console.log(JSON.stringify(data));
+        //console.log(JSON.stringify(data));
         this.snackBarService.triggerSnackBar("Comment activated!");
         this.router.navigate(['/manage-comments']);
       },
         error => {
-          console.log("ERROR " + JSON.stringify(error));
+          //console.log("ERROR " + JSON.stringify(error));
           this.snackBarService.triggerSnackBar("Comment not activated!");
         })
     }

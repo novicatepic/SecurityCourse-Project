@@ -32,35 +32,19 @@ public class SIEMService {
 
     public byte[] checkDigitallySignedMessage(String messageStr, byte[] message, String route, Status status) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, UnrecoverableKeyException, KeyStoreException {
         boolean validity = Validator.checkMessageValidity(messageStr, message, wafCertificate);
-        /*Status toWriteStatus;
-        String toWriteMessage;*/
         boolean correct = true;
         if(!validity && status == Status.CORRECT) {
-            /*toWriteStatus = Status.CHANGED;
-            toWriteMessage = "Found change for route " + route +
-                    " with id " + messageStr + " in protocol communication between WAF and SIEM!";*/
             correct = false;
-            //return ProtocolMessages.NOT_OK;
         } else if(validity && status == Status.CORRECT) {
-            /*toWriteStatus = Status.CORRECT;
-            toWriteMessage = "Route " + route + " with id " + messageStr + " not changed in protocol communication" +
-                    " between WAF and SIEM!";*/
             correct = true;
             logAction("Correct try for " + messageStr + " on route " + route, Status.CORRECT);
         }
         else {
-            /*toWriteStatus = Status.CHANGED;
-            toWriteMessage = "Found change for route " + route + " with id " + messageStr + " in protocol communication" +
-                    " between WAF and SIEM!";*/
             correct = false;
         }
 
-
-        //logAction(toWriteMessage, toWriteStatus);
-
         if(correct) {
             return MessageHasher.createDigitalSignature(ProtocolMessages.OK.toString(), CertificateAliasResolver.siemAlias);
-            //return ProtocolMessages.OK;
         }
         return MessageHasher.createDigitalSignature(ProtocolMessages.NOT_OK_SECOND_LEVEL.toString(), CertificateAliasResolver.siemAlias);
 

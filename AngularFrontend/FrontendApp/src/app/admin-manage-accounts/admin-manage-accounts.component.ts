@@ -39,11 +39,11 @@ export class AdminManageAccountsComponent {
 
     //HARD-KODOVANO 1 ISPOD
     this.service.getWaitingRequests(this.userId).subscribe((data) => {
-      console.log(JSON.stringify(data));
+      //console.log(JSON.stringify(data));
       this.users = data;
     },
       error => {
-        console.log("ERROR " + JSON.stringify(error));
+        //console.log("ERROR " + JSON.stringify(error));
         this.snackBarService.triggerSnackBar("Couldn't get data!");
       });
   }
@@ -54,12 +54,12 @@ export class AdminManageAccountsComponent {
     user2.isTerminated = true;
 
     this.service.terminateUser(user2, this.userId).subscribe((data) => {
-      console.log(JSON.stringify(data));
+      //console.log(JSON.stringify(data));
       this.snackBarService.triggerSnackBar("User terminated!");
       this.router.navigate(['/manage-accounts']);
     },
       error => {
-        console.log("ERROR " + JSON.stringify(error));
+        //console.log("ERROR " + JSON.stringify(error));
         this.snackBarService.triggerSnackBar("Error!");
       })
 
@@ -72,12 +72,12 @@ export class AdminManageAccountsComponent {
       user2.role = this.firstForm.get("role")?.value;
       user2.authorities = null;
     this.service.allowUser(user2, this.userId).subscribe((data) => {
-      console.log(JSON.stringify(data));
+      //console.log(JSON.stringify(data));
       this.snackBarService.triggerSnackBar("User activated!");
       this.router.navigate(['/manage-accounts']);
     },
       error => {
-        console.log("ERROR " + JSON.stringify(error));
+        //console.log("ERROR " + JSON.stringify(error));
         this.snackBarService.triggerSnackBar("Error!");
       })
     }

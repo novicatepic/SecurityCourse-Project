@@ -48,11 +48,11 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         }
 
         if(token != null) {
-            System.out.println("ERROR NOTICED");
+            //System.out.println("ERROR NOTICED");
             String errorMessage = "Authorization failed for user '" + username;
             String tokenToAdd = token.substring(7);
             tokenBlackListService.addToBlacklist(tokenToAdd);
-            System.out.println("Token added " + tokenToAdd);
+            //System.out.println("Token added " + tokenToAdd);
             logService.insertNewLog(errorMessage, Status.DANGER);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }

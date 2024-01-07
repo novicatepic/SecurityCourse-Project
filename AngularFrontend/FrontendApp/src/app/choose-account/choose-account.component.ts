@@ -36,11 +36,11 @@ export class ChooseAccountComponent {
 
   readData() {
     this.service.getUsers().subscribe((data) => {
-      console.log(JSON.stringify(data));
+      //console.log(JSON.stringify(data));
       this.users = data;
     },
       error => {
-        console.log("ERROR " + JSON.stringify(error));
+        //console.log("ERROR " + JSON.stringify(error));
         this.snackBarService.triggerSnackBar("Couldn't get data!");
       });
   }

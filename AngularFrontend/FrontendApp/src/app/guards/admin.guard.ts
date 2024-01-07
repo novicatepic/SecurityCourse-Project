@@ -12,9 +12,6 @@ export class AdminGuard {
   canActivate(): boolean {
     const token = this.jwtService.extractToken();
     const tokenInfo = this.jwtService.extractTokenInfo();
-    /*console.log("token = " + JSON.stringify(token));
-    console.log("Expired " + this.jwtService.checkIfTokenExpired(token));
-    console.log("role " + token.role);*/
     if (token && !this.jwtService.checkIfTokenExpired(token) && tokenInfo.role === "ROLE_ADMIN") {
       return true;
     } else {

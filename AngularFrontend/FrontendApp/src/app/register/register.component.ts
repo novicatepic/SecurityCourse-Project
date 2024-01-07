@@ -35,17 +35,17 @@ export class RegisterComponent {
       this.firstForm.get('email')?.value);
 
 
-      console.log(user);
-      console.log(JSON.stringify(user));
+      /*console.log(user);
+      console.log(JSON.stringify(user));*/
 
       this.service.registerUser(user).subscribe((data) => {
         const user = JSON.stringify(data);
-        console.log("user " + user);
+        //console.log("user " + user);
         this.snackService.triggerSnackBar("Registration sent, waiting for admin to approve!");
         this.router.navigate(['/']);
       },
       error => {
-        console.log(error);
+        //console.log(error);
         this.snackService.triggerSnackBar("Error creating user!");
       } );
 

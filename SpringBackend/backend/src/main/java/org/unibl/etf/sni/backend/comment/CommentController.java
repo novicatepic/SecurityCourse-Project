@@ -44,13 +44,13 @@ public class CommentController {
 
         tokenExtractor(request);
 
-        byte[] response = wafService.authorizeUserId(userId, "comments/"+commentId+"/"+userId, MessageHasher.createDigitalSignature(userId.toString(),
+        byte[] response = wafService.authorizeUserId(userId, request.getRequestURI(), MessageHasher.createDigitalSignature(userId.toString(),
                 CertificateAliasResolver.acAlias));
         if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), response, WAFService.wafCertificate)) {
             return BadEntity.returnForbidden();
         }
 
-        if(!wafService.checkNumberLength(commentId, "comments/"+commentId+"/"+userId)) {
+        if(!wafService.checkNumberLength(commentId, request.getRequestURI())) {
             return BadEntity.returnBadRequst();
         }
 
@@ -92,14 +92,14 @@ public class CommentController {
             return BadEntity.returnForbidden();
         }
 
-        byte[] response = wafService.authorizeUserId(commentModel.getUserId(), "/comments", MessageHasher.createDigitalSignature(commentModel.getUserId().toString(),
+        byte[] response = wafService.authorizeUserId(commentModel.getUserId(), request.getRequestURI(), MessageHasher.createDigitalSignature(commentModel.getUserId().toString(),
                 CertificateAliasResolver.acAlias));
         if(!Validator.checkMessageValidity(ProtocolMessages.OK.toString(), response, WAFService.wafCertificate)) {
             return BadEntity.returnForbidden();
         }
 
         byte[] commentResponse = wafService.authorizeCreationUserPermissionsForRoomAndComment(commentModel.getRoomId(),
-                commentModel.getUserId(), "/comments", MessageHasher.createDigitalSignature(commentModel.getRoomId().toString(),
+                commentModel.getUserId(), request.getRequestURI(), MessageHasher.createDigitalSignature(commentModel.getRoomId().toString(),
                 CertificateAliasResolver.acAlias),
                 MessageHasher.createDigitalSignature(commentModel.getUserId().toString(),
                         CertificateAliasResolver.acAlias));
@@ -121,7 +121,7 @@ public class CommentController {
         tokenExtractor(request);
 
         byte[] commentResponse = wafService.authorizeDeleteUserPermissionsForRoomAndComment(roomId,
-                userId, commentId,"/{commentId}/{userId}/{roomId}", MessageHasher.createDigitalSignature(roomId.toString(),
+                userId, commentId,request.getRequestURI(), MessageHasher.createDigitalSignature(roomId.toString(),
                         CertificateAliasResolver.acAlias),
                 MessageHasher.createDigitalSignature(userId.toString(),
                         CertificateAliasResolver.acAlias));
@@ -149,7 +149,7 @@ public class CommentController {
 
         byte[] commentResponse = wafService.authorizeUpdateUserPermissionsForRoomAndComment(commentModel.getRoomId(),
                 commentModel.getUserId(), commentModel.getId(),
-                "/{commentId}/{userId}/{roomId}",
+                request.getRequestURI(),
                 MessageHasher.createDigitalSignature(commentModel.getRoomId().toString(),
                         CertificateAliasResolver.acAlias),
                 MessageHasher.createDigitalSignature(commentModel.getUserId().toString(),

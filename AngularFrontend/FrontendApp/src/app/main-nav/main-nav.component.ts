@@ -28,8 +28,7 @@ export class MainNavComponent {
       this.jwtService.getUserById().subscribe((data: any) => {
         this.loggedIn = true;
         this.user = data;
-     }, (err: any) => console.log("ERR" + err));
-    } //else 
+     })} 
     else {
       this.loggedIn = false;
     }
@@ -42,7 +41,8 @@ export class MainNavComponent {
       this.jwtService.getUserById().subscribe((data: any) => {
         this.loggedIn = true;
         this.user = data;
-     }, (err: any) => console.log("ERR" + err));
+     }
+     );
     });
   }
 
@@ -64,7 +64,7 @@ export class MainNavComponent {
       localStorage.removeItem("user");
       this.loggedIn = false;
       this.logoutService.logoutUser().subscribe(() => {
-        console.log("Blacklisted!");
+        //console.log("Blacklisted!");
       })
       this.router.navigate(['/login']);
     }

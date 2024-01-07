@@ -6,22 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.unibl.etf.sni.backend.authorization.BadEntity;
-import org.unibl.etf.sni.backend.certificate.CertificateAliasResolver;
-import org.unibl.etf.sni.backend.certificate.MessageHasher;
-import org.unibl.etf.sni.backend.certificate.Validator;
 import org.unibl.etf.sni.backend.exception.NotFoundException;
-import org.unibl.etf.sni.backend.jsonconverter.JSONConverter;
 import org.unibl.etf.sni.backend.jwtconfig.TokenExtractor;
-import org.unibl.etf.sni.backend.protocol.ProtocolMessages;
 import org.unibl.etf.sni.backend.waf.WAFService;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.security.InvalidKeyException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
 
 @CrossOrigin("*")
 @RestController
@@ -60,7 +47,7 @@ public class UserController {
 
         tokenExtractor(request);
 
-        if(!wafService.checkNumberLength(userId, "/users/"+userId)) {
+        if(!wafService.checkNumberLength(userId, request.getRequestURI())) {
             return BadEntity.returnBadRequst();
         }
 

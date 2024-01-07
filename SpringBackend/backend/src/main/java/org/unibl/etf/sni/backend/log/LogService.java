@@ -18,13 +18,6 @@ public class LogService {
     @Autowired
     private LogRepository logRepository;
 
-    Certificate wafCertificate = CertificateAliasResolver.getCertificateByAlias(CertificateAliasResolver.wafAlias);
-    Certificate siemCertificate = CertificateAliasResolver.getCertificateByAlias(CertificateAliasResolver.siemAlias);
-
-    public List<LogModel> getAllLogs() {
-        return logRepository.findAll();
-    }
-
     public LogModel insertNewLog(String message, Status status) {
         LogModel model = new LogModel();
         model.setInfo(message);
@@ -35,17 +28,5 @@ public class LogService {
         model.setDate(sqlDate);
         return logRepository.save(model);
     }
-
-    /*public LogModel insertWAFLog(String log, byte[] message) {
-        if(Validator.checkMessageValidity(messageStr, message, accessControllerCertificate)) {
-            String invalid = "Found changed message " + messageStr + " in protocol communication!";
-            byte[] mssg = createDigitalSignature(invalid, CertificateAliasResolver.wafAlias);
-            return ProtocolMessages.OK;
-        }
-
-
-
-        return ProtocolMessages.NOT_OK;
-    }*/
 
 }

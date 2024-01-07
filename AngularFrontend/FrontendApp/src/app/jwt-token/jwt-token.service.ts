@@ -19,7 +19,7 @@ export class JwtTokenService {
       var token = JSON.parse(tokenTemp);
       return token.token;
     }
-    console.log("NULL");
+    //console.log("NULL");
     return null;
   }
 
@@ -27,7 +27,7 @@ export class JwtTokenService {
     var token = this.extractToken();
     if(token) {
       const decodedToken: any = jwtDecode(token);
-      console.log("decoded " + JSON.stringify(decodedToken));
+      //console.log("decoded " + JSON.stringify(decodedToken));
       return decodedToken;
     }
     return null;
@@ -39,7 +39,7 @@ export class JwtTokenService {
       const url = this.baseUrl + tokenInfo.id;
       return this.http.get<any[]>(`${url}`);
     }
-    console.log("NULL");
+    //console.log("NULL");
     return null;
   }
 

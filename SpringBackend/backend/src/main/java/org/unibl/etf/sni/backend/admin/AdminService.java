@@ -88,7 +88,7 @@ public class AdminService {
                 userRoomPermissionEntity.setCanCreate(true);
                 userRoomPermissionEntity.setCanDelete(true);
                 userRoomPermissionEntity.setCanUpdate(true);
-                System.out.println("done");
+                //System.out.println("done");
             } else {
                 //other users everything set to false, admin can correct it later on
                 userRoomPermissionEntity.setCanCreate(false);

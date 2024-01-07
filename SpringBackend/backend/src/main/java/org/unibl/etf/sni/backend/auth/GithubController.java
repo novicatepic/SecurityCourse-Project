@@ -61,7 +61,7 @@ public class GithubController {
         String clientSecret = "4b757f0034a8acbf540362cef9b8bcdf556c5e18";
         String redirectUri = "https://localhost:4200/callback";*/
 
-        System.out.println("Code " + code);
+        //System.out.println("Code " + code);
 
         // Construct the request URL
         URI uri = new URIBuilder("https://github.com/login/oauth/access_token")
@@ -126,7 +126,7 @@ public class GithubController {
     private String extractEmail(String userDetails) {
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(userDetails, JsonObject.class);
-        System.out.println("Extract login json object " + jsonObject);
+        //System.out.println("Extract login json object " + jsonObject);
 
         if (jsonObject.has("email")) {
             return jsonObject.get("email").getAsString();

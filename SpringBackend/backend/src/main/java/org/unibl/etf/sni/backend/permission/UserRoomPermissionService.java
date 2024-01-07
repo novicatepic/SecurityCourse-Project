@@ -28,17 +28,6 @@ public class UserRoomPermissionService {
 
 
     public List<UserRoomPermissionEntity> getSetPermissions(Integer userId) {
-        /*List<UserRoomPermissionEntity> entities = repository.findAll();
-
-        List<RoomModel> allRooms = roomService.getAllRooms();
-
-        Set<Integer> roomIdsFromEntities = entities.stream()
-                .map(UserRoomPermissionEntity::getRoomId)
-                .collect(Collectors.toSet());
-
-        return  allRooms.stream()
-                .filter(room -> roomIdsFromEntities.contains(room.getId()))
-                .collect(Collectors.toList());*/
 
         return repository.findByUserId(userId);
 

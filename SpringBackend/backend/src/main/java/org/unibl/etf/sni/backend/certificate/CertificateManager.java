@@ -92,7 +92,7 @@ public class CertificateManager {
 
     public X509Certificate generateCertificate(String alias, int validityDays, String signerAlias) {
         try {
-            System.out.println("In");
+            //System.out.println("In");
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
             keyPairGenerator.initialize(2048);
             KeyPair keyPair = keyPairGenerator.generateKeyPair();
@@ -117,7 +117,7 @@ public class CertificateManager {
             keyStore.load(fis, KEYSTORE_PASSWORD.toCharArray());
 
             // Set the key entry
-            System.out.println("Alias " + alias);
+            //System.out.println("Alias " + alias);
             keyStore.setKeyEntry(alias, keyPair.getPrivate(), KEYSTORE_PASSWORD.toCharArray(), new Certificate[]{certificate});
 
         } catch (Exception e) {
@@ -127,7 +127,7 @@ public class CertificateManager {
         try (FileOutputStream fos = new FileOutputStream(KEYSTORE_FILE_PATH)) {
             // Store the updated keystore back to the file
             keyStore.store(fos, KEYSTORE_PASSWORD.toCharArray());
-            System.out.println("Written");
+           // System.out.println("Written");
         } catch (Exception e) {
             throw new RuntimeException("Error writing certificate to file", e);
         }
@@ -199,7 +199,7 @@ public class CertificateManager {
             disableCertificate(alias);
             generateCertificate(alias, 365, MY_KEY_ALIAS);
 
-            System.out.println("Renewed certificate");
+            //System.out.println("Renewed certificate");
         } catch(Exception e) {
             e.printStackTrace();
         }

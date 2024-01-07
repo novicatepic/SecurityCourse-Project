@@ -38,7 +38,7 @@ export class AdminManageSingleAccountComponent {
       this.id = params.get('id');
     });
 
-    console.log("IN HERE!!!");
+    //console.log("IN HERE!!!");
 
     this.readData();
 
@@ -81,7 +81,7 @@ export class AdminManageSingleAccountComponent {
           this.snackBarService.triggerSnackBar("404 Not Found");
         } else {
           // Handle other errors
-          console.error("Unexpected error:", error);
+          //console.error("Unexpected error:", error);
           this.snackBarService.triggerSnackBar("Error");
         }
       }
@@ -100,7 +100,7 @@ export class AdminManageSingleAccountComponent {
           this.snackBarService.triggerSnackBar("404 Not Found");
         } else {
           // Handle other errors
-          console.error("Unexpected error:", error);
+          //console.error("Unexpected error:", error);
           this.snackBarService.triggerSnackBar("Error");
         }
       }
@@ -111,7 +111,7 @@ export class AdminManageSingleAccountComponent {
   changeCheckboxes() {
     const selectedRoomId = this.thirdForm.get('newRoom')?.value;
 
-    console.log("sel room " + selectedRoomId);
+    //console.log("sel room " + selectedRoomId);
 
     var selectedRoom = this.permittedRooms.filter((room) => {
       return room.roomId == selectedRoomId;
@@ -136,12 +136,12 @@ export class AdminManageSingleAccountComponent {
       const permissions = new UserPermissionsRoom(this.id, roomId, createPermission, updatePermission, deletePermission);
 
       this.service.addPermissions(permissions).subscribe((data) => {
-        console.log(JSON.stringify(data));
+        //console.log(JSON.stringify(data));
         this.snackBarService.triggerSnackBar("Permission added!");
         this.router.navigate(['/manage-account-permissions']);
     },
     error => {
-      console.log("ERROR " + JSON.stringify(error));
+      //console.log("ERROR " + JSON.stringify(error));
       this.snackBarService.triggerSnackBar("Couldn't add permissions!");
     })
     }
@@ -163,15 +163,15 @@ export class AdminManageSingleAccountComponent {
       // Assuming UserPermissionsRoom has appropriate constructor parameters
       const permissions = new UserPermissionsRoom(this.id, roomId, createPermission, updatePermission, deletePermission);
       
-      console.log("perm " + JSON.stringify(permissions));
+      //console.log("perm " + JSON.stringify(permissions));
 
       this.service.addPermissions(permissions).subscribe((data) => {
-          console.log(JSON.stringify(data));
+          //console.log(JSON.stringify(data));
           this.snackBarService.triggerSnackBar("Permission added!");
           this.router.navigate(['/manage-account-permissions']);
       },
       error => {
-        console.log("ERROR " + JSON.stringify(error));
+        //console.log("ERROR " + JSON.stringify(error));
         this.snackBarService.triggerSnackBar("Couldn't add permissions!");
       })
     

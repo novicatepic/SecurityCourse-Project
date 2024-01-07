@@ -11,7 +11,7 @@ export class AuthGuard {
 
   canActivate(): boolean {
     const token = this.jwtService.extractToken();
-    console.log("token = " + JSON.stringify(token));
+    //console.log("token = " + JSON.stringify(token));
     if (token && !this.jwtService.checkIfTokenExpired(token)) {
       return true;
     } else {
