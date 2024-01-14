@@ -19,6 +19,11 @@ public class CommentService {
         return repository.save(commentModel);
     }
 
+    public CommentModel updateComment(CommentModel commentModel) {
+        commentModel.setEnabled(false);
+        return repository.save(commentModel);
+    }
+
     public SuccessOperation deleteComment(Integer id) {
         repository.deleteById(id);
         return new SuccessOperation(true, "Successfully deleted comment with id " + id);

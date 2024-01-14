@@ -137,7 +137,7 @@ export class ShowForumComponent {
       this.toUpdate.content = this.updateForm.get("updateContent")?.value;
       this.toUpdate.writer = undefined;
       this.commentService.updateComment(this.toUpdate).subscribe((data) => {
-        this.snackBarService.triggerSnackBar("Updated comment!");
+        this.snackBarService.triggerSnackBar("Comment sent for checking!");
 
         this.router.navigate(['/room/'+this.roomId]);
       }, (err) => {

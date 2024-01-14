@@ -64,7 +64,7 @@ public class SIEMService {
         }
     }
 
-    private void logAction(String message, Status status) {
+    public void logAction(String message, Status status) {
         LogModel logModel = new LogModel();
         logModel.setInfo(message);
         logModel.setStatus(status);

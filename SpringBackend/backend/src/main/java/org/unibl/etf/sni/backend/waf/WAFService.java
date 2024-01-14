@@ -269,6 +269,14 @@ public class WAFService {
         }
     }
 
+    public boolean checkIfCommentIsForbidden(CommentModel commentModel) {
+        if(commentModel.getForbidden()) {
+            siemService.logAction("Tried to work with forbidden comment! User " + commentModel.getWriter().getUsername(), Status.DANGER);
+            blackListToken();
+            return true;
+        }
+        return false;
+    }
 
     private Boolean authorizeUserIdInternal(Integer userId) {
         if(AuthorizeRequests.checkIdValidity(userId)) {

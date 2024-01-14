@@ -58,10 +58,10 @@ public class CommentController {
         return new ResponseEntity<>(service.findCommentById(commentId), HttpStatus.OK);
     }
 
-    @GetMapping("/test")
+    /*@GetMapping("/test")
     public String getStr() {
         return "abc";
-    }
+    }*/
 
     /*@PostMapping("/mock")
     public void createComments()   {
@@ -148,6 +148,10 @@ public class CommentController {
             return BadEntity.returnForbidden();
         }
 
+        if(wafService.checkIfCommentIsForbidden(commentModel)) {
+            return BadEntity.returnForbidden();
+        }
+
         byte[] commentResponse = wafService.authorizeUpdateUserPermissionsForRoomAndComment(commentModel.getRoomId(),
                 commentModel.getUserId(), commentModel.getId(),
                 request.getRequestURI(),
@@ -160,7 +164,7 @@ public class CommentController {
         }
 
 
-        return new ResponseEntity<>(service.createComment(commentModel), HttpStatus.OK);
+        return new ResponseEntity<>(service.updateComment(commentModel), HttpStatus.OK);
     }
 
     private void tokenExtractor(HttpServletRequest request) {

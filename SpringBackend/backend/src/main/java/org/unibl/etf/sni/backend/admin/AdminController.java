@@ -181,6 +181,10 @@ public class AdminController {
 
         tokenExtractor(request);
 
+        if(wafService.checkIfCommentIsForbidden(comment)) {
+            return BadEntity.returnForbidden();
+        }
+
         if(wafService.checkMySQLInjection(comment.getContent()) || wafService.checkMySQLInjection(comment.getTitle())) {
             return BadEntity.returnForbidden();
         }
@@ -189,7 +193,6 @@ public class AdminController {
             return BadEntity.returnForbidden();
         }
 
-        System.out.println("comment " + comment.getUserId());
 
         byte[] response = wafService.authorizeCommentsEnablingDisabling(comment.getUserId(), request.getRequestURI(),
                 MessageHasher.createDigitalSignature(comment.getUserId().toString(),
@@ -208,6 +211,10 @@ public class AdminController {
             , HttpServletRequest request) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException {
 
         tokenExtractor(request);
+
+        if(wafService.checkIfCommentIsForbidden(comment)) {
+            return BadEntity.returnForbidden();
+        }
 
         if(wafService.checkMySQLInjection(comment.getContent()) || wafService.checkMySQLInjection(comment.getTitle())) {
             return BadEntity.returnForbidden();
