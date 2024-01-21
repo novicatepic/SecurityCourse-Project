@@ -85,10 +85,11 @@ public class GithubController {
         String accessToken = extractAccessToken(responseBody);
         String userDetails = getUserDetails(accessToken);
         String email = extractEmail(userDetails);
+        String username = extractLogin(userDetails);
 
-        UserModel userModel = userService.findByEmail(email);
+        //UserModel userModel = userService.findByEmail(email);
 
-        return new ResponseEntity<>(authenticationService.githubLogin(userModel), HttpStatus.OK);
+        return new ResponseEntity<>(authenticationService.githubMailLogin(email, username), HttpStatus.OK);
     }
 
     private String extractAccessToken(String responseBody) {
@@ -126,7 +127,6 @@ public class GithubController {
     private String extractEmail(String userDetails) {
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(userDetails, JsonObject.class);
-        //System.out.println("Extract login json object " + jsonObject);
 
         if (jsonObject.has("email")) {
             return jsonObject.get("email").getAsString();
@@ -135,50 +135,14 @@ public class GithubController {
         return null;
     }
 
-    /*private String extractLogin(String userDetails) {
+    private String extractLogin(String userDetails) {
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(userDetails, JsonObject.class);
-        System.out.println("Extract login json object " + jsonObject);
+
         if (jsonObject.has("login")) {
             return jsonObject.get("login").getAsString();
         }
-        return null; // Return null if the login field is not present
-    }*/
-
-    /*private String getUserEmail(String accessToken) throws URISyntaxException, IOException {
-        URI uri = new URIBuilder("https://api.github.com/user/emails")
-                .build();
-
-        // Create an HTTP GET request
-        CloseableHttpClient client = HttpClientBuilder.create().build();
-        HttpGet getRequest = new HttpGet(uri);
-        getRequest.setHeader("Authorization", "Bearer " + accessToken);
-
-        // Send the request and get the response
-        CloseableHttpResponse response = client.execute(getRequest);
-
-        // Check the status code
-        int statusCode = response.getStatusLine().getStatusCode();
-        if (statusCode == 200) {
-            // If the status code is OK, parse the JSON response
-            HttpEntity entity = response.getEntity();
-            String responseBody = EntityUtils.toString(entity);
-
-            // Parse the JSON response to get the email
-            JsonArray emailArray = JsonParser.parseString(responseBody).getAsJsonArray();
-            if (emailArray.size() > 0) {
-                JsonObject emailObject = emailArray.get(0).getAsJsonObject();
-                if (emailObject.has("email")) {
-                    return emailObject.get("email").getAsString();
-                }
-            }
-        } else {
-            // If the status code indicates an error, handle it appropriately
-            System.out.println("Error getting user email. Status code: " + statusCode);
-        }
-
-        return null; // Return null if the email cannot be extracted
-    }*/
-
+        return null;
+    }
 
 }

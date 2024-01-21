@@ -7,7 +7,7 @@
         <h1 class="display-4">Manage permissions for user {{ user.username }}</h1>
         <p class="lead">User mail: {{ user.email }}</p>
 
-        <form (ngSubmit)="updatePermissionsUnpermitted()" [formGroup]="firstForm">
+        <form *ngIf="unpermittedRooms.length > 0" (ngSubmit)="updatePermissionsUnpermitted()" [formGroup]="firstForm">
             
     
             <p class="lead mt-20">Manage permissions for unpermitted rooms:</p>

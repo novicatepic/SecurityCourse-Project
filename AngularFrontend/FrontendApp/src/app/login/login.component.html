@@ -2,12 +2,12 @@
     <h2 class="text-center mb-4">Login Form</h2>
     <form [formGroup]="firstForm" (ngSubmit)="login()" class="text-center">
         <div class="form-group">
-          <label for="username">First Name*</label>
-          <input formControlName="username" type="text" required="required" class="text-center form-control" id="username" placeholder="Enter first name">
+          <label for="username">Username*</label>
+          <input formControlName="username" type="text" required="required" class="text-center form-control" id="username" placeholder="Enter username">
         </div>
         <div class="form-group">
-            <label for="password">Last Name*</label>
-            <input formControlName="password" type="password" required="required" class="text-center form-control" id="password" placeholder="Enter last name">
+            <label for="password">Password*</label>
+            <input formControlName="password" type="password" required="required" class="text-center form-control" id="password" placeholder="Enter password">
         </div>
         <button [disabled]="firstForm.invalid" type="submit" class="btn btn-primary">Submit</button>
     </form>

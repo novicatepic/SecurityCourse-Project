@@ -62,6 +62,7 @@ public class JwtService {
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256).compact();
     }
 
+
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }

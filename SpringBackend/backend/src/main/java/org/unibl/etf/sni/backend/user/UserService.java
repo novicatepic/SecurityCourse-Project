@@ -9,6 +9,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.unibl.etf.sni.backend.exception.NotFoundException;
 
+import javax.swing.text.html.Option;
+import java.util.Optional;
+
 @Service
 public class UserService implements UserDetailsService {
 
@@ -25,6 +28,16 @@ public class UserService implements UserDetailsService {
     }
 
     public UserModel registerUser(UserModel user) {
+
+        Optional<UserModel> optUser = userRepository.findByEmail(user.getEmail());
+
+        if(optUser.isPresent()) {
+            UserModel foundUser = optUser.get();
+            foundUser.setUsername(user.getUsername());
+            foundUser.setPassword(passwordEncoder().encode(user.getPassword()));
+            return userRepository.save(foundUser);
+        }
+
         user.setPassword(passwordEncoder().encode(user.getPassword()) );
         user.setActive(false);
         //user.setIsTerminated(false);

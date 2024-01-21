@@ -82,9 +82,7 @@ public class AuthenticationController {
     @GetMapping("/logout")
     public void logout(HttpServletRequest request) {
         tokenExtractor(request);
-
         wafService.logoutUser();
-
     }
 
     private void tokenExtractor(HttpServletRequest request) {

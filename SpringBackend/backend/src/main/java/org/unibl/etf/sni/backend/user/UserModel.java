@@ -61,11 +61,6 @@ public class UserModel implements UserDetails {
     @Column(name = "active", nullable = false)
     private Boolean active;
 
-    /*@NotNull
-    @Basic
-    @Column(name = "is_terminated", nullable = false)
-    private Boolean isTerminated;*/
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
