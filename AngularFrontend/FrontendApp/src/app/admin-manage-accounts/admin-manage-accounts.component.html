@@ -10,6 +10,17 @@
             <option value="ROLE_MODERATOR">MODERATOR</option>
             <option value="ROLE_FORUM">FORUM USER</option>
           </select>
+          <div *ngIf="firstForm.get('role')?.invalid && (firstForm.get('role')?.dirty || firstForm.get('role')?.touched)">
+            <!-- Greske -->
+            <small class="text-danger"
+            *ngIf="firstForm.get('role')?.hasError('required')"
+            > This field is required
+            </small>
+            <small class="text-danger"
+              *ngIf="firstForm.get('role')?.hasError('maxlength')"
+              > Must be less than 45 characters
+            </small>
+          </div>
           <div style="margin-bottom: 10px;"><button [disabled]="firstForm.invalid" type="submit" class="btn btn-primary">Accept Request (you will be able to change permissions later)</button></div>
         </form>
         

@@ -24,13 +24,18 @@ export class CallbackComponent {
     if(code != null) {
       this.userService.getUserID(code).subscribe((data)=>{
         //console.log(JSON.stringify(data));
-        const token = JSON.stringify(data);
+        if(data != null) {
+          const token = JSON.stringify(data);
         localStorage.setItem("user", token);
           this.authService.notifyLoginSuccess();
           this.snackBarService.triggerSnackBar("Successfull login!");
           this.router.navigate(['/']);
+        } else {
+          this.snackBarService.triggerSnackBar("Wait for administrator to approve/reject your request!");
+        }
+        
        },(error)=>{
-        this.snackBarService.triggerSnackBar("Bad login!");
+        this.snackBarService.triggerSnackBar("Wait for administrator to approve/reject your request!");
          this.userId =error.error.text;
        })
     }

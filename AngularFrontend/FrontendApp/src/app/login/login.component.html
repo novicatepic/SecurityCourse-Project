@@ -5,14 +5,32 @@
           <label for="username">Username*</label>
           <input formControlName="username" type="text" required="required" class="text-center form-control" id="username" placeholder="Enter username">
         </div>
+        <div *ngIf="firstForm.get('username')?.invalid && (firstForm.get('username')?.dirty || firstForm.get('username')?.touched)">
+          <!-- Greske -->
+          <small class="text-danger"
+          *ngIf="firstForm.get('username')?.hasError('required')"
+          > This field is required
+          </small>
+          <small class="text-danger"
+            *ngIf="firstForm.get('username')?.hasError('maxlength')"
+            > Length must be less than 45
+          </small>
+        </div>
         <div class="form-group">
             <label for="password">Password*</label>
             <input formControlName="password" type="password" required="required" class="text-center form-control" id="password" placeholder="Enter password">
         </div>
+        <div *ngIf="firstForm.get('password')?.invalid && (firstForm.get('password')?.dirty || firstForm.get('password')?.touched)">
+          <!-- Greske -->
+          <small class="text-danger"
+          *ngIf="firstForm.get('password')?.hasError('required')"
+          > This field is required
+          </small>
+        </div>
         <button [disabled]="firstForm.invalid" type="submit" class="btn btn-primary">Submit</button>
     </form>
 
-    <button (click)="loginWithGithub()" style="margin-top: 20px;" type="submit" class="btn btn-danger">Login with github (email address must be public and match)</button>
+    <button (click)="loginWithGithub()" style="margin-top: 20px;" type="submit" class="btn btn-danger">Login with github</button>
 
   </div>
   

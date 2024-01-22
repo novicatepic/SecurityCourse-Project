@@ -12,6 +12,8 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -24,21 +26,10 @@ import java.util.Date;
 @Component
 public class CertificateManager {
     private static final String KEYSTORE_PASSWORD = "keystore";
-    private static final String KEYSTORE_FILE_PATH = "C:\\Users\\User\\Desktop\\SecurityCourse-Project\\SpringBackend\\backend\\keystore.jks";
+    //private static final String KEYSTORE_FILE_PATH = "C:\\Users\\User\\Desktop\\SecurityCourse-Project\\SpringBackend\\backend\\keystore.jks";
+    private static final String KEYSTORE_FILE_PATH = "."+ File.separator+"keystore.jks";
     private static final String KEYSTORE_TYPE = "JKS";
     private static final String MY_KEY_ALIAS = "myKeyAlias";
-
-    /*@Value("${spring.keystore.password}")
-    private static String KEYSTORE_PASSWORD;
-
-    @Value("${spring.keystore.file-path}")
-    private static String KEYSTORE_FILE_PATH;
-
-    @Value("${spring.keystore.type}")
-    private static String KEYSTORE_TYPE;
-
-    @Value("${spring.keystore.alias}")
-    private static String MY_KEY_ALIAS;*/
 
     private KeyStore keyStore;
 

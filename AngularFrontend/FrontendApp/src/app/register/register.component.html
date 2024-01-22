@@ -8,17 +8,58 @@
                     <label for="username" class="text-center">Username*</label>
                     <input formControlName="username" type="text" required="required" class="form-control text-center" id="username"
                         placeholder="Enter username">
+                        <div *ngIf="firstForm.get('username')?.invalid && (firstForm.get('username')?.dirty || firstForm.get('username')?.touched)">
+                          <!-- Greske -->
+                          <small class="text-danger"
+                          *ngIf="firstForm.get('username')?.hasError('required')"
+                          > This field is required
+                          </small>
+                          <small class="text-danger"
+                            *ngIf="firstForm.get('username')?.hasError('maxlength')"
+                            > Length must be less than 45
+                          </small>
+                        </div>
                 </div>
             </div>
             <div class="col-12 form-group text-center">
-                <label for="password" class="text-center">Password*</label>
-                <input formControlName="password" type="password" required="required" class="form-control text-center"
+                <label for="password" class="text-center">Password (8 or more characters)*</label>
+                <input formControlName="password" type="password" min="8" required="required" class="form-control text-center"
                     id="password" placeholder="Enter password">
+                    <div *ngIf="firstForm.get('password')?.invalid && (firstForm.get('password')?.dirty || firstForm.get('password')?.touched)">
+                        <!-- Greske -->
+                        <small class="text-danger"
+                        *ngIf="firstForm.get('password')?.hasError('required')"
+                        > This field is required
+                        </small>
+                        <small class="text-danger"
+                          *ngIf="firstForm.get('password')?.hasError('maxlength')"
+                          > Length must be less than 500
+                        </small>
+                        <small class="text-danger"
+                          *ngIf="firstForm.get('password')?.hasError('minlength')"
+                          > Length must be more than 8
+                        </small>
+                      </div>
             </div>  
             <div class="col-12 form-group text-center">
                 <label for="email" class="text-center">Email*</label>
                 <input formControlName="email" type="email" required="required" class="form-control text-center" id="email"
                     placeholder="Enter email">
+                    <div *ngIf="firstForm.get('email')?.invalid && (firstForm.get('email')?.dirty || firstForm.get('email')?.touched)">
+                      <!-- Greske -->
+                      <small class="text-danger"
+                      *ngIf="firstForm.get('email')?.hasError('required')"
+                      > This field is required
+                      </small>
+                      <small class="text-danger"
+                        *ngIf="firstForm.get('email')?.hasError('maxlength')"
+                        > Length must be less than 200
+                      </small>
+                      <small class="text-danger"
+                        *ngIf="firstForm.get('email')?.hasError('email')"
+                        > Must be email
+                      </small>
+                    </div>
             </div>
             
               

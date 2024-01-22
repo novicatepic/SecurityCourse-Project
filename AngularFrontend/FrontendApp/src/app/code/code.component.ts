@@ -41,12 +41,16 @@ export class CodeComponent {
       }
 
       this.service.loginUserCode(code).subscribe((data) => {
-        const token = JSON.stringify(data);
-        //console.log("token " + token);
-        localStorage.setItem("user", token);
-        this.authService.notifyLoginSuccess();
-        this.snackBarService.triggerSnackBar("Successfull login!");
-        this.router.navigate(['/']);
+        if(data != null && data !== "null") {
+          const token = JSON.stringify(data);
+          //console.log("token " + token);
+          localStorage.setItem("user", token);
+          this.authService.notifyLoginSuccess();
+          this.snackBarService.triggerSnackBar("Successfull login!");
+          this.router.navigate(['/']);
+        } else {
+          this.snackBarService.triggerSnackBar("Code not correct!");
+        }  
       },
       error => {
         //console.log(error);

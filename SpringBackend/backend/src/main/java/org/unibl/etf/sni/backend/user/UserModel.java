@@ -61,6 +61,7 @@ public class UserModel implements UserDetails {
     @Column(name = "active", nullable = false)
     private Boolean active;
 
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));

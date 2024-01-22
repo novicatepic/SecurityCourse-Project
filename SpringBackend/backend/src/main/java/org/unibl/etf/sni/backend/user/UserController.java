@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.unibl.etf.sni.backend.authorization.BadEntity;
 import org.unibl.etf.sni.backend.exception.NotFoundException;
+import org.unibl.etf.sni.backend.exception.PasswordTooShortException;
+import org.unibl.etf.sni.backend.exception.RegistrationNotAllowed;
 import org.unibl.etf.sni.backend.jwtconfig.TokenExtractor;
 import org.unibl.etf.sni.backend.waf.WAFService;
 
@@ -23,7 +25,8 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<UserModel> registerUser(@RequestBody UserModel userModel,
-                                                  HttpServletRequest request)  {
+                                                  HttpServletRequest request)
+                                                    throws RegistrationNotAllowed, PasswordTooShortException {
 
         tokenExtractor(request);
 

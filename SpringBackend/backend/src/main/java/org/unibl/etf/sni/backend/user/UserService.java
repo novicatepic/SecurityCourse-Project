@@ -8,6 +8,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.unibl.etf.sni.backend.exception.NotFoundException;
+import org.unibl.etf.sni.backend.exception.PasswordTooShortException;
+import org.unibl.etf.sni.backend.exception.RegistrationNotAllowed;
 
 import javax.swing.text.html.Option;
 import java.util.Optional;
@@ -27,15 +29,24 @@ public class UserService implements UserDetailsService {
         return new BCryptPasswordEncoder();
     }
 
-    public UserModel registerUser(UserModel user) {
+    public UserModel registerUser(UserModel user) throws RegistrationNotAllowed, PasswordTooShortException {
+
+        if(user.getPassword().length() < 8) {
+            throw new PasswordTooShortException();
+        }
 
         Optional<UserModel> optUser = userRepository.findByEmail(user.getEmail());
 
         if(optUser.isPresent()) {
             UserModel foundUser = optUser.get();
-            foundUser.setUsername(user.getUsername());
-            foundUser.setPassword(passwordEncoder().encode(user.getPassword()));
-            return userRepository.save(foundUser);
+            if("github_user".equals(foundUser.getPassword())) {
+                foundUser.setUsername(user.getUsername());
+                foundUser.setPassword(passwordEncoder().encode(user.getPassword()));
+                return userRepository.save(foundUser);
+            } else {
+                throw new RegistrationNotAllowed();
+            }
+
         }
 
         user.setPassword(passwordEncoder().encode(user.getPassword()) );

@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.unibl.etf.sni.backend.exception.InvalidRoleException;
 import org.unibl.etf.sni.backend.exception.NotFoundException;
+import org.unibl.etf.sni.backend.exception.PasswordTooShortException;
+import org.unibl.etf.sni.backend.exception.RegistrationNotAllowed;
 import org.unibl.etf.sni.backend.log.LogModel;
 import org.unibl.etf.sni.backend.log.LogService;
 import org.unibl.etf.sni.backend.log.Status;
@@ -42,6 +44,20 @@ public class GlobalExceptionHandler {
     public void handleInvalidRoleException(InvalidRoleException err) {
         logger.error("No permissions for that action!");
         logService.insertNewLog(err.getMessage(), Status.ERROR);
+    }
+
+    @ExceptionHandler(RegistrationNotAllowed.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public void handleRegistrationNotAllowed(RegistrationNotAllowed err) {
+        logger.error("Registration not allowed!");
+        logService.insertNewLog("Registration not allowed!", Status.ERROR);
+    }
+
+    @ExceptionHandler(PasswordTooShortException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public void handlePasswordTooShortException(PasswordTooShortException err) {
+        logger.error("Password to short!");
+        logService.insertNewLog("Password to short!", Status.ERROR);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

@@ -4,6 +4,17 @@
     <div class="form-group">
         <label for="code">Code*</label>
         <input formControlName="code" type="text" required="required" class="text-center form-control" id="code" placeholder="Enter code">
+        <div *ngIf="firstForm.get('code')?.invalid && (firstForm.get('code')?.dirty || firstForm.get('code')?.touched)">
+          <!-- Greske -->
+          <small class="text-danger"
+          *ngIf="firstForm.get('code')?.hasError('required')"
+          > This field is required
+          </small>
+          <small class="text-danger"
+            *ngIf="firstForm.get('code')?.hasError('maxlength')"
+            > Length must be 4
+          </small>
+        </div>
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>

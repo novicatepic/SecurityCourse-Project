@@ -69,11 +69,11 @@ public class AuthenticationService {
             return null;
         }
 
-        codeService.deleteCode(c.getUserId());
-
         if(!c.getCode().equals(code.getCode())) {
             return null;
         }
+
+        codeService.deleteCode(c.getUserId());
 
         var user = userRepository.findById(code.getUserId());
         UserModel extractedUser;

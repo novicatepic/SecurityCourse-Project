@@ -56,7 +56,7 @@ export class AdminManageAccountsComponent {
     this.service.terminateUser(user2, this.userId).subscribe((data) => {
       //console.log(JSON.stringify(data));
       this.snackBarService.triggerSnackBar("User terminated!");
-      this.router.navigate(['/manage-accounts']);
+      location.reload();
     },
       error => {
         //console.log("ERROR " + JSON.stringify(error));
@@ -74,7 +74,7 @@ export class AdminManageAccountsComponent {
     this.service.allowUser(user2, this.userId).subscribe((data) => {
       //console.log(JSON.stringify(data));
       this.snackBarService.triggerSnackBar("User activated!");
-      this.router.navigate(['/manage-accounts']);
+      location.reload();
     },
       error => {
         //console.log("ERROR " + JSON.stringify(error));

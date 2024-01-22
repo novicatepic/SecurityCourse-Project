@@ -30,11 +30,33 @@
           <form [formGroup]="firstForm" (ngSubmit)="updateComment()">
             <div class="mb-3">
                 <label for="title" class="col-form-label">Title</label>
-                <input formControlName="title" id="title" type="text" class="form-control" placeholder="Title...">
+                <input formControlName="title" required="required" id="title" type="text" class="form-control" placeholder="Title...">
+            </div>
+            <div *ngIf="firstForm.get('title')?.invalid && (firstForm.get('title')?.dirty || firstForm.get('title')?.touched)">
+              <!-- Greske -->
+              <small class="text-danger"
+              *ngIf="firstForm.get('title')?.hasError('required')"
+              > This field is required
+              </small>
+              <small class="text-danger"
+                *ngIf="firstForm.get('title')?.hasError('maxlength')"
+                > Length must be less than 45
+              </small>
             </div>
             <div class="mb-3">
                 <label for="content" class="col-form-label">Content</label>
-                <input formControlName="content" id="content" type="text" class="form-control" placeholder="Content...">
+                <input formControlName="content" required="required" id="content" type="text" class="form-control" placeholder="Content...">
+            </div>
+            <div *ngIf="firstForm.get('content')?.invalid && (firstForm.get('content')?.dirty || firstForm.get('content')?.touched)">
+              <!-- Greske -->
+              <small class="text-danger"
+              *ngIf="firstForm.get('content')?.hasError('required')"
+              > This field is required
+              </small>
+              <small class="text-danger"
+                *ngIf="firstForm.get('content')?.hasError('maxlength')"
+                > Length must be less than 2000
+              </small>
             </div>
             <div class="modal-footer">
               <button type="submit" class="btn btn-primary">Submit</button>
