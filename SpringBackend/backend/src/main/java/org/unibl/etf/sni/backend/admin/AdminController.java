@@ -212,9 +212,9 @@ public class AdminController {
 
         tokenExtractor(request);
 
-        if(wafService.checkIfCommentIsForbidden(comment)) {
+        /*if(wafService.checkIfCommentIsForbidden(comment)) {
             return BadEntity.returnForbidden();
-        }
+        }*/
 
         if(wafService.checkMySQLInjection(comment.getContent()) || wafService.checkMySQLInjection(comment.getTitle())) {
             return BadEntity.returnForbidden();

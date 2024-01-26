@@ -36,22 +36,16 @@ public class UserService implements UserDetailsService {
         }
 
         Optional<UserModel> optUser = userRepository.findByEmail(user.getEmail());
-
         if(optUser.isPresent()) {
-            UserModel foundUser = optUser.get();
-            if("github_user".equals(foundUser.getPassword())) {
-                foundUser.setUsername(user.getUsername());
-                foundUser.setPassword(passwordEncoder().encode(user.getPassword()));
-                return userRepository.save(foundUser);
-            } else {
-                throw new RegistrationNotAllowed();
-            }
-
+            throw new RegistrationNotAllowed();
+        }
+        Optional<UserModel> optUser2 = userRepository.findByUsername(user.getUsername());
+        if(optUser2.isPresent()) {
+            throw new RegistrationNotAllowed();
         }
 
         user.setPassword(passwordEncoder().encode(user.getPassword()) );
         user.setActive(false);
-        //user.setIsTerminated(false);
         return userRepository.save(user);
     }
 

@@ -27,7 +27,7 @@ import java.util.Date;
 public class CertificateManager {
     private static final String KEYSTORE_PASSWORD = "keystore";
     //private static final String KEYSTORE_FILE_PATH = "C:\\Users\\User\\Desktop\\SecurityCourse-Project\\SpringBackend\\backend\\keystore.jks";
-    private static final String KEYSTORE_FILE_PATH = "."+ File.separator+"keystore.jks";
+    private static final String KEYSTORE_FILE_PATH = "."+File.separator+"keystore.jks";
     private static final String KEYSTORE_TYPE = "JKS";
     private static final String MY_KEY_ALIAS = "myKeyAlias";
 

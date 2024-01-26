@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.unibl.etf.sni.backend.exception.NotFoundException;
 
+import java.sql.Date;
+
 @Service
 public class CommentService {
 
@@ -21,6 +23,7 @@ public class CommentService {
 
     public CommentModel updateComment(CommentModel commentModel) {
         commentModel.setEnabled(false);
+        commentModel.setDateCreated(new Date(new java.util.Date().getTime()));
         return repository.save(commentModel);
     }
 

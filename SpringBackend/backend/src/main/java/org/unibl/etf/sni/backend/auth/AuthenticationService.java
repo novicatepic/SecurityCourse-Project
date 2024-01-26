@@ -105,8 +105,10 @@ public class AuthenticationService {
         Optional<UserModel> k = userRepository.findByEmail(email);
 
         if(k.isPresent()) {
+            System.out.println("Present!");
             UserModel user = k.get();
             if(user.getActive()) {
+                System.out.println("Active!");
                 String jwt = jwtService.generateToken(user);
                 JwtAuthResponse response = new JwtAuthResponse(jwt);
                 return response;
