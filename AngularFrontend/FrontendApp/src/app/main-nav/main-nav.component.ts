@@ -39,10 +39,14 @@ export class MainNavComponent {
     this.authService2.loginSuccess$.subscribe(() => {
       this.loggedIn = true;
       this.jwtService.getUserById().subscribe((data: any) => {
-        this.loggedIn = true;
         this.user = data;
      }
      );
+    });
+
+    this.authService2.terminateNotification$.subscribe(() => {
+      this.loggedIn = false;
+      this.router.navigate(['/login']);
     });
   }
 

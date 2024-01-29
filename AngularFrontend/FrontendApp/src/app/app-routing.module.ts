@@ -15,10 +15,11 @@ import { UrlGuard } from './guards/url.guard';
 import { ChooseAccountComponent } from './choose-account/choose-account.component';
 import { HomeComponent } from './home/home.component';
 import { CallbackComponent } from './callback/callback.component';
+import { CodeGuard } from './guards/code.guard';
 
 const routes: Routes = [
   {path: 'login', component: LoginComponent}, //OK
-  {path: 'code/:id', component: CodeComponent}, //OK 
+  {path: 'code/:id', component: CodeComponent, canActivate: [CodeGuard]}, //OK 
   {path: 'register', component: RegisterComponent}, //OK
   {path: 'callback', component: CallbackComponent}, 
   {path: 'manage-accounts', component: AdminManageAccountsComponent, canActivate: [AdminGuard]}, //OK

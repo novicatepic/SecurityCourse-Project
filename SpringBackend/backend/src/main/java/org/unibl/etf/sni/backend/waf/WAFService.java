@@ -1,6 +1,8 @@
 package org.unibl.etf.sni.backend.waf;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.unibl.etf.sni.backend.authorization.AuthorizeRequests;
 import org.unibl.etf.sni.backend.certificate.CertificateAliasResolver;
@@ -198,6 +200,22 @@ public class WAFService {
             return returnBadMessage();
         }
 
+    }
+
+    private static UserModel extractCredentials() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserModel userDetails = (UserModel) authentication.getPrincipal();
+        return userDetails;
+    }
+
+    public boolean checkAccountModification(Integer id) {
+        UserModel k = extractCredentials();
+
+        if(k.getId() != id) {
+            return true;
+        }
+        blackListToken();
+        return false;
     }
 
     public byte[] authorizeDeleteUserPermissionsForRoomAndComment(Integer roomId, Integer userId,

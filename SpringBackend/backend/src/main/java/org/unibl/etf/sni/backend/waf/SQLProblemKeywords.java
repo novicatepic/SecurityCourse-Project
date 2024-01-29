@@ -6,7 +6,7 @@ public class SQLProblemKeywords {
             "DELETE", "UPDATE",
             "INSERT", "TRUNCATE",
             "SELECT", "UNION", "ALTER",
-            "MODIFY"};
+            "MODIFY", "#", "` OR 1=1"};
 
     public static String[] returnSQLKeywords() {
         return sqlKeywords;

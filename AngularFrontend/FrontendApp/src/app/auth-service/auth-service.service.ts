@@ -11,8 +11,16 @@ export class AuthServiceService {
   // Observable that other components can subscribe to for login success notification
   loginSuccess$: Observable<void> = this.loginSuccessSubject.asObservable();
 
+  private terminate = new Subject<void>();
+  terminateNotification$: Observable<void> = this.terminate.asObservable();
+
   // Method to notify subscribers about successful login
   notifyLoginSuccess() {
     this.loginSuccessSubject.next();
   }
+
+  notifyTermination() {
+    this.terminate.next();
+  }
+
 }

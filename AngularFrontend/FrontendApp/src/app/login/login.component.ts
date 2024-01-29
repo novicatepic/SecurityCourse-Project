@@ -35,12 +35,11 @@ export class LoginComponent {
         username: this.firstForm.get('username')?.value,
         password: this.firstForm.get('password')?.value
       }
-
-
-
+      
       this.service.loginUserUPW(user).subscribe((data) => {
         if(data!=null && data.success) {
           this.snackBarService.triggerSnackBar("Correct credentials!");
+          sessionStorage.setItem("usrtemp", JSON.stringify(data.userId));
           this.router.navigate(['/code/'+data.userId]);
         } else {
           this.snackBarService.triggerSnackBar("Incorrect credentials!");

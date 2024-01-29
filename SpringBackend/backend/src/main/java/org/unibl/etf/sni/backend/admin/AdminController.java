@@ -42,6 +42,10 @@ public class AdminController {
 
         tokenExtractor(request);
 
+        if(!wafService.checkAccountModification(userId)) {
+            return BadEntity.returnBadRequst();
+        }
+
         if(!wafService.checkNumberLength(userId, request.getRequestURI())) {
             return BadEntity.returnBadRequst();
         }
