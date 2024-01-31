@@ -1,6 +1,0 @@
-5) waf (notes) :
-
-
--oauth 2.0 (github)
-pri kraju, popraviti da se ne ucita ni djelic stranice gdje se proslijedi id
-

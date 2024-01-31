@@ -1,6 +1,7 @@
 <div id="maindiv" class="d-flex flex-column flex-grow-1 justify-content-center align-items-center" style="margin-top: 100px; height: 40vh;">
-    <h2 class="text-center mb-4">Login Form</h2>
-    <form [formGroup]="firstForm" (ngSubmit)="login()" class="text-center">
+    
+    <form *ngIf="!correctCredentials" [formGroup]="firstForm" (ngSubmit)="login()" class="text-center">
+      <h2 class="text-center mb-4">Login Form</h2>
         <div class="form-group">
           <label for="username">Username*</label>
           <input formControlName="username" type="text" required="required" class="text-center form-control" id="username" placeholder="Enter username">
@@ -29,8 +30,27 @@
         </div>
         <button [disabled]="firstForm.invalid" type="submit" class="btn btn-primary">Submit</button>
     </form>
-
-    <button (click)="loginWithGithub()" style="margin-top: 20px;" type="submit" class="btn btn-danger">Login with github</button>
+    
+  <form *ngIf="this.correctCredentials" (ngSubmit)="inputCode()" [formGroup]="secondForm" style="margin-top: 78px; text-align: center;">
+    <p class="h2" style="margin-top: 50px;">Code input</p>
+    <div class="form-group">
+        <label for="code">Code*</label>
+        <input formControlName="code" type="text" required="required" class="text-center form-control" id="code" placeholder="Enter code">
+        <div *ngIf="secondForm.get('code')?.invalid && (secondForm.get('code')?.dirty || secondForm.get('code')?.touched)">
+          <!-- Greske -->
+          <small class="text-danger"
+          *ngIf="secondForm.get('code')?.hasError('required')"
+          > This field is required
+          </small>
+          <small class="text-danger"
+            *ngIf="secondForm.get('code')?.hasError('maxlength')"
+            > Length must be 4
+          </small>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+    <button *ngIf="!this.correctCredentials" (click)="loginWithGithub()" style="margin-top: 20px;" type="submit" class="btn btn-danger">Login with github</button>
 
   </div>
   

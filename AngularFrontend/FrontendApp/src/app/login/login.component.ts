@@ -13,19 +13,29 @@ import { environment } from '../../environments/environment';
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  public firstForm : FormGroup
+  public firstForm : FormGroup;
+  public secondForm : FormGroup;
+
+  correctCredentials: boolean = false;
+  userId: any;
 
   constructor( 
     private formBuilder: FormBuilder,
      private router: Router,
      private service: LoginService,
      private jwtService: JwtTokenService,
-     private snackBarService: SnackBarService) {
+     private snackBarService: SnackBarService, 
+     private authService: AuthServiceService) {
 
     this.firstForm = formBuilder.group({
       username : [null, [Validators.required, Validators.maxLength(45)]],
       password : [null, [Validators.required, Validators.maxLength(500)]]
     });
+
+    this.secondForm = formBuilder.group({
+      code : [null, [Validators.required, Validators.maxLength(4), Validators.minLength(4)]]
+    });
+
   }
 
   login() {
@@ -39,8 +49,10 @@ export class LoginComponent {
       this.service.loginUserUPW(user).subscribe((data) => {
         if(data!=null && data.success) {
           this.snackBarService.triggerSnackBar("Correct credentials!");
-          sessionStorage.setItem("usrtemp", JSON.stringify(data.userId));
-          this.router.navigate(['/code/'+data.userId]);
+          this.correctCredentials = true;
+          this.userId = data.userId;
+          //sessionStorage.setItem("usrtemp", JSON.stringify(data.userId));
+          //this.router.navigate(['/code/'+data.userId]);
         } else {
           this.snackBarService.triggerSnackBar("Incorrect credentials!");
         }
@@ -52,6 +64,32 @@ export class LoginComponent {
 
     }
   }
+
+  inputCode() {
+    if(this.secondForm.valid) {
+      const code = {
+        code: this.secondForm.get('code')?.value,
+        userId: parseInt(this.userId, 10)
+      }
+
+      this.service.loginUserCode(code).subscribe((data) => {
+        if(data != null && data !== "null") {
+          const token = JSON.stringify(data);
+          //console.log("token " + token);
+          localStorage.setItem("user", token);
+          this.authService.notifyLoginSuccess();
+          this.snackBarService.triggerSnackBar("Successfull login!");
+          this.router.navigate(['/']);
+        } else {
+          this.snackBarService.triggerSnackBar("Code not correct!");
+        }  
+      },
+      error => {
+        //console.log(error);
+        this.snackBarService.triggerSnackBar("Code not correct!");
+      } );
+  }
+}
 
 
   private clientId = environment.clientId;

@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
-import { CodeComponent } from './code/code.component';
 import { RegisterComponent } from './register/register.component';
 import { AdminManageAccountsComponent } from './admin-manage-accounts/admin-manage-accounts.component';
 import { AdminManageSingleAccountComponent } from './admin-manage-single-account/admin-manage-single-account.component';
@@ -15,11 +14,9 @@ import { UrlGuard } from './guards/url.guard';
 import { ChooseAccountComponent } from './choose-account/choose-account.component';
 import { HomeComponent } from './home/home.component';
 import { CallbackComponent } from './callback/callback.component';
-import { CodeGuard } from './guards/code.guard';
 
 const routes: Routes = [
-  {path: 'login', component: LoginComponent}, //OK
-  {path: 'code/:id', component: CodeComponent, canActivate: [CodeGuard]}, //OK 
+  {path: 'login', component: LoginComponent},
   {path: 'register', component: RegisterComponent}, //OK
   {path: 'callback', component: CallbackComponent}, 
   {path: 'manage-accounts', component: AdminManageAccountsComponent, canActivate: [AdminGuard]}, //OK

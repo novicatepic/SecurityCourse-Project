@@ -16,7 +16,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { CodeComponent } from './code/code.component';
 import { RegisterComponent } from './register/register.component';
 import { AdminManageAccountsComponent } from './admin-manage-accounts/admin-manage-accounts.component';
 import { AdminManageSingleAccountComponent } from './admin-manage-single-account/admin-manage-single-account.component';
@@ -37,7 +36,6 @@ import { CallbackComponent } from './callback/callback.component';
   declarations: [
     AppComponent,
     LoginComponent,
-    CodeComponent,
     RegisterComponent,
     AdminManageAccountsComponent,
     AdminManageSingleAccountComponent,
