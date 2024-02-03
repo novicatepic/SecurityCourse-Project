@@ -15,8 +15,6 @@ public class AuthorizeRequests {
     public static boolean checkIdValidity(Integer id) {
         UserModel k = extractCredentials();
 
-        //System.out.println("same = " + k.getId() + " id");
-
         if(k.getId() != id) {
             return false;
         }

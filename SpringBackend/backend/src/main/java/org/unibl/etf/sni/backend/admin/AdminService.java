@@ -13,9 +13,7 @@ import org.unibl.etf.sni.backend.room.RoomModel;
 import org.unibl.etf.sni.backend.room.RoomRepository;
 import org.unibl.etf.sni.backend.user.UserModel;
 import org.unibl.etf.sni.backend.user.UserRepository;
-
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class AdminService {
@@ -34,14 +32,6 @@ public class AdminService {
 
     @Autowired
     private RoomRepository roomRepository;
-
-    /*public UserModel configureUser(UserModel user) {
-        return userRepository.save(user);
-    }
-
-    public CommentModel configureComment(CommentModel comment) {
-        return commentRepository.save(comment);
-    }*/
 
     public List<UserModel> getUsersToModifyPermissions() {
         return userRepository.findAll().stream().filter(
@@ -109,10 +99,8 @@ public class AdminService {
         UserModel user = userRepository.findById(userId).orElseThrow(NotFoundException::new);
 
         user.setActive(false);
-        //user.setIsTerminated(true);
         mailService.sendEmail(user.getEmail(), "Account activation notification - SNI Project",
                     "Your account with username " + user.getUsername() + " not activated, deleted request!");
-        //return userRepository.save(user);
         userRepository.delete(user);
         return user;
     }
@@ -121,9 +109,9 @@ public class AdminService {
         return userRepository.findById(userId).orElseThrow(NotFoundException::new);
     }
 
+    //set role for user
     public UserModel update(UserModel user) throws NotFoundException {
         UserModel u =  this.userRepository.findById(user.getId()).orElseThrow(NotFoundException::new);
-        //System.out.println("Found");
         u.setRole(user.getRole());
         return userRepository.save(u);
     }

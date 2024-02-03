@@ -22,7 +22,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.util.List;
 
-//@CrossOrigin("*")
+//everyone has access
+//get all rooms
+//get single room by id
 @CrossOrigin(origins = "https://localhost:4200")
 @RestController
 @RequestMapping("/rooms")

@@ -33,18 +33,6 @@ public class CodeService {
         return sb.toString();
     }
 
-    public Boolean insertCode(Integer userId, String userCode) throws NotFoundException {
-        Code code  = codeRepository.findByUserId(userId)
-                .orElseThrow(() -> new NotFoundException());
-
-
-        if(code.getCode().equals(userCode)) {
-            codeRepository.delete(code);
-            return true;
-        }
-        return false;
-    }
-
     @Transactional
     public void deleteCode(Integer fitnessUserId) throws NotFoundException {
         Code code  = codeRepository.findByUserId(fitnessUserId)

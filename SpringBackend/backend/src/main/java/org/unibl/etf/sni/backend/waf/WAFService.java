@@ -23,25 +23,26 @@ import org.unibl.etf.sni.backend.role.Role;
 import org.unibl.etf.sni.backend.siem.SIEMService;
 import org.unibl.etf.sni.backend.user.UserModel;
 import org.unibl.etf.sni.backend.user.UserService;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.swing.text.html.Option;
 import java.security.InvalidKeyException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
-import java.util.Optional;
 
 import static org.unibl.etf.sni.backend.certificate.MessageHasher.createDigitalSignature;
 
+//waf checks for mysql injection, xss (these two based on keywords), buffer overflow
+//if there is something malicious, token is blacklisted (no more access)
+//it's checked whether user has right to update comment (role and if he modifies his own comment)
+//it's checked whether user has right to allow registration, modify roles (can't do it for himself etc.)
 @Service
 public class WAFService {
 
     private static final int MIN_LENGTH = 1;
-    private static final int MAX_LENGTH = 10_000_000;
+    private static final int MAX_LENGTH = 2147483645;
 
     public static Certificate accessControllerCertificate = CertificateAliasResolver.getCertificateByAlias(CertificateAliasResolver.acAlias);
     public static Certificate wafCertificate = CertificateAliasResolver.getCertificateByAlias(CertificateAliasResolver.wafAlias);

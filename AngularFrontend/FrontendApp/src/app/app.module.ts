@@ -21,7 +21,6 @@ import { AdminManageAccountsComponent } from './admin-manage-accounts/admin-mana
 import { AdminManageSingleAccountComponent } from './admin-manage-single-account/admin-manage-single-account.component';
 import { ShowForumComponent } from './show-forum/show-forum.component';
 import { ManageCommentsComponent } from './manage-comments/manage-comments.component';
-import { ChangeUserRoleComponent } from './change-user-role/change-user-role.component';
 import { AuthService } from './interceptors/auth.service';
 import { MainNavComponent } from './main-nav/main-nav.component';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -41,7 +40,6 @@ import { CallbackComponent } from './callback/callback.component';
     AdminManageSingleAccountComponent,
     ShowForumComponent,
     ManageCommentsComponent,
-    ChangeUserRoleComponent,
     MainNavComponent,
     ChooseAccountComponent,
     HomeComponent,

@@ -31,7 +31,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-
+//logging in with github
+//accessing email and username
+//if user doesn't exists, admin needs to enable his account, else he logs in
 @CrossOrigin("https://localhost:4200")
 @RestController
 @RequestMapping("/api")
@@ -57,12 +59,6 @@ public class GithubController {
 
     @GetMapping("/callback")
     public ResponseEntity<JwtAuthResponse> callback(@RequestParam String code) throws URISyntaxException, IOException, NotFoundException {
-        /*String clientId = "3bff39eca726cbbc11e0";
-        String clientSecret = "4b757f0034a8acbf540362cef9b8bcdf556c5e18";
-        String redirectUri = "https://localhost:4200/callback";*/
-
-        //System.out.println("Code " + code);
-
         // Construct the request URL
         URI uri = new URIBuilder("https://github.com/login/oauth/access_token")
                 .addParameter("client_id", clientId)
@@ -86,8 +82,6 @@ public class GithubController {
         String userDetails = getUserDetails(accessToken);
         String email = extractEmail(userDetails);
         String username = extractLogin(userDetails);
-
-        //UserModel userModel = userService.findByEmail(email);
 
         return new ResponseEntity<>(authenticationService.githubMailLogin(email, username), HttpStatus.OK);
     }

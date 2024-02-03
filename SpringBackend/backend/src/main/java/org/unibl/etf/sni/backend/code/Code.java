@@ -32,6 +32,4 @@ public class Code {
     @Column(name = "user_id", nullable = false)
     private Integer userId;
 
-
-
 }

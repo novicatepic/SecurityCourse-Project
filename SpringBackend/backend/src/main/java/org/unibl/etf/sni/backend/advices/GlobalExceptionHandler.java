@@ -19,6 +19,7 @@ import org.unibl.etf.sni.backend.log.Status;
 
 import java.io.IOException;
 
+//class for handling and logging exceptions
 @ControllerAdvice
 public class GlobalExceptionHandler {
     private Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
@@ -71,12 +72,4 @@ public class GlobalExceptionHandler {
             logService.insertNewLog("Wrong input for field with name " + fieldName + " with message " + errorMessage, Status.ERROR);
         });
     }
-
-    /*ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(Exception.class)
-    public void handleException(
-            MethodArgumentNotValidException ex) {
-            logger.error("No permissions for that action!");
-            logService.insertNewLog(ex.getMessage(), Status.ERROR);
-        }*/
 }

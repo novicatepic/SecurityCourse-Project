@@ -32,27 +32,25 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         String token = request.getHeader("Authorization");
-        String username = "Anonymous"; // Default to Anonymous if not present in token
+        String username = "";
 
         if (token != null && token.startsWith("Bearer ")) {
             try {
                 Claims claims = Jwts.parser()
-                        .setSigningKey(jwtSigningKey) // Replace with your actual secret key
+                        .setSigningKey(jwtSigningKey)
                         .parseClaimsJws(token.replace("Bearer ", ""))
                         .getBody();
 
                 username = claims.getSubject();
             } catch (SignatureException e) {
-                // Handle invalid or expired token
+
             }
         }
 
         if(token != null) {
-            //System.out.println("ERROR NOTICED");
             String errorMessage = "Authorization failed for user '" + username;
             String tokenToAdd = token.substring(7);
             tokenBlackListService.addToBlacklist(tokenToAdd);
-            //System.out.println("Token added " + tokenToAdd);
             logService.insertNewLog(errorMessage, Status.DANGER);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }

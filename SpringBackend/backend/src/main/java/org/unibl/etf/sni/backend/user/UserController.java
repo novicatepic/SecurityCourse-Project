@@ -12,6 +12,7 @@ import org.unibl.etf.sni.backend.exception.RegistrationNotAllowed;
 import org.unibl.etf.sni.backend.jwtconfig.TokenExtractor;
 import org.unibl.etf.sni.backend.waf.WAFService;
 
+//register route -> everyone has access
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/users")

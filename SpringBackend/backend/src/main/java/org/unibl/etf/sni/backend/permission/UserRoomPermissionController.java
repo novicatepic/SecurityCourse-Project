@@ -24,7 +24,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.util.List;
 
-//@CrossOrigin("*")
+//admin work
+//create permissions -> admin has all permissions, other users when created have none, updated later
+//get current permissions for user
+//get permissions for program
 @CrossOrigin(origins = "https://localhost:4200")
 @RestController
 @RequestMapping("/permissions")

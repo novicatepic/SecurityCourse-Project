@@ -21,11 +21,11 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.sql.Date;
 
+//siem service for logging
 @Service
 public class SIEMService {
 
     Certificate wafCertificate = CertificateAliasResolver.getCertificateByAlias(CertificateAliasResolver.wafAlias);
-    Certificate siemCertificate = CertificateAliasResolver.getCertificateByAlias(CertificateAliasResolver.siemAlias);
 
     @Autowired
     private LogRepository repository;

@@ -6,7 +6,6 @@ import { AdminManageAccountsComponent } from './admin-manage-accounts/admin-mana
 import { AdminManageSingleAccountComponent } from './admin-manage-single-account/admin-manage-single-account.component';
 import { ShowForumComponent } from './show-forum/show-forum.component';
 import { ManageCommentsComponent } from './manage-comments/manage-comments.component';
-import { ChangeUserRoleComponent } from './change-user-role/change-user-role.component';
 import { AdminGuard } from './guards/admin.guard';
 import { ModeratorGuard } from './guards/moderator.guard';
 import { ForumUserGuard } from './guards/form-user.guard';
@@ -23,7 +22,6 @@ const routes: Routes = [
   {path: 'manage-comments', component: ManageCommentsComponent, canActivate: [ModeratorGuard]}, //OK
   {path: 'manage-account-permissions', component: ChooseAccountComponent, canActivate: [AdminGuard]},
   {path: 'manage-account/:id', component: AdminManageSingleAccountComponent, canActivate: [AdminGuard, UrlGuard]},
-  //{path: 'manage-permissions/:id', component: ChangeUserRoleComponent, canActivate: [AdminGuard, UrlGuard]},
   {path: 'room/:id', component: ShowForumComponent, canActivate: [ForumUserGuard]}, //OK
   {path: '', component: HomeComponent}, //OK
   { path: '**', redirectTo: '/', pathMatch: 'full' }, //OK

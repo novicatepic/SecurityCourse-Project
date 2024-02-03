@@ -24,7 +24,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.sql.Date;
 
-//@CrossOrigin("*")
+//admin and moderator comment work
+//find comment by id
+//create comment and save it to db waiting for approval/rejection
+//delete comment by user who wrote it
+//update comment and wait for approval/rejection
 @CrossOrigin(origins = "https://localhost:4200")
 @RestController
 @RequestMapping("/comments")
@@ -57,26 +61,6 @@ public class CommentController {
 
         return new ResponseEntity<>(service.findCommentById(commentId), HttpStatus.OK);
     }
-
-    /*@GetMapping("/test")
-    public String getStr() {
-        return "abc";
-    }*/
-
-    /*@PostMapping("/mock")
-    public void createComments()   {
-        for(int i=1; i<=20; i++) {
-            CommentModel comment = new CommentModel();
-            comment.setRoomId(4);
-            comment.setEnabled(true);
-            comment.setForbidden(false);
-            comment.setContent("Content Room id 4 " +i);
-            comment.setTitle("Title Room id 4 "+i);
-            comment.setDateCreated(new Date(2024, 1, 2));
-            comment.setUserId(3);
-            service.createComment(comment);
-        }
-    }*/
 
     @PostMapping
     public ResponseEntity<CommentModel> createComment(@Valid @RequestBody CommentModel commentModel,

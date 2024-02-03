@@ -84,6 +84,11 @@ export class ShowForumComponent {
 
       this.service.loadComments(this.roomId).subscribe(async (data) => {
         this.comments = data;
+        this.comments.sort((a:Comment ,b: Comment) => {
+            const dateA = new Date(a.dateCreated);
+            const dateB = new Date(b.dateCreated);
+            return dateB.getTime() - dateA.getTime();
+        })
         await this.updatePages();
       },
       error => {

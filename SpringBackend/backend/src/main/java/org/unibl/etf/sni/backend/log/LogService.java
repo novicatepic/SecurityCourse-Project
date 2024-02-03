@@ -12,6 +12,9 @@ import java.util.List;
 
 import static org.unibl.etf.sni.backend.certificate.MessageHasher.createDigitalSignature;
 
+//insert log into database
+//almost every action is logged in
+//every log has status
 @Service
 public class LogService {
 

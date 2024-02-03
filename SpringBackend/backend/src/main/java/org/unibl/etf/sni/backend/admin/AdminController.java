@@ -25,7 +25,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.util.List;
 
-//@CrossOrigin("*")
+//admin work -> update role, get waiting requests, enable user, disable user...
+//admin and moderator work -> enabling and disabling comments
 @CrossOrigin(origins = "https://localhost:4200")
 @RestController
 @RequestMapping("/admins")
@@ -37,6 +38,7 @@ public class AdminController {
     @Autowired
     private WAFService wafService;
 
+    //find user by id
     @GetMapping("/users/{userId}")
     public ResponseEntity<UserModel> findUserById(@PathVariable("userId") Integer userId, HttpServletRequest request) throws NotFoundException {
 
@@ -53,17 +55,20 @@ public class AdminController {
         return new ResponseEntity<>(service.getUserById(userId), HttpStatus.OK);
     }
 
+    //extract token to check validity
     private void tokenExtractor(HttpServletRequest request) {
         String token = TokenExtractor.extractToken(request);
         wafService.setToken(token);
     }
 
+    //admin can only modify moderators/simple users
     @GetMapping("/users-to-modify")
-    public ResponseEntity<List<UserModel>> findUsersToModifyPermissions() {
+    public ResponseEntity<List<UserModel>> findUsersToModifyPermissions(HttpServletRequest request) {
+        tokenExtractor(request);
         return new ResponseEntity<>(service.getUsersToModifyPermissions(), HttpStatus.OK);
     }
 
-
+    //admin/moderator function
     @GetMapping("/comments/{userId}")
     public ResponseEntity<List<CommentModel>> findUnprocessedComments(
             @PathVariable("userId") Integer userId, HttpServletRequest request) {
@@ -77,6 +82,7 @@ public class AdminController {
         return new ResponseEntity<>(service.unprocessedComments(userId), HttpStatus.OK);
     }
 
+    //admin function to get waiting account requests
     @GetMapping("/waiting-requests/{adminId}")
     public ResponseEntity<List<UserModel>> getWaitingRequests(
             @PathVariable("adminId") Integer adminId, HttpServletRequest request) {
@@ -90,6 +96,7 @@ public class AdminController {
         return new ResponseEntity<>(service.getWaitingUsers(adminId), HttpStatus.OK);
     }
 
+    //update role for user -> admin function
     @PatchMapping("/update-role")
     public ResponseEntity<UserModel> updateRole(@RequestBody UserModel user, HttpServletRequest request) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, UnrecoverableKeyException, KeyStoreException, NotFoundException {
 
@@ -124,6 +131,7 @@ public class AdminController {
         return new ResponseEntity<>(service.update(user), HttpStatus.OK);
     }
 
+    //enable user account
     @PatchMapping("/enable-users/{adminId}")
     public ResponseEntity<UserModel> configureUserEnabled(@PathVariable("adminId") Integer adminId,
                                                           @RequestBody UserModel user
@@ -156,6 +164,7 @@ public class AdminController {
         return new ResponseEntity<>(service.configureUserEnabled(user), HttpStatus.OK);
     }
 
+    //disable user account
     @PatchMapping("/disable-users/{adminId}/{userId}")
     public ResponseEntity<UserModel> configureUserDisabled(@PathVariable("adminId") Integer adminId,
                                                            @PathVariable("userId") Integer userId
@@ -215,10 +224,6 @@ public class AdminController {
             , HttpServletRequest request) throws UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, KeyStoreException, BadPaddingException, InvalidKeyException {
 
         tokenExtractor(request);
-
-        /*if(wafService.checkIfCommentIsForbidden(comment)) {
-            return BadEntity.returnForbidden();
-        }*/
 
         if(wafService.checkMySQLInjection(comment.getContent()) || wafService.checkMySQLInjection(comment.getTitle())) {
             return BadEntity.returnForbidden();

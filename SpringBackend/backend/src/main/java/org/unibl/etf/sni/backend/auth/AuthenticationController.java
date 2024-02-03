@@ -14,7 +14,9 @@ import org.unibl.etf.sni.backend.exception.NotFoundException;
 import org.unibl.etf.sni.backend.jwtconfig.TokenExtractor;
 import org.unibl.etf.sni.backend.waf.WAFService;
 
-//@CrossOrigin("*")
+//login, code entrance and logout
+//actions logged
+//logout implemented with blacklisting token
 @CrossOrigin(origins = "https://localhost:4200")
 @RestController
 @RequestMapping("/auth")

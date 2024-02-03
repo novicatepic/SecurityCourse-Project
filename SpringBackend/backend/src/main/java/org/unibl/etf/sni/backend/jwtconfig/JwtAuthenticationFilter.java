@@ -63,12 +63,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         jwt = authHeader.substring(7);
 
-        //m.out.println("Processing token " + jwt);
         if(tokenBlackListService.isTokenBlacklisted(jwt)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
             response.getWriter().write("{\"error\": \"Token is blacklisted\"}");
-            //filterChain.doFilter(request, response);
             return;
         } else {
             username = jwtService.extractUserName(jwt);
@@ -82,11 +80,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     context.setAuthentication(authToken);
                     SecurityContextHolder.setContext(context);
-
-                    String requestedUri = request.getRequestURI();
-
-                    logService.insertNewLog("User with username " + username + " tried to access uri "
-                            + requestedUri, Status.DANGER);
                 }
             }
         }

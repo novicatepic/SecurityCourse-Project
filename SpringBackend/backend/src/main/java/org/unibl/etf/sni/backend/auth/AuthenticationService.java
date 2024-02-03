@@ -1,7 +1,5 @@
 package org.unibl.etf.sni.backend.auth;
 
-
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,9 +12,11 @@ import org.unibl.etf.sni.backend.jwtconfig.JwtService;
 import org.unibl.etf.sni.backend.mail.MailService;
 import org.unibl.etf.sni.backend.role.Role;
 import org.unibl.etf.sni.backend.user.*;
-
 import java.util.Optional;
 
+//standard username/pw login
+//code entrance
+//github login
 @Service
 public class AuthenticationService {
 
@@ -90,25 +90,11 @@ public class AuthenticationService {
 
 
     public JwtAuthResponse githubMailLogin(String email, String username)  {
-        /*Optional<GithubUserModel> k = githubUserRepository.findByEmail(email);
-
-        if(k.isPresent()) {
-            GithubUserModel user = k.get();
-            if(user.getActive()) {
-                String jwt = jwtService.generateTokenGithub(user);
-                JwtAuthResponse response = new JwtAuthResponse(jwt);
-                return response;
-            }
-            return null;
-        }*/
-
         Optional<UserModel> k = userRepository.findByEmail(email);
 
         if(k.isPresent()) {
-            System.out.println("Present!");
             UserModel user = k.get();
             if(user.getActive()) {
-                System.out.println("Active!");
                 String jwt = jwtService.generateToken(user);
                 JwtAuthResponse response = new JwtAuthResponse(jwt);
                 return response;
@@ -124,20 +110,7 @@ public class AuthenticationService {
         userModel.setPassword("github_user");
         userRepository.save(userModel);
 
-        /*GithubUserModel userModel = new GithubUserModel();
-        userModel.setActive(false);
-        userModel.setRole(Role.ROLE_UNDEFINED);
-        userModel.setEmail(email);
-        githubUserRepository.save(userModel);*/
-        //System.out.println("Returned null");
-
         return null;
-    }
-
-    public JwtAuthResponse githubLogin(UserModel user) {
-        String jwt = jwtService.generateToken(user);
-        JwtAuthResponse response = new JwtAuthResponse(jwt);
-        return response;
     }
 
     private BoolAuthResponse getBoolAuthResponse(UserModel k) throws NotFoundException {
@@ -154,7 +127,5 @@ public class AuthenticationService {
         }
         return new BoolAuthResponse(false, 0);
     }
-
-
 
 }
